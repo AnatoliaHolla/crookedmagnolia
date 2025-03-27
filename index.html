@@ -287,31 +287,65 @@
         }
         
         // Create text texture
-        function createTextTexture(text, width, height) {
+        function createTextTexture(text, width, height, rotate90 = false) {
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             
-            // Set canvas size
-            canvas.width = width;
-            canvas.height = height;
+            // Set canvas size - swap width and height if rotating
+            if (rotate90) {
+                canvas.width = height;
+                canvas.height = width;
+            } else {
+                canvas.width = width;
+                canvas.height = height;
+            }
             
             // Clear canvas
             context.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Set text properties
-            const fontSize = Math.min(width, height) * 0.3;
-            context.font = `bold ${fontSize}px Arial`;
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            
-            // Add gradient for better visibility
-            context.fillStyle = 'white';
-            context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-            context.lineWidth = fontSize * 0.05;
-            
-            // Draw text
-            context.strokeText(text, canvas.width / 2, canvas.height / 2);
-            context.fillText(text, canvas.width / 2, canvas.height / 2);
+            if (rotate90) {
+                // Set text properties for rotated text
+                const fontSize = Math.min(width, height) * 0.3;
+                context.font = `bold ${fontSize}px Arial`;
+                
+                // Save the current context state
+                context.save();
+                
+                // Translate and rotate the context
+                context.translate(canvas.width / 2, canvas.height / 2);
+                context.rotate(Math.PI / 2);
+                
+                // Set text alignment for rotated text
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                // Add gradient for better visibility
+                context.fillStyle = 'white';
+                context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                context.lineWidth = fontSize * 0.05;
+                
+                // Draw rotated text
+                context.strokeText(text, 0, 0);
+                context.fillText(text, 0, 0);
+                
+                // Restore the context to its original state
+                context.restore();
+            } else {
+                // Set text properties for normal text
+                const fontSize = Math.min(width, height) * 0.3;
+                context.font = `bold ${fontSize}px Arial`;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                // Add gradient for better visibility
+                context.fillStyle = 'white';
+                context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                context.lineWidth = fontSize * 0.05;
+                
+                // Draw text
+                context.strokeText(text, canvas.width / 2, canvas.height / 2);
+                context.fillText(text, canvas.width / 2, canvas.height / 2);
+            }
             
             // Create texture
             const texture = new THREE.CanvasTexture(canvas);
@@ -329,7 +363,7 @@
             const backTexture = createTextTexture(text, 1024, 512);
             const leftTexture = createTextTexture(text, 1024, 512);
             const rightTexture = createTextTexture(text, 1024, 512);
-            const topTexture = createTextTexture(text, 1024, 512);
+            const topTexture = createTextTexture(text, 1024, 512, true); // Rotate text 90 degrees
             
             // Create materials with the textures
             const frontMaterial = new THREE.MeshBasicMaterial({ 
