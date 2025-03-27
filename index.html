@@ -32,7 +32,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem;
+            padding: 1rem;
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.05) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(0, 255, 204, 0.05) 0%, transparent 20%);
@@ -43,20 +43,20 @@
             max-width: 1200px;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 2rem;
-            margin-top: 1rem;
+            gap: 1rem;
+            margin-top: 0.5rem;
         }
 
         @media (min-width: 768px) {
             .container {
-                grid-template-columns: 2fr 1fr;
+                grid-template-columns: 1.5fr 1fr;
             }
         }
 
         .form-container {
             background-color: var(--card);
-            border-radius: 1rem;
-            padding: 2rem;
+            border-radius: 0.75rem;
+            padding: 1rem;
             box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
             border: 1px solid rgba(0, 255, 157, 0.1);
             backdrop-filter: blur(4px);
@@ -64,14 +64,14 @@
 
         h1 {
             color: var(--primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 600;
-            font-size: 1.2rem; /* Reduced from 1.4rem to 1.2rem */
+            font-size: 1rem;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
             position: relative;
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
         }
 
         h1::after {
@@ -85,24 +85,31 @@
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--primary);
             font-weight: 500;
+            font-size: 0.85rem;
         }
 
         input {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.5rem;
             border-radius: 0.5rem;
             border: 1px solid rgba(0, 255, 157, 0.3);
             background-color: rgba(10, 26, 18, 0.8);
             color: var(--text);
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
 
@@ -114,7 +121,7 @@
         input[type="number"]::-webkit-inner-spin-button, 
         input[type="number"]::-webkit-outer-spin-button { 
             opacity: 1;
-            height: 30px;
+            height: 24px;
         }
 
         input:focus {
@@ -125,17 +132,18 @@
 
         button {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.5rem;
             border: none;
             border-radius: 0.5rem;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             color: var(--secondary);
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 0.5rem;
         }
 
         button:hover {
@@ -147,10 +155,16 @@
             transform: translateY(0);
         }
 
+        .totals-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
         .total-square-feet {
-            margin-top: 1.5rem;
             text-align: center;
-            padding: 1rem;
+            padding: 0.5rem;
             background-color: rgba(0, 255, 157, 0.1);
             border-radius: 0.5rem;
             border: 1px solid rgba(0, 255, 157, 0.2);
@@ -158,21 +172,20 @@
 
         .total-square-feet-label {
             display: block;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.7rem;
+            margin-bottom: 0.25rem;
             color: var(--primary);
         }
 
         .total-square-feet-value {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text);
         }
 
         .total-square-feet-net {
-            margin-top: 1rem;
             text-align: center;
-            padding: 1rem;
+            padding: 0.5rem;
             background-color: rgba(0, 255, 204, 0.1);
             border-radius: 0.5rem;
             border: 1px solid rgba(0, 255, 204, 0.2);
@@ -180,7 +193,7 @@
 
         .canvas-container {
             background-color: var(--card);
-            border-radius: 1rem;
+            border-radius: 0.75rem;
             overflow: hidden;
             position: relative;
             aspect-ratio: 16/15.21;
@@ -202,7 +215,7 @@
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             border-left: 3px solid var(--primary);
-            font-size: 0.5rem; /* Adjusted size between 0.9rem and 0.18rem */
+            font-size: 0.5rem;
         }
 
         .instructions {
@@ -212,7 +225,7 @@
             background-color: rgba(10, 26, 18, 0.8);
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text);
             opacity: 0.8;
         }
@@ -224,7 +237,7 @@
             background-color: rgba(10, 26, 18, 0.8);
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text);
             border-right: 3px solid var(--atx-green);
         }
@@ -232,6 +245,26 @@
         .powered-by span {
             color: var(--atx-green);
             font-weight: 600;
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 767px) {
+            .container {
+                gap: 0.5rem;
+            }
+            
+            .canvas-container {
+                aspect-ratio: 16/12; /* Shorter viewport on mobile */
+            }
+            
+            .form-container {
+                padding: 0.75rem;
+            }
+            
+            .dimensions-display, .instructions, .powered-by {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.6rem;
+            }
         }
     </style>
 </head>
@@ -252,30 +285,36 @@
         <div class="form-container">
             <h1>Enter Cage Size</h1>
             <form id="dimensionsForm">
-                <div class="form-group">
-                    <label for="length">Length (feet)</label>
-                    <input type="number" id="length" name="length" min="1" step="1" value="70" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="length">Length (feet)</label>
+                        <input type="number" id="length" name="length" min="1" step="1" value="70" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="width">Width (feet)</label>
+                        <input type="number" id="width" name="width" min="1" step="1" value="14" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="width">Width (feet)</label>
-                    <input type="number" id="width" name="width" min="1" step="1" value="14" required>
-                </div>
-                <div class="form-group">
-                    <label for="height">Height (feet)</label>
-                    <input type="number" id="height" name="height" min="1" step="1" value="12" required>
-                </div>
-                <div class="form-group">
-                    <label for="cageCount">How Many Cages?</label>
-                    <input type="number" id="cageCount" name="cageCount" min="1" max="10" step="1" value="1" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="height">Height (feet)</label>
+                        <input type="number" id="height" name="height" min="1" step="1" value="12" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cageCount">How Many Cages?</label>
+                        <input type="number" id="cageCount" name="cageCount" min="1" max="10" step="1" value="1" required>
+                    </div>
                 </div>
                 <button type="submit">Update Dimensions</button>
-                <div class="total-square-feet">
-                    <span class="total-square-feet-label">Total Square Feet of Turf</span>
-                    <div class="total-square-feet-value" id="totalSquareFeet">980</div>
-                </div>
-                <div class="total-square-feet-net">
-                    <span class="total-square-feet-label">Total Square Feet of Net</span>
-                    <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
+                <div class="totals-container">
+                    <div class="total-square-feet">
+                        <span class="total-square-feet-label">Total Square Feet of Turf</span>
+                        <div class="total-square-feet-value" id="totalSquareFeet">980</div>
+                    </div>
+                    <div class="total-square-feet-net">
+                        <span class="total-square-feet-label">Total Square Feet of Net</span>
+                        <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
+                    </div>
                 </div>
             </form>
         </div>
