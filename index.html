@@ -86,6 +86,7 @@
 
         .form-group {
             margin-bottom: 0.75rem;
+            position: relative;
         }
 
         .form-row {
@@ -116,12 +117,54 @@
         /* Ensure number input controls are visible */
         input[type="number"] {
             -moz-appearance: textfield; /* Firefox */
+            padding-right: 1.5rem; /* Make room for custom controls */
         }
 
+        /* Hide default controls but keep them accessible */
         input[type="number"]::-webkit-inner-spin-button, 
         input[type="number"]::-webkit-outer-spin-button { 
-            opacity: 1;
-            height: 24px;
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Custom number controls */
+        .number-controls {
+            position: absolute;
+            right: 0;
+            top: 1.4rem; /* Position below label */
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 1.4rem);
+        }
+
+        .number-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 50%;
+            background-color: rgba(0, 255, 157, 0.2);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        .number-control:first-child {
+            border-top-right-radius: 0.5rem;
+        }
+
+        .number-control:last-child {
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .number-control:hover {
+            background-color: rgba(0, 255, 157, 0.4);
+        }
+
+        .number-control:active {
+            background-color: rgba(0, 255, 157, 0.6);
         }
 
         input:focus {
@@ -265,6 +308,12 @@
                 padding: 0.25rem 0.5rem;
                 font-size: 0.6rem;
             }
+            
+            /* Ensure number controls are visible and easy to tap on mobile */
+            .number-control {
+                width: 1.8rem;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -289,20 +338,36 @@
                     <div class="form-group">
                         <label for="length">Length (feet)</label>
                         <input type="number" id="length" name="length" min="1" step="1" value="70" required>
+                        <div class="number-controls">
+                            <div class="number-control" data-input="length" data-action="increment">+</div>
+                            <div class="number-control" data-input="length" data-action="decrement">-</div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="width">Width (feet)</label>
                         <input type="number" id="width" name="width" min="1" step="1" value="14" required>
+                        <div class="number-controls">
+                            <div class="number-control" data-input="width" data-action="increment">+</div>
+                            <div class="number-control" data-input="width" data-action="decrement">-</div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="height">Height (feet)</label>
                         <input type="number" id="height" name="height" min="1" step="1" value="12" required>
+                        <div class="number-controls">
+                            <div class="number-control" data-input="height" data-action="increment">+</div>
+                            <div class="number-control" data-input="height" data-action="decrement">-</div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="cageCount">How Many Cages?</label>
                         <input type="number" id="cageCount" name="cageCount" min="1" max="10" step="1" value="1" required>
+                        <div class="number-controls">
+                            <div class="number-control" data-input="cageCount" data-action="increment">+</div>
+                            <div class="number-control" data-input="cageCount" data-action="decrement">-</div>
+                        </div>
                     </div>
                 </div>
                 <button type="submit">Update Dimensions</button>
@@ -377,6 +442,39 @@
             
             // Handle window resize
             window.addEventListener('resize', onWindowResize);
+            
+            // Set up custom number input controls
+            setupNumberControls();
+        }
+        
+        // Set up custom number input controls
+        function setupNumberControls() {
+            const numberControls = document.querySelectorAll('.number-control');
+            
+            numberControls.forEach(control => {
+                control.addEventListener('click', function() {
+                    const inputId = this.getAttribute('data-input');
+                    const action = this.getAttribute('data-action');
+                    const input = document.getElementById(inputId);
+                    
+                    let value = parseInt(input.value) || 0;
+                    const step = parseInt(input.getAttribute('step')) || 1;
+                    const min = parseInt(input.getAttribute('min')) || 0;
+                    const max = parseInt(input.getAttribute('max')) || Infinity;
+                    
+                    if (action === 'increment') {
+                        value = Math.min(value + step, max);
+                    } else if (action === 'decrement') {
+                        value = Math.max(value - step, min);
+                    }
+                    
+                    input.value = value;
+                    
+                    // Trigger input event to update the 3D model
+                    const event = new Event('input', { bubbles: true });
+                    input.dispatchEvent(event);
+                });
+            });
         }
         
         // Update total square feet display
@@ -697,6 +795,7 @@
             input.addEventListener('input', function() {
                 const length = parseFloat(document.getElementById('length').value) || 70;
                 const width = parseFloat(document.getElementById('width').value) || 14;
+                const height = parseFloat(document.getElementById('height').  || 14;
                 const height = parseFloat(document.getElementById('height').value) || 12;
                 const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
                 
