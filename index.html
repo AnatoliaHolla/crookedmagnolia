@@ -15,6 +15,7 @@
             --text: #e0ffe9;
             --background: #0a1a12;
             --card: #112218;
+            --atx-green: #008f39; /* Darker green for ATXTurf text */
         }
 
         * {
@@ -42,9 +43,12 @@
             text-align: center;
         }
 
-        .logo {
-            max-width: 300px;
-            height: auto;
+        .logo-text {
+            color: var(--atx-green);
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .container {
@@ -74,7 +78,7 @@
             color: var(--primary);
             margin-bottom: 1.5rem;
             font-weight: 600;
-            font-size: 1.8rem;
+            font-size: 1.4rem; /* Decreased font size from 1.8rem to 1.4rem */
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -149,8 +153,8 @@
             border-radius: 1rem;
             overflow: hidden;
             position: relative;
-            /* Increased height by 30% by changing aspect ratio from 16/9 to 16/11.7 */
-            aspect-ratio: 16/11.7;
+            /* Increased height by another 30% by changing aspect ratio from 16/11.7 to 16/15.21 */
+            aspect-ratio: 16/15.21;
             box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
             border: 1px solid rgba(0, 255, 157, 0.1);
         }
@@ -187,7 +191,7 @@
 </head>
 <body>
     <div class="logo-container">
-        <img src="images/logo.png" alt="ATX TURF - Artificial Turf" class="logo">
+        <h2 class="logo-text">ATXTurf</h2>
     </div>
     
     <div class="container">
@@ -197,7 +201,7 @@
                 Length: 70 ft × Width: 14 ft × Height: 12 ft
             </div>
             <div class="instructions">
-                Drag to rotate | Scroll to zoom
+                Drag to rotate | Pinch to zoom
             </div>
         </div>
         <div class="form-container">
@@ -286,7 +290,7 @@
             // Clear canvas
             context.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Set text properties - decreased by 25% from 0.4 to 0.3
+            // Set text properties
             const fontSize = Math.min(width, height) * 0.3;
             context.font = `bold ${fontSize}px Arial`;
             context.textAlign = 'center';
@@ -347,7 +351,7 @@
                 side: THREE.DoubleSide
             });
             
-            // Create planes for each side - decreased size by 25%
+            // Create planes for each side
             // Front side (positive Z)
             const frontPlane = new THREE.Mesh(
                 new THREE.PlaneGeometry(width * 0.85, height * 0.45),
