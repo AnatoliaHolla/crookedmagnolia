@@ -286,8 +286,8 @@
             // Clear canvas
             context.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Set text properties - doubled the font size (0.2 -> 0.4)
-            const fontSize = Math.min(width, height) * 0.4;
+            // Set text properties - decreased by 25% from 0.4 to 0.3
+            const fontSize = Math.min(width, height) * 0.3;
             context.font = `bold ${fontSize}px Arial`;
             context.textAlign = 'center';
             context.textBaseline = 'middle';
@@ -347,10 +347,10 @@
                 side: THREE.DoubleSide
             });
             
-            // Create planes for each side - increased size by making the planes larger
+            // Create planes for each side - decreased size by 25%
             // Front side (positive Z)
             const frontPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(width * 0.9, height * 0.5),
+                new THREE.PlaneGeometry(width * 0.85, height * 0.45),
                 frontMaterial
             );
             frontPlane.position.set(0, 0, length / 2 + 0.1);
@@ -360,7 +360,7 @@
             
             // Back side (negative Z)
             const backPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(width * 0.9, height * 0.5),
+                new THREE.PlaneGeometry(width * 0.85, height * 0.45),
                 backMaterial
             );
             backPlane.position.set(0, 0, -length / 2 - 0.1);
@@ -369,7 +369,7 @@
             
             // Left side (negative X)
             const leftPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(length * 0.9, height * 0.5),
+                new THREE.PlaneGeometry(length * 0.85, height * 0.45),
                 leftMaterial
             );
             leftPlane.position.set(-width / 2 - 0.1, 0, 0);
@@ -379,7 +379,7 @@
             
             // Right side (positive X)
             const rightPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(length * 0.9, height * 0.5),
+                new THREE.PlaneGeometry(length * 0.85, height * 0.45),
                 rightMaterial
             );
             rightPlane.position.set(width / 2 + 0.1, 0, 0);
