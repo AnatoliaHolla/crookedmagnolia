@@ -348,16 +348,23 @@
         
         // Update total square feet of net display
         function updateTotalSquareFeetNet(length, width, height, count) {
-            // Calculate net square footage for each cage
-            // Net = top + front + back + left + right (excluding floor)
+            // Calculate net square footage for a single cage
             const topSide = length * width;
             const frontAndBackSides = length * height * 2;
             const leftAndRightSides = width * height * 2;
+            const singleCageNet = topSide + frontAndBackSides + leftAndRightSides;
             
-            // Total net square footage for all cages
-            const totalNetSqFt = Math.round((topSide + frontAndBackSides + leftAndRightSides) * count);
+            // For multiple cages, subtract the redundant long sides
+            let totalNetSqFt;
+            if (count === 1) {
+                totalNetSqFt = singleCageNet;
+            } else {
+                // Subtract one long side (length × height) for each additional cage
+                const redundantSides = (length * height) * (count - 1);
+                totalNetSqFt = (singleCageNet * count) - redundantSides;
+            }
             
-            document.getElementById('totalSquareFeetNet').textContent = totalNetSqFt.toLocaleString();
+            document.getElementById('totalSquareFeetNet').textContent = Math.round(totalNetSqFt).toLocaleString();
         }
         
         // Create text texture
