@@ -286,19 +286,30 @@
 
         .powered-by {
             position: absolute;
-            bottom: 1rem;
-            right: 1rem;
+            top: 1rem;
+            left: 1rem;
             background-color: rgba(10, 26, 18, 0.8);
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             font-size: 0.7rem;
             color: var(--text);
-            border-right: 3px solid var(--atx-green);
+            border-left: 3px solid var(--atx-green);
+            z-index: 10;
         }
 
         .powered-by span {
             color: var(--atx-green);
             font-weight: 600;
+        }
+
+        .powered-by a {
+            text-decoration: none;
+            color: inherit;
+            transition: opacity 0.2s ease;
+        }
+
+        .powered-by a:hover {
+            opacity: 0.8;
         }
 
         /* Mobile-specific adjustments */
@@ -325,6 +336,11 @@
                 width: 1.8rem;
                 font-size: 1rem;
             }
+            
+            /* Ensure instructions and powered-by don't overlap */
+            .instructions {
+                top: 3rem;
+            }
         }
     </style>
 </head>
@@ -339,7 +355,7 @@
                 Drag to rotate | Pinch to zoom
             </div>
             <div class="powered-by">
-                Powered by <span>ATXTurf, LLC</span>
+                Powered by <a href="https://www.atxturf.com" target="_blank" rel="noopener noreferrer"><span>ATXTurf, LLC</span></a>
             </div>
         </div>
         <div class="form-container">
@@ -826,6 +842,11 @@
         });
         
         // Initialize the scene when the page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
+</merged the scene when the page loads
         window.onload = init;
     </script>
 </body>
