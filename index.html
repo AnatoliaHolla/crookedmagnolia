@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Batting Cage Dimensions</title>
+    <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <style>
@@ -35,6 +35,16 @@
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.05) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(0, 255, 204, 0.05) 0%, transparent 20%);
+        }
+
+        .logo-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 300px;
+            height: auto;
         }
 
         .container {
@@ -175,6 +185,10 @@
     </style>
 </head>
 <body>
+    <div class="logo-container">
+        <img src="images/logo.png" alt="ATX TURF - Artificial Turf" class="logo">
+    </div>
+    
     <div class="container">
         <div class="form-container">
             <h1>Enter Your Batting Cage Dimensions</h1>
