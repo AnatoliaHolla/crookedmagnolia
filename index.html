@@ -1,29 +1,585 @@
 <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Andrews Git Test</title>
-     <style>
-         body {
-             font-family: Arial, sans-serif;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             height: 100vh;
-             margin: 0;
-             background-color: #f5f5f5;
-         }
-         h1 {
-             color: #333;
-             padding: 20px;
-             border-radius: 5px;
-             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-             background-color: white;
-         }
-     </style>
- </head>
- <body>
-     <h1>Andrews Git Test</h1>
- </body>
- </html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Batting Cage Generator</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React and ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Three.js -->
+  <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
+  
+  <!-- React Three Fiber and Drei -->
+  <script src="https://unpkg.com/@react-three/fiber@8.15.11/dist/react-three-fiber.umd.js"></script>
+  <script src="https://unpkg.com/@react-three/drei@9.88.2/index.umd.js"></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Google Fonts - Futuristic Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neonGreen: '#39FF14',
+            darkGreen: '#0A2F1A',
+            mediumGreen: '#1A5F37',
+            lightGreen: '#3BBA6C',
+            darkBg: '#0A1A12',
+            darkPanel: '#0F2318',
+          },
+          fontFamily: {
+            futuristic: ['Orbitron', 'sans-serif'],
+            tech: ['Rajdhani', 'sans-serif'],
+          },
+          boxShadow: {
+            neon: '0 0 5px #39FF14, 0 0 10px #39FF14, 0 0 15px #39FF14',
+            'neon-sm': '0 0 2px #39FF14, 0 0 5px #39FF14',
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0A1A12;
+      background-image: 
+        linear-gradient(rgba(10, 26, 18, 0.97), rgba(10, 26, 18, 0.97)),
+        repeating-linear-gradient(transparent, transparent 50px, rgba(59, 186, 108, 0.1) 50px, rgba(59, 186, 108, 0.1) 51px),
+        repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(59, 186, 108, 0.1) 50px, rgba(59, 186, 108, 0.1) 51px);
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+    }
+    
+    .canvas-container {
+      height: 500px;
+      width: 100%;
+      border: 1px solid #1A5F37;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 15px rgba(59, 186, 108, 0.3);
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: rgba(15, 35, 24, 0.8);
+      border: 1px solid #1A5F37;
+      border-radius: 0.25rem;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      transition: all 0.3s ease;
+    }
+    
+    input[type="number"]:focus {
+      border-color: #39FF14;
+      box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.3);
+      outline: none;
+    }
+    
+    button {
+      background-color: #1A5F37;
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button:hover {
+      background-color: #3BBA6C;
+      box-shadow: 0 0 10px rgba(59, 186, 108, 0.5);
+    }
+    
+    button:before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(57, 255, 20, 0) 0%,
+        rgba(57, 255, 20, 0.1) 50%,
+        rgba(57, 255, 20, 0) 100%
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+      0% {
+        left: -50%;
+        top: -50%;
+      }
+      100% {
+        left: 100%;
+        top: 100%;
+      }
+    }
+    
+    .control-panel {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(15, 35, 24, 0.8);
+      backdrop-filter: blur(5px);
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 15px rgba(59, 186, 108, 0.3);
+      border: 1px solid #1A5F37;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .rotation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .auto-rotate-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .futuristic-panel {
+      background-color: rgba(15, 35, 24, 0.8);
+      border: 1px solid #1A5F37;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 15px rgba(59, 186, 108, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .futuristic-panel:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #39FF14, transparent);
+    }
+    
+    .glow-text {
+      text-shadow: 0 0 5px #39FF14, 0 0 10px rgba(57, 255, 20, 0.5);
+    }
+    
+    input[type="range"] {
+      -webkit-appearance: none;
+      height: 5px;
+      background: #1A5F37;
+      border-radius: 5px;
+      background-image: linear-gradient(#3BBA6C, #3BBA6C);
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #39FF14;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(57, 255, 20, 0.7);
+    }
+    
+    input[type="checkbox"] {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      border: 1px solid #1A5F37;
+      background-color: rgba(15, 35, 24, 0.8);
+      position: relative;
+    }
+    
+    input[type="checkbox"]:checked {
+      background-color: #1A5F37;
+    }
+    
+    input[type="checkbox"]:checked:after {
+      content: '✓';
+      position: absolute;
+      color: #39FF14;
+      font-size: 14px;
+      top: -1px;
+      left: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" class="min-h-screen p-4 md:p-8"></div>
+  
+  <script type="text/babel">
+    const { useState, useRef, useEffect } = React;
+    const { Canvas, useFrame } = ReactThreeFiber;
+    const { OrbitControls, Text } = drei;
+    
+    function Box({ length, width, height, autoRotate, rotationSpeed }) {
+      const groupRef = useRef(null);
+      
+      useFrame((_, delta) => {
+        if (autoRotate && groupRef.current) {
+          groupRef.current.rotation.y += delta * rotationSpeed;
+        }
+      });
+    
+      return (
+        <group ref={groupRef} position={[0, height / 2, 0]}>
+          {/* Box */}
+          <mesh>
+            <boxGeometry args={[width, height, length]} />
+            <meshStandardMaterial 
+              color="#1A5F37" 
+              transparent 
+              opacity={0.7} 
+              emissive="#3BBA6C"
+              emissiveIntensity={0.2}
+              metalness={0.5}
+              roughness={0.2}
+            />
+          </mesh>
+          
+          {/* Green Floor */}
+          <mesh position={[0, -height / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[width, length]} />
+            <meshStandardMaterial 
+              color="#3BBA6C" 
+              side={THREE.DoubleSide} 
+              emissive="#39FF14"
+              emissiveIntensity={0.1}
+              metalness={0.3}
+              roughness={0.4}
+            />
+          </mesh>
+    
+          {/* Measurement Labels */}
+          {/* Width (X-axis) */}
+          <Text 
+            position={[width/2 + 0.3, -height/2, 0]} 
+            rotation={[0, 0, 0]} 
+            fontSize={0.3}
+            color="#39FF14"
+            anchorX="left"
+            font="https://fonts.gstatic.com/s/orbitron/v29/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6xpmIyXw.woff"
+          >
+            {`Width: ${width.toFixed(1)}ft`}
+          </Text>
+          <mesh position={[width/2, -height/2, 0]}>
+            <boxGeometry args={[width, 0.05, 0.05]} />
+            <meshStandardMaterial 
+              color="#FF3333" 
+              emissive="#FF3333"
+              emissiveIntensity={0.5}
+            />
+          </mesh>
+    
+          {/* Height (Y-axis) */}
+          <Text 
+            position={[0, 0, -length/2 - 0.3]} 
+            rotation={[0, Math.PI, 0]} 
+            fontSize={0.3}
+            color="#39FF14"
+            anchorX="right"
+            font="https://fonts.gstatic.com/s/orbitron/v29/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6xpmIyXw.woff"
+          >
+            {`Height: ${height.toFixed(1)}ft`}
+          </Text>
+          <mesh position={[0, 0, -length/2]}>
+            <boxGeometry args={[0.05, height, 0.05]} />
+            <meshStandardMaterial 
+              color="#33FF33" 
+              emissive="#33FF33"
+              emissiveIntensity={0.5}
+            />
+          </mesh>
+    
+          {/* Length (Z-axis) */}
+          <Text 
+            position={[-width/2 - 0.3, -height/2, 0]} 
+            rotation={[0, Math.PI/2, 0]} 
+            fontSize={0.3}
+            color="#39FF14"
+            anchorX="right"
+            font="https://fonts.gstatic.com/s/orbitron/v29/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6xpmIyXw.woff"
+          >
+            {`Length: ${length.toFixed(1)}ft`}
+          </Text>
+          <mesh position={[-width/2, -height/2, 0]}>
+            <boxGeometry args={[0.05, 0.05, length]} />
+            <meshStandardMaterial 
+              color="#3333FF" 
+              emissive="#3333FF"
+              emissiveIntensity={0.5}
+            />
+          </mesh>
+          
+          {/* Grid lines on the floor for futuristic look */}
+          <mesh position={[0, -height/2 + 0.01, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[width, length]} />
+            <meshBasicMaterial 
+              wireframe={true} 
+              color="#39FF14" 
+              transparent={true} 
+              opacity={0.3} 
+            />
+          </mesh>
+        </group>
+      );
+    }
+    
+    function BoxVisualization({ length, width, height }) {
+      const [autoRotate, setAutoRotate] = useState(false);
+      const [rotationSpeed, setRotationSpeed] = useState(1);
+      const orbitControlsRef = useRef(null);
+    
+      const handleRotateLeft = () => {
+        if (orbitControlsRef.current) {
+          orbitControlsRef.current.rotateY(0.3);
+        }
+      };
+    
+      const handleRotateRight = () => {
+        if (orbitControlsRef.current) {
+          orbitControlsRef.current.rotateY(-0.3);
+        }
+      };
+    
+      const handleRotateUp = () => {
+        if (orbitControlsRef.current) {
+          orbitControlsRef.current.rotateX(0.3);
+        }
+      };
+    
+      const handleRotateDown = () => {
+        if (orbitControlsRef.current) {
+          orbitControlsRef.current.rotateX(-0.3);
+        }
+      };
+    
+      return (
+        <div className="canvas-container">
+          <Canvas camera={{ position: [10, 10, 10], fov: 45 }}>
+            <color attach="background" args={['#0A1A12']} />
+            <fog attach="fog" args={['#0A1A12', 10, 50]} />
+            <ambientLight intensity={0.3} />
+            <directionalLight position={[10, 10, 5]} intensity={1} color="#E0FFE0" />
+            <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#E0FFE0" />
+            <pointLight position={[0, 5, 0]} intensity={0.5} color="#39FF14" />
+            <Box 
+              length={length} 
+              width={width} 
+              height={height} 
+              autoRotate={autoRotate}
+              rotationSpeed={rotationSpeed}
+            />
+            <gridHelper args={[50, 50, '#1A5F37', '#0F2318']} />
+            <OrbitControls 
+              ref={orbitControlsRef}
+              enablePan={true} 
+              enableZoom={true} 
+              enableRotate={true}
+              autoRotate={false}
+            />
+          </Canvas>
+          
+          <div className="control-panel">
+            <div className="rotation-buttons">
+              <button 
+                onClick={handleRotateLeft}
+                aria-label="Rotate Left"
+                className="text-xs"
+              >
+                ← Rotate
+              </button>
+              <button 
+                onClick={handleRotateUp}
+                aria-label="Rotate Up"
+                className="text-xs"
+              >
+                ↑ Rotate
+              </button>
+              <button 
+                onClick={handleRotateDown}
+                aria-label="Rotate Down"
+                className="text-xs"
+              >
+                ↓ Rotate
+              </button>
+              <button 
+                onClick={handleRotateRight}
+                aria-label="Rotate Right"
+                className="text-xs"
+              >
+                Rotate →
+              </button>
+            </div>
+            
+            <div className="auto-rotate-controls">
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="checkbox"
+                  checked={autoRotate}
+                  onChange={() => setAutoRotate(!autoRotate)}
+                />
+                Auto-rotate
+              </label>
+              
+              {autoRotate && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">Speed:</span>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value={rotationSpeed}
+                    onChange={(e) => setRotationSpeed(parseFloat(e.target.value))}
+                    className="w-24"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    function DimensionForm({ initialDimensions, onSubmit }) {
+      const [length, setLength] = useState(initialDimensions.length.toString());
+      const [width, setWidth] = useState(initialDimensions.width.toString());
+      const [height, setHeight] = useState(initialDimensions.height.toString());
+    
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const lengthValue = parseFloat(length);
+        const widthValue = parseFloat(width);
+        const heightValue = parseFloat(height);
+        
+        if (isNaN(lengthValue) || isNaN(widthValue) || isNaN(heightValue)) {
+          return;
+        }
+        
+        onSubmit({
+          length: lengthValue,
+          width: widthValue,
+          height: heightValue,
+        });
+      };
+    
+      return (
+        <div className="futuristic-panel mb-6">
+          <h2 className="text-xl font-futuristic font-bold mb-4 text-lightGreen glow-text">Enter Batting Cage Dimensions (in feet)</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label htmlFor="length" className="block mb-1 font-tech font-medium text-neonGreen">Length</label>
+                <input
+                  id="length"
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  placeholder="Length in feet"
+                  value={length}
+                  onChange={(e) => setLength(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="width" className="block mb-1 font-tech font-medium text-neonGreen">Width</label>
+                <input
+                  id="width"
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  placeholder="Width in feet"
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="height" className="block mb-1 font-tech font-medium text-neonGreen">Height</label>
+                <input
+                  id="height"
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  placeholder="Height in feet"
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+            </div>
+            <button type="submit" className="w-full font-futuristic">Update Cage</button>
+          </form>
+        </div>
+      );
+    }
+    
+    function App() {
+      // Default dimensions for a standard batting cage
+      const defaultDimensions = {
+        length: 70,
+        width: 14,
+        height: 12
+      };
+      
+      const [dimensions, setDimensions] = useState(defaultDimensions);
+    
+      return (
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-futuristic font-bold text-center mb-6 text-neonGreen glow-text tracking-wider">3D BATTING CAGE GENERATOR</h1>
+          <DimensionForm 
+            initialDimensions={defaultDimensions} 
+            onSubmit={setDimensions} 
+          />
+          <BoxVisualization
+            length={dimensions.length}
+            width={dimensions.width}
+            height={dimensions.height}
+          />
+          <div className="text-center mt-4 text-xs text-mediumGreen font-tech">
+            © {new Date().getFullYear()} Futuristic Batting Cage Designer | v1.0
+          </div>
+        </div>
+      );
+    }
+    
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
