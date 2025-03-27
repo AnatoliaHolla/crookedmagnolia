@@ -246,6 +246,33 @@
             color: var(--text);
         }
 
+        .total-cost-container {
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .total-cost {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(90deg, rgba(0, 255, 157, 0.2), rgba(0, 255, 204, 0.2));
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .total-cost-label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .total-cost-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
         .canvas-container {
             background-color: var(--card);
             border-radius: 0.75rem;
@@ -423,6 +450,12 @@
                         <div class="cost-value" id="costNet">$1,276.24</div>
                     </div>
                 </div>
+                <div class="total-cost-container">
+                    <div class="total-cost">
+                        <span class="total-cost-label">Turf & Net Total</span>
+                        <div class="total-cost-value" id="totalCost">$2,932.44</div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -528,6 +561,9 @@
             // Calculate and update cost
             const costTurf = totalSqFt * 1.69;
             document.getElementById('costTurf').textContent = '$' + costTurf.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            // Update total cost
+            updateTotalCost();
         }
         
         // Update total square feet of net display
@@ -554,6 +590,26 @@
             // Calculate and update cost
             const costNet = roundedNetSqFt * 0.43;
             document.getElementById('costNet').textContent = '$' + costNet.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            // Update total cost
+            updateTotalCost();
+        }
+        
+        // Update total cost (turf + net)
+        function updateTotalCost() {
+            // Get the current cost values
+            const costTurfText = document.getElementById('costTurf').textContent;
+            const costNetText = document.getElementById('costNet').textContent;
+            
+            // Remove $ and commas, then parse as float
+            const costTurf = parseFloat(costTurfText.replace('$', '').replace(/,/g, ''));
+            const costNet = parseFloat(costNetText.replace('$', '').replace(/,/g, ''));
+            
+            // Calculate total
+            const totalCost = costTurf + costNet;
+            
+            // Update the total cost display
+            document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
         
         // Create text texture
