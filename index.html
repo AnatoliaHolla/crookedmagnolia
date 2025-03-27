@@ -38,25 +38,13 @@
                 radial-gradient(circle at 90% 80%, rgba(0, 255, 204, 0.05) 0%, transparent 20%);
         }
 
-        .logo-container {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .logo-text {
-            color: var(--atx-green);
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
         .container {
             width: 100%;
             max-width: 1200px;
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
+            margin-top: 1rem;
         }
 
         @media (min-width: 768px) {
@@ -78,7 +66,7 @@
             color: var(--primary);
             margin-bottom: 1.5rem;
             font-weight: 600;
-            font-size: 1.4rem; /* Decreased font size from 1.8rem to 1.4rem */
+            font-size: 1.4rem;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -153,7 +141,6 @@
             border-radius: 1rem;
             overflow: hidden;
             position: relative;
-            /* Increased height by another 30% by changing aspect ratio from 16/11.7 to 16/15.21 */
             aspect-ratio: 16/15.21;
             box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
             border: 1px solid rgba(0, 255, 157, 0.1);
@@ -173,7 +160,7 @@
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             border-left: 3px solid var(--primary);
-            font-size: 0.9rem;
+            font-size: 0.18rem; /* 80% smaller than 0.9rem */
         }
 
         .instructions {
@@ -187,13 +174,26 @@
             color: var(--text);
             opacity: 0.8;
         }
+
+        .powered-by {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: rgba(10, 26, 18, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text);
+            border-right: 3px solid var(--atx-green);
+        }
+
+        .powered-by span {
+            color: var(--atx-green);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <h2 class="logo-text">ATXTurf</h2>
-    </div>
-    
     <div class="container">
         <div class="canvas-container">
             <canvas id="cageCanvas"></canvas>
@@ -203,21 +203,24 @@
             <div class="instructions">
                 Drag to rotate | Pinch to zoom
             </div>
+            <div class="powered-by">
+                Powered by <span>ATXTurf, LLC</span>
+            </div>
         </div>
         <div class="form-container">
             <h1>Enter Your Batting Cage Dimensions</h1>
             <form id="dimensionsForm">
                 <div class="form-group">
                     <label for="length">Length (feet)</label>
-                    <input type="number" id="length" name="length" min="1" step="0.1" value="70" required>
+                    <input type="number" id="length" name="length" min="1" step="1" value="70" required>
                 </div>
                 <div class="form-group">
                     <label for="width">Width (feet)</label>
-                    <input type="number" id="width" name="width" min="1" step="0.1" value="14" required>
+                    <input type="number" id="width" name="width" min="1" step="1" value="14" required>
                 </div>
                 <div class="form-group">
                     <label for="height">Height (feet)</label>
-                    <input type="number" id="height" name="height" min="1" step="0.1" value="12" required>
+                    <input type="number" id="height" name="height" min="1" step="1" value="12" required>
                 </div>
                 <div class="form-group">
                     <label for="cageCount">How Many Cages?</label>
@@ -396,6 +399,11 @@
         
         // Create or update multiple cages
         function createCages(length, width, height, count) {
+            // Round values to whole numbers
+            length = Math.round(length);
+            width = Math.round(width);
+            height = Math.round(height);
+            
             // Remove existing cages and text labels
             cages.forEach(cage => scene.remove(cage));
             cages = [];
@@ -475,7 +483,7 @@
                 camera.lookAt(0, 0, 0);
             }
             
-            // Update dimensions display
+            // Update dimensions display with whole numbers
             document.getElementById('dimensionsDisplay').textContent = 
                 `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft × Count: ${count}`;
         }
