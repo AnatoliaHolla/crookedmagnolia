@@ -16,6 +16,7 @@
             --background: #0a1a12;
             --card: #112218;
             --atx-green: #008f39; /* Darker green for ATXTurf text */
+            --floor-green: #00ff4c; /* Brighter green for the floor */
         }
 
         * {
@@ -291,7 +292,7 @@
             background-color: rgba(10, 26, 18, 0.8);
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.7rem;
+            font-size: 0.8rem; /* Increased from 0.7rem */
             color: var(--text);
             border-left: 3px solid var(--atx-green);
             z-index: 10;
@@ -326,9 +327,14 @@
                 padding: 0.75rem;
             }
             
-            .dimensions-display, .instructions, .powered-by {
+            .dimensions-display, .instructions {
                 padding: 0.25rem 0.5rem;
                 font-size: 0.6rem;
+            }
+            
+            .powered-by {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem; /* Slightly larger on mobile too */
             }
             
             /* Ensure number controls are visible and easy to tap on mobile */
@@ -399,21 +405,21 @@
                 </div>
                 <div class="totals-container">
                     <div class="total-square-feet">
-                        <span class="total-square-feet-label">Total Square Feet of Turf</span>
+                        <span class="total-square-feet-label">Total Sq Ft of Turf</span>
                         <div class="total-square-feet-value" id="totalSquareFeet">980</div>
                     </div>
                     <div class="total-square-feet-net">
-                        <span class="total-square-feet-label">Total Square Feet of Net</span>
+                        <span class="total-square-feet-label">Total Sq Ft of Net</span>
                         <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
                     </div>
                 </div>
                 <div class="cost-container">
                     <div class="cost-turf">
-                        <span class="cost-label">@ $1.69 sf</span>
+                        <span class="cost-label">Turf @ $1.69 sf</span>
                         <div class="cost-value" id="costTurf">$1,656.20</div>
                     </div>
                     <div class="cost-net">
-                        <span class="cost-label">@ $0.43 sf</span>
+                        <span class="cost-label">Net @ $0.43 sf</span>
                         <div class="cost-value" id="costNet">$1,276.24</div>
                     </div>
                 </div>
@@ -461,8 +467,8 @@
             directionalLight2.position.set(-5, -10, 7);
             scene.add(directionalLight2);
             
-            // Create grid
-            const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
+            // Create grid with brighter green color
+            const gridHelper = new THREE.GridHelper(200, 200, 0x00ff4c, 0x00ff4c);
             gridHelper.position.y = -10;
             scene.add(gridHelper);
             
@@ -842,11 +848,6 @@
         });
         
         // Initialize the scene when the page loads
-        window.onload = init;
-    </script>
-</body>
-</html>
-</merged the scene when the page loads
         window.onload = init;
     </script>
 </body>
