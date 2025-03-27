@@ -219,6 +219,10 @@
                     <label for="height">Height (feet)</label>
                     <input type="number" id="height" name="height" min="1" step="0.1" value="12" required>
                 </div>
+                <div class="form-group">
+                    <label for="cageCount">How Many Cages?</label>
+                    <input type="number" id="cageCount" name="cageCount" min="1" max="10" step="1" value="1" required>
+                </div>
                 <button type="submit">Update Dimensions</button>
             </form>
         </div>
@@ -226,7 +230,8 @@
 
     <script>
         // Initialize Three.js scene
-        let scene, camera, renderer, cage, controls;
+        let scene, camera, renderer, controls;
+        let cages = [];
         let textLabels = [];
         
         // Set up the scene
@@ -264,12 +269,12 @@
             scene.add(directionalLight2);
             
             // Create grid
-            const gridHelper = new THREE.GridHelper(100, 100, 0x004d33, 0x004d33);
+            const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
             gridHelper.position.y = -10;
             scene.add(gridHelper);
             
-            // Create initial cage
-            createCage(70, 14, 12);
+            // Create initial cage(s)
+            createCages(70, 14, 12, 1);
             
             // Animation loop
             animate();
@@ -313,11 +318,7 @@
         }
         
         // Add text to cage
-        function addTextToCage(length, width, height) {
-            // Remove existing text labels
-            textLabels.forEach(label => scene.remove(label));
-            textLabels = [];
-            
+        function addTextToCage(length, width, height, xOffset = 0) {
             const text = "ATXTurf.com";
             
             // Create materials for each side with text
@@ -357,7 +358,7 @@
                 new THREE.PlaneGeometry(width * 0.85, height * 0.45),
                 frontMaterial
             );
-            frontPlane.position.set(0, 0, length / 2 + 0.1);
+            frontPlane.position.set(xOffset, 0, length / 2 + 0.1);
             frontPlane.rotation.y = Math.PI;
             scene.add(frontPlane);
             textLabels.push(frontPlane);
@@ -367,77 +368,116 @@
                 new THREE.PlaneGeometry(width * 0.85, height * 0.45),
                 backMaterial
             );
-            backPlane.position.set(0, 0, -length / 2 - 0.1);
+            backPlane.position.set(xOffset, 0, -length / 2 - 0.1);
             scene.add(backPlane);
             textLabels.push(backPlane);
             
+            // Only add side labels for the first and last cage
             // Left side (negative X)
-            const leftPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(length * 0.85, height * 0.45),
-                leftMaterial
-            );
-            leftPlane.position.set(-width / 2 - 0.1, 0, 0);
-            leftPlane.rotation.y = Math.PI / 2;
-            scene.add(leftPlane);
-            textLabels.push(leftPlane);
-            
-            // Right side (positive X)
-            const rightPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(length * 0.85, height * 0.45),
-                rightMaterial
-            );
-            rightPlane.position.set(width / 2 + 0.1, 0, 0);
-            rightPlane.rotation.y = -Math.PI / 2;
-            scene.add(rightPlane);
-            textLabels.push(rightPlane);
-        }
-        
-        // Create or update the cage
-        function createCage(length, width, height) {
-            // Remove existing cage if it exists
-            if (cage) {
-                scene.remove(cage);
+            if (xOffset === 0) {
+                const leftPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(length * 0.85, height * 0.45),
+                    leftMaterial
+                );
+                leftPlane.position.set(xOffset - width / 2 - 0.1, 0, 0);
+                leftPlane.rotation.y = Math.PI / 2;
+                scene.add(leftPlane);
+                textLabels.push(leftPlane);
             }
             
-            // Create cage group
-            cage = new THREE.Group();
+            // Right side label for the last cage will be added separately
+            return {
+                rightTexture: rightTexture,
+                rightMaterial: rightMaterial,
+                length: length,
+                height: height
+            };
+        }
+        
+        // Create or update multiple cages
+        function createCages(length, width, height, count) {
+            // Remove existing cages and text labels
+            cages.forEach(cage => scene.remove(cage));
+            cages = [];
             
-            // Create wireframe material
-            const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
+            textLabels.forEach(label => scene.remove(label));
+            textLabels = [];
             
-            // Create solid material with transparency
-            const solidMaterial = new THREE.MeshPhongMaterial({
-                color: 0x00ff9d,
-                transparent: true,
-                opacity: 0.1,
-                side: THREE.DoubleSide
-            });
+            // Store info for the right side label of the last cage
+            let lastCageInfo;
             
-            // Create cage geometry
-            const geometry = new THREE.BoxGeometry(width, height, length);
+            // Create multiple cages side by side
+            for (let i = 0; i < count; i++) {
+                // Calculate x offset for this cage
+                const xOffset = i * width - ((count - 1) * width / 2);
+                
+                // Create cage group
+                const cage = new THREE.Group();
+                
+                // Create wireframe material
+                const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
+                
+                // Create solid material with transparency
+                const solidMaterial = new THREE.MeshPhongMaterial({
+                    color: 0x00ff9d,
+                    transparent: true,
+                    opacity: 0.1,
+                    side: THREE.DoubleSide
+                });
+                
+                // Create cage geometry
+                const geometry = new THREE.BoxGeometry(width, height, length);
+                
+                // Create wireframe
+                const wireframe = new THREE.LineSegments(
+                    new THREE.EdgesGeometry(geometry),
+                    wireMaterial
+                );
+                
+                // Create solid mesh
+                const solid = new THREE.Mesh(geometry, solidMaterial);
+                
+                // Add to cage group
+                cage.add(wireframe);
+                cage.add(solid);
+                
+                // Position cage
+                cage.position.set(xOffset, 0, 0);
+                
+                // Add cage to scene
+                scene.add(cage);
+                cages.push(cage);
+                
+                // Add text labels to the cage
+                lastCageInfo = addTextToCage(length, width, height, xOffset);
+            }
             
-            // Create wireframe
-            const wireframe = new THREE.LineSegments(
-                new THREE.EdgesGeometry(geometry),
-                wireMaterial
-            );
+            // Add right side label for the last cage
+            if (lastCageInfo && count > 0) {
+                const rightPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(lastCageInfo.length * 0.85, lastCageInfo.height * 0.45),
+                    lastCageInfo.rightMaterial
+                );
+                const lastXOffset = (count - 1) * width - ((count - 1) * width / 2);
+                rightPlane.position.set(lastXOffset + width / 2 + 0.1, 0, 0);
+                rightPlane.rotation.y = -Math.PI / 2;
+                scene.add(rightPlane);
+                textLabels.push(rightPlane);
+            }
             
-            // Create solid mesh
-            const solid = new THREE.Mesh(geometry, solidMaterial);
-            
-            // Add to cage group
-            cage.add(wireframe);
-            cage.add(solid);
-            
-            // Add cage to scene
-            scene.add(cage);
-            
-            // Add text labels to the cage
-            addTextToCage(length, width, height);
+            // Adjust camera position based on number of cages
+            if (count > 1) {
+                const totalWidth = count * width;
+                camera.position.set(totalWidth * 0.7, totalWidth * 0.8, totalWidth * 0.9);
+                camera.lookAt(0, 0, 0);
+            } else {
+                camera.position.set(50, 60, 70);
+                camera.lookAt(0, 0, 0);
+            }
             
             // Update dimensions display
             document.getElementById('dimensionsDisplay').textContent = 
-                `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft`;
+                `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft × Count: ${count}`;
         }
         
         // Animation loop
@@ -461,9 +501,10 @@
             const length = parseFloat(document.getElementById('length').value);
             const width = parseFloat(document.getElementById('width').value);
             const height = parseFloat(document.getElementById('height').value);
+            const cageCount = parseInt(document.getElementById('cageCount').value);
             
-            if (length > 0 && width > 0 && height > 0) {
-                createCage(length, width, height);
+            if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                createCages(length, width, height, cageCount);
             }
         });
         
@@ -474,9 +515,10 @@
                 const length = parseFloat(document.getElementById('length').value) || 70;
                 const width = parseFloat(document.getElementById('width').value) || 14;
                 const height = parseFloat(document.getElementById('height').value) || 12;
+                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
                 
-                if (length > 0 && width > 0 && height > 0) {
-                    createCage(length, width, height);
+                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                    createCages(length, width, height, cageCount);
                 }
             });
         });
