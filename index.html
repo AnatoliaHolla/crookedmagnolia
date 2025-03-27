@@ -223,6 +223,7 @@
     <script>
         // Initialize Three.js scene
         let scene, camera, renderer, cage, controls;
+        let textLabels = [];
         
         // Set up the scene
         function init() {
@@ -273,6 +274,120 @@
             window.addEventListener('resize', onWindowResize);
         }
         
+        // Create text texture
+        function createTextTexture(text, width, height) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Set text properties
+            const fontSize = Math.min(width, height) * 0.2;
+            context.font = `bold ${fontSize}px Arial`;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            
+            // Add gradient for better visibility
+            context.fillStyle = 'white';
+            context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            context.lineWidth = fontSize * 0.05;
+            
+            // Draw text
+            context.strokeText(text, canvas.width / 2, canvas.height / 2);
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
+            
+            // Create texture
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            
+            return texture;
+        }
+        
+        // Add text to cage
+        function addTextToCage(length, width, height) {
+            // Remove existing text labels
+            textLabels.forEach(label => scene.remove(label));
+            textLabels = [];
+            
+            const text = "ATXTurf";
+            
+            // Create materials for each side with text
+            const frontTexture = createTextTexture(text, 1024, 512);
+            const backTexture = createTextTexture(text, 1024, 512);
+            const leftTexture = createTextTexture(text, 1024, 512);
+            const rightTexture = createTextTexture(text, 1024, 512);
+            
+            // Create materials with the textures
+            const frontMaterial = new THREE.MeshBasicMaterial({ 
+                map: frontTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const backMaterial = new THREE.MeshBasicMaterial({ 
+                map: backTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const leftMaterial = new THREE.MeshBasicMaterial({ 
+                map: leftTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const rightMaterial = new THREE.MeshBasicMaterial({ 
+                map: rightTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            // Create planes for each side
+            // Front side (positive Z)
+            const frontPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width * 0.8, height * 0.4),
+                frontMaterial
+            );
+            frontPlane.position.set(0, 0, length / 2 + 0.1);
+            frontPlane.rotation.y = Math.PI;
+            scene.add(frontPlane);
+            textLabels.push(frontPlane);
+            
+            // Back side (negative Z)
+            const backPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width * 0.8, height * 0.4),
+                backMaterial
+            );
+            backPlane.position.set(0, 0, -length / 2 - 0.1);
+            scene.add(backPlane);
+            textLabels.push(backPlane);
+            
+            // Left side (negative X)
+            const leftPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(length * 0.8, height * 0.4),
+                leftMaterial
+            );
+            leftPlane.position.set(-width / 2 - 0.1, 0, 0);
+            leftPlane.rotation.y = Math.PI / 2;
+            scene.add(leftPlane);
+            textLabels.push(leftPlane);
+            
+            // Right side (positive X)
+            const rightPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(length * 0.8, height * 0.4),
+                rightMaterial
+            );
+            rightPlane.position.set(width / 2 + 0.1, 0, 0);
+            rightPlane.rotation.y = -Math.PI / 2;
+            scene.add(rightPlane);
+            textLabels.push(rightPlane);
+        }
+        
         // Create or update the cage
         function createCage(length, width, height) {
             // Remove existing cage if it exists
@@ -312,6 +427,9 @@
             
             // Add cage to scene
             scene.add(cage);
+            
+            // Add text labels to the cage
+            addTextToCage(length, width, height);
             
             // Update dimensions display
             document.getElementById('dimensionsDisplay').textContent = 
