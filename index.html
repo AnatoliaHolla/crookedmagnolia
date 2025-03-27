@@ -169,6 +169,15 @@
             color: var(--text);
         }
 
+        .total-square-feet-net {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 1rem;
+            background-color: rgba(0, 255, 204, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
         .canvas-container {
             background-color: var(--card);
             border-radius: 1rem;
@@ -264,6 +273,10 @@
                     <span class="total-square-feet-label">Total Square Feet of Turf</span>
                     <div class="total-square-feet-value" id="totalSquareFeet">980</div>
                 </div>
+                <div class="total-square-feet-net">
+                    <span class="total-square-feet-label">Total Square Feet of Net</span>
+                    <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
+                </div>
             </form>
         </div>
     </div>
@@ -318,6 +331,7 @@
             
             // Update total square feet display
             updateTotalSquareFeet(70, 14, 1);
+            updateTotalSquareFeetNet(70, 14, 12, 1);
             
             // Animation loop
             animate();
@@ -330,6 +344,20 @@
         function updateTotalSquareFeet(length, width, count) {
             const totalSqFt = Math.round(length * width * count);
             document.getElementById('totalSquareFeet').textContent = totalSqFt.toLocaleString();
+        }
+        
+        // Update total square feet of net display
+        function updateTotalSquareFeetNet(length, width, height, count) {
+            // Calculate net square footage for each cage
+            // Net = top + front + back + left + right (excluding floor)
+            const topSide = length * width;
+            const frontAndBackSides = length * height * 2;
+            const leftAndRightSides = width * height * 2;
+            
+            // Total net square footage for all cages
+            const totalNetSqFt = Math.round((topSide + frontAndBackSides + leftAndRightSides) * count);
+            
+            document.getElementById('totalSquareFeetNet').textContent = totalNetSqFt.toLocaleString();
         }
         
         // Create text texture
@@ -586,6 +614,7 @@
                 
             // Update total square feet
             updateTotalSquareFeet(length, width, count);
+            updateTotalSquareFeetNet(length, width, height, count);
         }
         
         // Animation loop
