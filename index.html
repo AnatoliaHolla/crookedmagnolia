@@ -432,6 +432,7 @@
         let scene, camera, renderer, controls;
         let cages = [];
         let textLabels = [];
+        let floors = []; // Array to store floor planes
         
         // Set up the scene
         function init() {
@@ -467,8 +468,8 @@
             directionalLight2.position.set(-5, -10, 7);
             scene.add(directionalLight2);
             
-            // Create grid with brighter green color
-            const gridHelper = new THREE.GridHelper(200, 200, 0x00ff4c, 0x00ff4c);
+            // Create grid
+            const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
             gridHelper.position.y = -10;
             scene.add(gridHelper);
             
@@ -731,6 +732,10 @@
             textLabels.forEach(label => scene.remove(label));
             textLabels = [];
             
+            // Remove existing floor planes
+            floors.forEach(floor => scene.remove(floor));
+            floors = [];
+            
             // Store info for the right side label of the last cage
             let lastCageInfo;
             
@@ -775,6 +780,22 @@
                 // Add cage to scene
                 scene.add(cage);
                 cages.push(cage);
+                
+                // Add bright green floor inside the cage
+                const floorGeometry = new THREE.PlaneGeometry(width - 0.1, length - 0.1);
+                const floorMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x00ff4c, // Bright green
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                
+                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
+                floor.position.set(xOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
+                
+                scene.add(floor);
+                floors.push(floor);
                 
                 // Add text labels to the cage
                 lastCageInfo = addTextToCage(length, width, height, xOffset);
