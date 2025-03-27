@@ -173,31 +173,6 @@
             box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
         }
 
-        button {
-            width: 100%;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--secondary);
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 0.5rem;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 255, 157, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
         .totals-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -232,6 +207,42 @@
             background-color: rgba(0, 255, 204, 0.1);
             border-radius: 0.5rem;
             border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .cost-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .cost-turf {
+            text-align: center;
+            padding: 0.5rem;
+            background-color: rgba(0, 255, 157, 0.15);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .cost-net {
+            text-align: center;
+            padding: 0.5rem;
+            background-color: rgba(0, 255, 204, 0.15);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .cost-label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+        }
+
+        .cost-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
         }
 
         .canvas-container {
@@ -370,7 +381,6 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit">Update Dimensions</button>
                 <div class="totals-container">
                     <div class="total-square-feet">
                         <span class="total-square-feet-label">Total Square Feet of Turf</span>
@@ -379,6 +389,16 @@
                     <div class="total-square-feet-net">
                         <span class="total-square-feet-label">Total Square Feet of Net</span>
                         <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
+                    </div>
+                </div>
+                <div class="cost-container">
+                    <div class="cost-turf">
+                        <span class="cost-label">@ $1.69 sf</span>
+                        <div class="cost-value" id="costTurf">$1,656.20</div>
+                    </div>
+                    <div class="cost-net">
+                        <span class="cost-label">@ $0.43 sf</span>
+                        <div class="cost-value" id="costNet">$1,276.24</div>
                     </div>
                 </div>
             </form>
@@ -481,6 +501,10 @@
         function updateTotalSquareFeet(length, width, count) {
             const totalSqFt = Math.round(length * width * count);
             document.getElementById('totalSquareFeet').textContent = totalSqFt.toLocaleString();
+            
+            // Calculate and update cost
+            const costTurf = totalSqFt * 1.69;
+            document.getElementById('costTurf').textContent = '$' + costTurf.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
         
         // Update total square feet of net display
@@ -501,7 +525,12 @@
                 totalNetSqFt = (singleCageNet * count) - redundantSides;
             }
             
-            document.getElementById('totalSquareFeetNet').textContent = Math.round(totalNetSqFt).toLocaleString();
+            const roundedNetSqFt = Math.round(totalNetSqFt);
+            document.getElementById('totalSquareFeetNet').textContent = roundedNetSqFt.toLocaleString();
+            
+            // Calculate and update cost
+            const costNet = roundedNetSqFt * 0.43;
+            document.getElementById('costNet').textContent = '$' + costNet.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
         
         // Create text texture
@@ -779,14 +808,6 @@
         // Handle form submission
         document.getElementById('dimensionsForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const length = parseFloat(document.getElementById('length').value);
-            const width = parseFloat(document.getElementById('width').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const cageCount = parseInt(document.getElementById('cageCount').value);
-            
-            if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
-                createCages(length, width, height, cageCount);
-            }
         });
         
         // Handle input changes for real-time updates
