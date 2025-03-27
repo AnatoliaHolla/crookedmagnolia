@@ -160,7 +160,7 @@
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             border-left: 3px solid var(--primary);
-            font-size: 0.18rem; /* 80% smaller than 0.9rem */
+            font-size: 0.5rem; /* Adjusted size between 0.9rem and 0.18rem */
         }
 
         .instructions {
@@ -329,6 +329,7 @@
             const backTexture = createTextTexture(text, 1024, 512);
             const leftTexture = createTextTexture(text, 1024, 512);
             const rightTexture = createTextTexture(text, 1024, 512);
+            const topTexture = createTextTexture(text, 1024, 512);
             
             // Create materials with the textures
             const frontMaterial = new THREE.MeshBasicMaterial({ 
@@ -351,6 +352,12 @@
             
             const rightMaterial = new THREE.MeshBasicMaterial({ 
                 map: rightTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const topMaterial = new THREE.MeshBasicMaterial({ 
+                map: topTexture, 
                 transparent: true,
                 side: THREE.DoubleSide
             });
@@ -387,6 +394,16 @@
                 scene.add(leftPlane);
                 textLabels.push(leftPlane);
             }
+            
+            // Top side (positive Y)
+            const topPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width * 0.85, length * 0.85),
+                topMaterial
+            );
+            topPlane.position.set(xOffset, height / 2 + 0.1, 0);
+            topPlane.rotation.x = -Math.PI / 2;
+            scene.add(topPlane);
+            textLabels.push(topPlane);
             
             // Right side label for the last cage will be added separately
             return {
