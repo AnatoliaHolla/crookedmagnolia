@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turf Inventory Management</title>
+    <title>ATXTurf Inventory</title>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-X8ZRM5LHC6"></script>
     <script>
@@ -52,9 +52,9 @@
         }
 
         header {
-            background: linear-gradient(135deg, #004d40, #00796b);
+            background: #000000; /* Changed to black */
             color: white;
-            padding: 1.5rem 0;
+            padding: 0.75rem 0; /* Reduced by 50% from 1.5rem */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             margin-bottom: 2rem;
         }
@@ -63,15 +63,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 0.5rem; /* Reduced padding */
+            padding-bottom: 0.5rem; /* Reduced padding */
         }
 
         h1 {
             font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(to right, #ffffff, var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: var(--primary); /* Changed to match "Inventory Data" green */
         }
 
         .card {
@@ -411,7 +410,7 @@
 <body>
     <header>
         <div class="container">
-            <h1>Turf Inventory Management</h1>
+            <h1>ATXTurf Inventory</h1>
             <div class="header-actions">
                 <span id="current-date"></span>
             </div>
@@ -469,7 +468,7 @@
 
     <footer>
         <div class="container">
-            <div>© 2025 Turf Inventory Management</div>
+            <div>© 2025 ATXTurf Inventory</div>
             <div>Powered by <span class="everclick-logo">EverClick.com</span></div>
         </div>
     </footer>
