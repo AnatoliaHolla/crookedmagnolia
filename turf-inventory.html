@@ -195,6 +195,25 @@
             background-color: var(--sold-row);
         }
 
+        .data-table tr.sold-completed {
+            position: relative;
+        }
+
+        .data-table tr.sold-completed td {
+            position: relative;
+        }
+
+        .data-table tr.sold-completed td::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: white;
+            z-index: 1;
+        }
+
         .data-section {
             margin-top: 2rem;
             display: none;
@@ -295,6 +314,21 @@
             font-size: 0.9rem;
             color: var(--foreground);
             opacity: 0.8;
+        }
+
+        .confirm-btn {
+            background-color: var(--primary);
+            color: #121212;
+            border: none;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .confirm-btn:hover {
+            background-color: var(--secondary);
         }
 
         @keyframes fadeIn {
@@ -407,6 +441,7 @@
                             <th>Length</th>
                             <th>Square Feet</th>
                             <th>Dye Lot</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="table-body"></tbody>
@@ -588,6 +623,13 @@
                     const tr = document.createElement('tr');
                     tr.dataset.rowId = rowCount++;
                     
+                    // Store the original data in data attributes for later use
+                    tr.dataset.rollNumber = columns[rollNumberIndex] || '';
+                    tr.dataset.width = columns[widthIndex] || '';
+                    tr.dataset.length = columns[lengthIndex] || '';
+                    tr.dataset.squareFeet = columns[squareFeetIndex] || '';
+                    tr.dataset.dyeLot = columns[dyeLotIndex] || '';
+                    
                     // Add Sold checkbox column
                     const soldTd = document.createElement('td');
                     const soldCheckbox = document.createElement('input');
@@ -628,9 +670,144 @@
                         tr.appendChild(td);
                     });
                     
+                    // Add actions column with confirm button
+                    const actionsTd = document.createElement('td');
+                    const confirmBtn = document.createElement('button');
+                    confirmBtn.textContent = 'Confirm Sale';
+                    confirmBtn.className = 'confirm-btn';
+                    confirmBtn.addEventListener('click', function() {
+                        handleSaleConfirmation(tr);
+                    });
+                    actionsTd.appendChild(confirmBtn);
+                    tr.appendChild(actionsTd);
+                    
                     tableBody.appendChild(tr);
                 }
             });
+        }
+
+        function handleSaleConfirmation(row) {
+            const soldCheckbox = row.querySelector('.sold-checkbox');
+            const amountSoldInput = row.querySelector('.amount-sold-input');
+            
+            // Check if the row is marked as sold and has an amount
+            if (!soldCheckbox.checked) {
+                showStatus('Please mark the item as sold first.', 'error');
+                return;
+            }
+            
+            const amountSold = parseInt(amountSoldInput.value);
+            if (isNaN(amountSold) || amountSold <= 0) {
+                showStatus('Please enter a valid amount sold.', 'error');
+                return;
+            }
+            
+            // Get the original data from data attributes
+            const rollNumber = row.dataset.rollNumber;
+            const width = parseFloat(row.dataset.width);
+            const originalLength = parseFloat(row.dataset.length);
+            const dyeLot = row.dataset.dyeLot;
+            
+            // Calculate new length
+            const newLength = originalLength - amountSold;
+            
+            // Check if the new length is valid
+            if (newLength < 0) {
+                showStatus('Amount sold cannot exceed the available length.', 'error');
+                return;
+            }
+            
+            // Calculate new square feet
+            const newSquareFeet = (width * newLength).toFixed(2);
+            
+            // Create a new row with the remaining inventory
+            if (newLength > 0) {
+                const newRow = document.createElement('tr');
+                newRow.dataset.rowId = rowCount++;
+                
+                // Store the updated data in data attributes
+                newRow.dataset.rollNumber = rollNumber + 'b';
+                newRow.dataset.width = width;
+                newRow.dataset.length = newLength;
+                newRow.dataset.squareFeet = newSquareFeet;
+                newRow.dataset.dyeLot = dyeLot;
+                
+                // Add Sold checkbox column
+                const soldTd = document.createElement('td');
+                const soldCheckbox = document.createElement('input');
+                soldCheckbox.type = 'checkbox';
+                soldCheckbox.className = 'sold-checkbox';
+                soldCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        newRow.classList.add('sold');
+                    } else {
+                        newRow.classList.remove('sold');
+                    }
+                });
+                soldTd.appendChild(soldCheckbox);
+                newRow.appendChild(soldTd);
+                
+                // Add Amount Sold input column
+                const amountSoldTd = document.createElement('td');
+                const amountSoldInput = document.createElement('input');
+                amountSoldInput.type = 'number';
+                amountSoldInput.min = '0';
+                amountSoldInput.value = '0';
+                amountSoldInput.className = 'amount-sold-input';
+                amountSoldTd.appendChild(amountSoldInput);
+                newRow.appendChild(amountSoldTd);
+                
+                // Add data columns with updated values
+                const newRollNumberTd = document.createElement('td');
+                newRollNumberTd.textContent = rollNumber + 'b';
+                newRow.appendChild(newRollNumberTd);
+                
+                const widthTd = document.createElement('td');
+                widthTd.textContent = width;
+                newRow.appendChild(widthTd);
+                
+                const lengthTd = document.createElement('td');
+                lengthTd.textContent = newLength;
+                newRow.appendChild(lengthTd);
+                
+                const squareFeetTd = document.createElement('td');
+                squareFeetTd.textContent = newSquareFeet;
+                newRow.appendChild(squareFeetTd);
+                
+                const dyeLotTd = document.createElement('td');
+                dyeLotTd.textContent = dyeLot;
+                newRow.appendChild(dyeLotTd);
+                
+                // Add actions column with confirm button
+                const actionsTd = document.createElement('td');
+                const confirmBtn = document.createElement('button');
+                confirmBtn.textContent = 'Confirm Sale';
+                confirmBtn.className = 'confirm-btn';
+                confirmBtn.addEventListener('click', function() {
+                    handleSaleConfirmation(newRow);
+                });
+                actionsTd.appendChild(confirmBtn);
+                newRow.appendChild(actionsTd);
+                
+                // Add the new row after the current row
+                row.after(newRow);
+                
+                // Add the new roll number to the tracking set
+                existingRollNumbers.add(rollNumber + 'b');
+            }
+            
+            // Mark the original row as sold with strikethrough
+            row.classList.add('sold-completed');
+            
+            // Disable the checkbox and input in the original row
+            soldCheckbox.disabled = true;
+            amountSoldInput.disabled = true;
+            row.querySelector('.confirm-btn').disabled = true;
+            
+            // Update the row count
+            updateRowCount();
+            
+            showStatus('Sale confirmed successfully!', 'success');
         }
 
         function updateRowCount() {
