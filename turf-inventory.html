@@ -186,6 +186,33 @@
             font-weight: 600;
         }
 
+        .data-table th.sortable {
+            cursor: pointer;
+            position: relative;
+            padding-right: 1.5rem;
+        }
+
+        .data-table th.sortable:hover {
+            background-color: var(--primary);
+        }
+
+        .data-table th.sortable::after {
+            content: "↕";
+            position: absolute;
+            right: 0.5rem;
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .data-table th.sortable.asc::after {
+            content: "↑";
+            color: #000;
+        }
+
+        .data-table th.sortable.desc::after {
+            content: "↓";
+            color: #000;
+        }
+
         .data-table tr:nth-child(even) {
             background-color: rgba(0, 230, 118, 0.05);
         }
@@ -454,9 +481,9 @@
                             <th>Amount Sold</th>
                             <th>Roll Number</th>
                             <th>Width</th>
-                            <th>Length</th>
+                            <th class="sortable" data-column="length">Length</th>
                             <th>Square Feet</th>
-                            <th>Dye Lot</th>
+                            <th class="sortable" data-column="dyeLot">Dye Lot</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -493,11 +520,24 @@
         // Track existing data rows to avoid duplicates
         let existingRollNumbers = new Set();
         let rowCount = 0;
+        
+        // Sorting state
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+        let tableRows = [];
 
         // Load initial data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             dataSection.classList.add('active');
             loadInitialData();
+            
+            // Add event listeners to sortable columns
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.addEventListener('click', () => {
+                    const column = th.dataset.column;
+                    handleSort(column);
+                });
+            });
         });
 
         // Event listeners
@@ -602,6 +642,7 @@
                 tableBody.innerHTML = '';
                 existingRollNumbers.clear();
                 rowCount = 0;
+                tableRows = [];
             }
             
             // Process data rows
@@ -698,8 +739,14 @@
                     tr.appendChild(actionsTd);
                     
                     tableBody.appendChild(tr);
+                    tableRows.push(tr);
                 }
             });
+            
+            // Apply current sort if there is one
+            if (currentSortColumn) {
+                sortTable(currentSortColumn, currentSortDirection);
+            }
         }
 
         function handleSaleConfirmation(row) {
@@ -810,6 +857,14 @@
                 
                 // Add the new roll number to the tracking set
                 existingRollNumbers.add(rollNumber + 'b');
+                
+                // Add to tableRows array for sorting
+                const rowIndex = tableRows.indexOf(row);
+                if (rowIndex !== -1) {
+                    tableRows.splice(rowIndex + 1, 0, newRow);
+                } else {
+                    tableRows.push(newRow);
+                }
             }
             
             // Mark the original row as sold with strikethrough
@@ -838,6 +893,66 @@
             setTimeout(() => {
                 statusElement.style.display = 'none';
             }, 5000);
+        }
+        
+        // Sorting functions
+        function handleSort(column) {
+            // Get the header element
+            const header = document.querySelector(`th[data-column="${column}"]`);
+            
+            // Toggle sort direction if clicking the same column
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                // Reset sort direction for new column
+                currentSortDirection = 'asc';
+                
+                // Remove sorting classes from all headers
+                document.querySelectorAll('th.sortable').forEach(th => {
+                    th.classList.remove('asc', 'desc');
+                });
+            }
+            
+            // Update current sort column
+            currentSortColumn = column;
+            
+            // Update header classes
+            header.classList.remove('asc', 'desc');
+            header.classList.add(currentSortDirection);
+            
+            // Sort the table
+            sortTable(column, currentSortDirection);
+        }
+        
+        function sortTable(column, direction) {
+            // Sort the tableRows array
+            tableRows.sort((a, b) => {
+                let valueA, valueB;
+                
+                // Get values based on column
+                if (column === 'length') {
+                    valueA = parseFloat(a.dataset.length) || 0;
+                    valueB = parseFloat(b.dataset.length) || 0;
+                } else if (column === 'dyeLot') {
+                    valueA = a.dataset.dyeLot || '';
+                    valueB = b.dataset.dyeLot || '';
+                    return direction === 'asc' 
+                        ? valueA.localeCompare(valueB) 
+                        : valueB.localeCompare(valueA);
+                }
+                
+                // Compare numeric values
+                return direction === 'asc' ? valueA - valueB : valueB - valueA;
+            });
+            
+            // Reorder the DOM elements
+            const fragment = document.createDocumentFragment();
+            tableRows.forEach(row => {
+                fragment.appendChild(row);
+            });
+            
+            tableBody.innerHTML = '';
+            tableBody.appendChild(fragment);
         }
     </script>
 </body>
