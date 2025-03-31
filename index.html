@@ -207,6 +207,33 @@
             font-size: 0.85rem;
         }
 
+        /* Remnant roll info styling */
+        .remnant-info {
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+            background-color: rgba(0, 255, 204, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .remnant-info-title {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .remnant-info-content {
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        .remnant-info-value {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
         .totals-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -478,6 +505,14 @@
                     <label for="flipLines">Check to Flip Turf Roll Direction</label>
                 </div>
                 
+                <!-- Remnant roll information -->
+                <div class="remnant-info" id="remnantInfo">
+                    <span class="remnant-info-title">Remnant Roll Information:</span>
+                    <div class="remnant-info-content" id="remnantContent">
+                        Calculating...
+                    </div>
+                </div>
+                
                 <div class="totals-container">
                     <div class="total-square-feet">
                         <span class="total-square-feet-label">Total Sq Ft of Turf</span>
@@ -572,6 +607,9 @@
             updateTotalSquareFeet(70, 14, 1);
             updateTotalSquareFeetNet(70, 14, 12, 1);
             
+            // Update remnant roll information
+            updateRemnantInfo(70, 14, 1);
+            
             // Animation loop
             animate();
             
@@ -585,19 +623,75 @@
             setupFlipLinesCheckbox();
         }
         
+        // Calculate remnant roll information
+        function calculateRemnantRoll(length, width, count, isFlipped) {
+            const rollWidth = 15; // Standard roll width in feet
+            let remnantWidth, remnantLength, remnantArea;
+            
+            if (!isFlipped) {
+                // Rolls run along the length (default)
+                const totalWidth = width * count;
+                const numRolls = Math.ceil(totalWidth / rollWidth);
+                remnantWidth = (numRolls * rollWidth) - totalWidth;
+                remnantLength = length;
+                remnantArea = remnantWidth * remnantLength;
+                
+                return {
+                    numRolls: numRolls,
+                    remnantWidth: remnantWidth,
+                    remnantLength: remnantLength,
+                    remnantArea: remnantArea,
+                    direction: "along length"
+                };
+            } else {
+                // Rolls run along the width
+                const numRolls = Math.ceil(length / rollWidth);
+                remnantWidth = (numRolls * rollWidth) - length;
+                remnantLength = width * count;
+                remnantArea = remnantWidth * remnantLength;
+                
+                return {
+                    numRolls: numRolls,
+                    remnantWidth: remnantWidth,
+                    remnantLength: remnantLength,
+                    remnantArea: remnantArea,
+                    direction: "along width"
+                };
+            }
+        }
+        
+        // Update remnant roll information display
+        function updateRemnantInfo(length, width, count) {
+            const isFlipped = document.getElementById('flipLines').checked;
+            const remnantInfo = calculateRemnantRoll(length, width, count, isFlipped);
+            
+            let remnantText = "";
+            
+            if (remnantInfo.remnantWidth > 0) {
+                if (!isFlipped) {
+                    // Rolls run along the length
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sq ft).`;
+                } else {
+                    // Rolls run along the width
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sq ft).`;
+                }
+            } else {
+                // No remnant (perfect fit)
+                if (!isFlipped) {
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit).`;
+                } else {
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit).`;
+                }
+            }
+            
+            document.getElementById('remnantContent').innerHTML = remnantText;
+        }
+        
         // Set up flip lines checkbox
         function setupFlipLinesCheckbox() {
             const flipLinesCheckbox = document.getElementById('flipLines');
             
             flipLinesCheckbox.addEventListener('change', function() {
-                // Update the label text based on checkbox state
-                const label = document.querySelector('label[for="flipLines"]');
-                if (this.checked) {
-                    label.textContent = 'Check to Flip Turf Roll Direction';
-                } else {
-                    label.textContent = 'Check to Flip Turf Roll Direction';
-                }
-                
                 // Trigger update to redraw the cage with new line orientation
                 const length = parseFloat(document.getElementById('length').value) || 70;
                 const width = parseFloat(document.getElementById('width').value) || 14;
@@ -606,6 +700,8 @@
                 
                 if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
                     createCages(length, width, height, cageCount);
+                    // Update remnant roll information
+                    updateRemnantInfo(length, width, cageCount);
                 }
             });
         }
@@ -1053,6 +1149,9 @@
             // Update total square feet
             updateTotalSquareFeet(length, width, count);
             updateTotalSquareFeetNet(length, width, height, count);
+            
+            // Update remnant roll information
+            updateRemnantInfo(length, width, count);
         }
         
         // Animation loop
