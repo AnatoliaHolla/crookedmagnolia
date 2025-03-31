@@ -873,21 +873,21 @@
             
             // Store info for the right side label of the last cage
             let lastCageInfo;
-            
+
             // Check if lines should be flipped
             const flipLines = document.getElementById('flipLines').checked;
-            
+
             // Create multiple cages side by side
             for (let i = 0; i < count; i++) {
                 // Calculate x offset for this cage
                 const xOffset = i * width - ((count - 1) * width / 2);
-                
+
                 // Create cage group
                 const cage = new THREE.Group();
-                
+
                 // Create wireframe material
                 const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
-                
+
                 // Create solid material with transparency
                 const solidMaterial = new THREE.MeshPhongMaterial({
                     color: 0x00ff9d,
@@ -895,99 +895,109 @@
                     opacity: 0.1,
                     side: THREE.DoubleSide
                 });
-                
+
                 // Create cage geometry
                 const geometry = new THREE.BoxGeometry(width, height, length);
-                
+
                 // Create wireframe
                 const wireframe = new THREE.LineSegments(
                     new THREE.EdgesGeometry(geometry),
                     wireMaterial
                 );
-                
+
                 // Create solid mesh
                 const solid = new THREE.Mesh(geometry, solidMaterial);
-                
+
                 // Add to cage group
                 cage.add(wireframe);
                 cage.add(solid);
-                
+
                 // Position cage
                 cage.position.set(xOffset, 0, 0);
-                
+
                 // Add cage to scene
                 scene.add(cage);
                 cages.push(cage);
+            }
+            
+            // For multiple cages, create a single continuous floor
+            const totalWidth = width * count;
+            const floorGeometry = new THREE.PlaneGeometry(totalWidth - 0.1, length - 0.1);
+            const floorMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x00ff4c, // Bright green
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            // Position the floor at the center of all cages
+            const floorXOffset = count > 1 ? 0 : xOffset; // Center for multiple cages, or at cage position for single cage
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
+            floor.position.set(floorXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
+
+            scene.add(floor);
+            floors.push(floor);
+
+            // Add lines every 15 feet across the entire floor
+            const lineInterval = 15; // 15 feet between lines
+            const lineColor = 0x000000; // Black color
+
+            if (!flipLines) {
+                // Lines running along the length (default)
+                const numLines = Math.floor(length / lineInterval);
                 
-                // Add bright green floor inside the cage
-                const floorGeometry = new THREE.PlaneGeometry(width - 0.1, length - 0.1);
-                const floorMaterial = new THREE.MeshBasicMaterial({ 
-                    color: 0x00ff4c, // Bright green
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    opacity: 0.7
-                });
-
-                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-                floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
-                floor.position.set(xOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
-
-                scene.add(floor);
-                floors.push(floor);
-
-                // Add lines every 15 feet
-                const lineInterval = 15; // 15 feet between lines
-                const lineColor = 0x000000; // Black color
-                
-                if (!flipLines) {
-                    // Lines running along the length (default)
-                    const numLines = Math.floor(length / lineInterval);
+                for (let i = 1; i <= numLines; i++) {
+                    const linePosition = -length/2 + (i * lineInterval);
                     
-                    for (let i = 1; i <= numLines; i++) {
-                        const linePosition = -length/2 + (i * lineInterval);
-                        
-                        // Create line as a thin rectangle
-                        const lineGeometry = new THREE.PlaneGeometry(width - 0.5, 0.3);
-                        const lineMaterial = new THREE.MeshBasicMaterial({ 
-                            color: lineColor,
-                            side: THREE.DoubleSide,
-                            transparent: false,
-                            opacity: 1
-                        });
-                        
-                        // Create line as a mesh
-                        const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                        line.rotation.x = Math.PI / 2; // Make it horizontal
-                        line.position.set(xOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
-                        
-                        scene.add(line);
-                        floors.push(line); // Add to floors array so it gets removed when dimensions change
-                    }
-                } else {
-                    // Lines running along the width (perpendicular to length)
-                    const numLines = Math.floor(width / lineInterval);
+                    // Create line as a thin rectangle spanning the entire width of all cages
+                    const lineGeometry = new THREE.PlaneGeometry(totalWidth - 0.5, 0.3);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
+                        color: lineColor,
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
+                    });
                     
-                    for (let i = 1; i <= numLines; i++) {
-                        const linePosition = -width/2 + (i * lineInterval);
-                        
-                        // Create line as a thin rectangle
-                        const lineGeometry = new THREE.PlaneGeometry(0.3, length - 0.5);
-                        const lineMaterial = new THREE.MeshBasicMaterial({ 
-                            color: lineColor,
-                            side: THREE.DoubleSide,
-                            transparent: false,
-                            opacity: 1
-                        });
-                        
-                        // Create line as a mesh
-                        const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                        line.rotation.x = Math.PI / 2; // Make it horizontal
-                        line.position.set(xOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
-                        
-                        scene.add(line);
-                        floors.push(line); // Add to floors array so it gets removed when dimensions change
-                    }
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(floorXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
+                    
+                    scene.add(line);
+                    floors.push(line); // Add to floors array so it gets removed when dimensions change
                 }
+            } else {
+                // Lines running along the width (perpendicular to length)
+                // For multiple cages, we need lines across the entire width
+                const numLines = Math.floor(totalWidth / lineInterval);
+                
+                for (let i = 1; i <= numLines; i++) {
+                    const linePosition = -totalWidth/2 + (i * lineInterval);
+                    
+                    // Create line as a thin rectangle
+                    const lineGeometry = new THREE.PlaneGeometry(0.3, length - 0.5);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
+                        color: lineColor,
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
+                    });
+                    
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(floorXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
+                    
+                    scene.add(line);
+                    floors.push(line); // Add to floors array so it gets removed when dimensions change
+                }
+            }
+
+            // Now add the individual cages
+            for (let i = 0; i < count; i++) {
+                // Calculate x offset for this cage
+                const xOffset = i * width - ((count - 1) * width / 2);
                 
                 // Add text labels to the cage
                 lastCageInfo = addTextToCage(length, width, height, xOffset);
@@ -1065,9 +1075,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
 
