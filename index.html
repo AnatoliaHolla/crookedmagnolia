@@ -551,6 +551,14 @@
             const directionalLight2 = new THREE.DirectionalLight(0x00ffcc, 0.4);
             directionalLight2.position.set(-5, -10, 7);
             scene.add(directionalLight2);
+
+            // Add a spotlight to illuminate the floor
+            const spotLight = new THREE.SpotLight(0xffffff, 0.8);
+            spotLight.position.set(0, -height, 0);
+            spotLight.target.position.set(0, -height/2, 0);
+            spotLight.angle = Math.PI / 3;
+            scene.add(spotLight);
+            scene.add(spotLight.target);
             
             // Create grid
             const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
@@ -926,20 +934,30 @@
             // For multiple cages, create a single continuous floor
             const totalWidth = width * count;
             const floorGeometry = new THREE.PlaneGeometry(totalWidth - 0.1, length - 0.1);
-            const floorMaterial = new THREE.MeshBasicMaterial({ 
+            const floorMaterial = new THREE.MeshStandardMaterial({ 
                 color: 0x00ff4c, // Bright green
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.7
+                opacity: 0.8,
+                emissive: 0x00ff4c, // Add emissive color to make it glow
+                emissiveIntensity: 0.3, // Control the glow intensity
+                roughness: 0.5,
+                metalness: 0.2
             });
 
             // Position the floor at the center of all cages
             const floor = new THREE.Mesh(floorGeometry, floorMaterial);
             floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
             floor.position.set(centerXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
-
             scene.add(floor);
             floors.push(floor);
+
+            // Add a duplicate floor facing the opposite direction for better visibility
+            const floorBottom = new THREE.Mesh(floorGeometry, floorMaterial);
+            floorBottom.rotation.x = -Math.PI / 2; // Rotate to face the opposite direction
+            floorBottom.position.set(centerXOffset, -height/2 + 0.04, 0); // Slightly below the main floor
+            scene.add(floorBottom);
+            floors.push(floorBottom);
 
             // Add lines every 15 feet across the entire floor
             const lineInterval = 15; // 15 feet between lines
@@ -1077,6 +1095,7 @@
     </script>
 </body>
 </html>
+
 
 
 
