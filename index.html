@@ -628,8 +628,8 @@
             const rollWidth = 15; // Standard roll width in feet
             let remnantWidth, remnantLength, remnantArea;
             
-            if (!isFlipped) {
-                // Rolls run along the length (default)
+            if (isFlipped) {
+                // Rolls run along the length (when checkbox is checked)
                 const totalWidth = width * count;
                 const numRolls = Math.ceil(totalWidth / rollWidth);
                 remnantWidth = (numRolls * rollWidth) - totalWidth;
@@ -644,7 +644,7 @@
                     direction: "along length"
                 };
             } else {
-                // Rolls run along the width
+                // Rolls run along the width (default when checkbox is unchecked)
                 const numRolls = Math.ceil(length / rollWidth);
                 remnantWidth = (numRolls * rollWidth) - length;
                 remnantLength = width * count;
@@ -668,16 +668,16 @@
             let remnantText = "";
             
             if (remnantInfo.remnantWidth > 0) {
-                if (!isFlipped) {
-                    // Rolls run along the length
+                if (isFlipped) {
+                    // Rolls run along the length (when checkbox is checked)
                     remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sq ft).`;
                 } else {
-                    // Rolls run along the width
+                    // Rolls run along the width (default when checkbox is unchecked)
                     remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sq ft).`;
                 }
             } else {
                 // No remnant (perfect fit)
-                if (!isFlipped) {
+                if (isFlipped) {
                     remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit).`;
                 } else {
                     remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit).`;
@@ -1194,6 +1194,7 @@
     </script>
 </body>
 </html>
+
 
 
 
