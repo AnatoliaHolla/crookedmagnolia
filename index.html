@@ -240,7 +240,7 @@
 
         .totals-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 0.5rem;
             margin-top: 0.75rem;
         }
@@ -343,6 +343,13 @@
             font-size: 0.7rem;
             color: rgba(224, 255, 233, 0.7);
             font-style: italic;
+        }
+
+        .gravel-note {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: rgba(224, 255, 233, 0.7);
         }
 
         .canvas-container {
@@ -523,6 +530,8 @@
                         <span class="total-square-feet-label">Sq Ft of Area</span>
                         <div class="total-square-feet-value" id="totalSquareFeet">980</div>
                     </div>
+                </div>
+                <div class="totals-container">
                     <div class="total-square-feet">
                         <span class="total-square-feet-label">Sq Ft in 15' Wide Rolls</span>
                         <div class="total-square-feet-value" id="totalRollSquareFeet">1,050</div>
@@ -552,6 +561,9 @@
                 </div>
                 <div class="additional-note">
                     Hardware & Shipping Additional
+                </div>
+                <div class="gravel-note" id="gravelNote">
+                    Going Outside? <span id="gravelTons">4.2</span> tons of 89 gravel needed for 4 inch deep subbase
                 </div>
             </form>
         </div>
@@ -621,6 +633,9 @@
             
             // Update remnant roll information
             updateRemnantInfo(70, 14, 1);
+            
+            // Update gravel calculation
+            updateGravelCalculation(70, 14, 1);
             
             // Animation loop
             animate();
@@ -721,7 +736,33 @@
                 totalRollSqFt = (width * count) * roundedLength;
             }
             
-            document.getElementById('totalRollSquareFeet').textContent = Math.round(totalRollSqFt).toLocaleString();
+            const roundedTotalRollSqFt = Math.round(totalRollSqFt);
+            document.getElementById('totalRollSquareFeet').textContent = roundedTotalRollSqFt.toLocaleString();
+            
+            // Update turf cost based on roll square feet
+            const costTurf = roundedTotalRollSqFt * 1.69;
+            document.getElementById('costTurf').textContent = '$' + costTurf.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            // Update total cost
+            updateTotalCost();
+        }
+        
+        // Calculate and update gravel needed
+        function updateGravelCalculation(length, width, count) {
+            // Calculate total area
+            const totalArea = length * width * count;
+            
+            // Calculate cubic feet of gravel (4 inches deep = 1/3 foot)
+            const cubicFeet = totalArea * (4/12);
+            
+            // Convert to tons (approximately 1.4 tons per cubic yard, and 27 cubic feet per cubic yard)
+            const tons = cubicFeet * (1.4/27);
+            
+            // Round to 1 decimal place
+            const roundedTons = Math.round(tons * 10) / 10;
+            
+            // Update the display
+            document.getElementById('gravelTons').textContent = roundedTons.toLocaleString();
         }
         
         // Set up flip lines checkbox
@@ -780,12 +821,8 @@
             const totalSqFt = Math.round(length * width * count);
             document.getElementById('totalSquareFeet').textContent = totalSqFt.toLocaleString();
             
-            // Calculate and update cost
-            const costTurf = totalSqFt * 1.69;
-            document.getElementById('costTurf').textContent = '$' + costTurf.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            
-            // Update total cost
-            updateTotalCost();
+            // Update gravel calculation
+            updateGravelCalculation(length, width, count);
         }
         
         // Update total square feet of net display
@@ -1233,12 +1270,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
