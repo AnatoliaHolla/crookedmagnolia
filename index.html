@@ -920,6 +920,9 @@
                 cages.push(cage);
             }
             
+            // Calculate the center x-offset for multiple cages
+            const centerXOffset = 0; // Center for all cages
+            
             // For multiple cages, create a single continuous floor
             const totalWidth = width * count;
             const floorGeometry = new THREE.PlaneGeometry(totalWidth - 0.1, length - 0.1);
@@ -931,10 +934,9 @@
             });
 
             // Position the floor at the center of all cages
-            const floorXOffset = count > 1 ? 0 : xOffset; // Center for multiple cages, or at cage position for single cage
             const floor = new THREE.Mesh(floorGeometry, floorMaterial);
             floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
-            floor.position.set(floorXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
+            floor.position.set(centerXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
 
             scene.add(floor);
             floors.push(floor);
@@ -962,7 +964,7 @@
                     // Create line as a mesh
                     const line = new THREE.Mesh(lineGeometry, lineMaterial);
                     line.rotation.x = Math.PI / 2; // Make it horizontal
-                    line.position.set(floorXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
+                    line.position.set(centerXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
                     
                     scene.add(line);
                     floors.push(line); // Add to floors array so it gets removed when dimensions change
@@ -970,9 +972,9 @@
             } else {
                 // Lines running along the width (perpendicular to length)
                 // For multiple cages, we need lines across the entire width
-                const numLines = Math.floor(totalWidth / lineInterval);
+                const totalLines = Math.floor(totalWidth / lineInterval);
                 
-                for (let i = 1; i <= numLines; i++) {
+                for (let i = 1; i <= totalLines; i++) {
                     const linePosition = -totalWidth/2 + (i * lineInterval);
                     
                     // Create line as a thin rectangle
@@ -987,7 +989,7 @@
                     // Create line as a mesh
                     const line = new THREE.Mesh(lineGeometry, lineMaterial);
                     line.rotation.x = Math.PI / 2; // Make it horizontal
-                    line.position.set(floorXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
+                    line.position.set(centerXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
                     
                     scene.add(line);
                     floors.push(line); // Add to floors array so it gets removed when dimensions change
@@ -1075,4 +1077,6 @@
     </script>
 </body>
 </html>
+
+
 
