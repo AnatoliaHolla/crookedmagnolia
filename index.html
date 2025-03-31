@@ -630,6 +630,20 @@
             
             if (!isFlipped) {
                 // Rolls run along the length (default when checkbox is unchecked)
+                const numRolls = Math.ceil(length / rollWidth);
+                remnantWidth = (numRolls * rollWidth) - length;
+                remnantLength = width * count;
+                remnantArea = remnantWidth * remnantLength;
+                
+                return {
+                    numRolls: numRolls,
+                    remnantWidth: remnantWidth,
+                    remnantLength: remnantLength,
+                    remnantArea: remnantArea,
+                    direction: "along width"
+                };
+            } else {
+                // Rolls run along the width (when checkbox is checked)
                 const totalWidth = width * count;
                 const numRolls = Math.ceil(totalWidth / rollWidth);
                 remnantWidth = (numRolls * rollWidth) - totalWidth;
@@ -642,20 +656,6 @@
                     remnantLength: remnantLength,
                     remnantArea: remnantArea,
                     direction: "along length"
-                };
-            } else {
-                // Rolls run along the width (when checkbox is checked)
-                const numRolls = Math.ceil(length / rollWidth);
-                remnantWidth = (numRolls * rollWidth) - length;
-                remnantLength = width * count;
-                remnantArea = remnantWidth * remnantLength;
-                
-                return {
-                    numRolls: numRolls,
-                    remnantWidth: remnantWidth,
-                    remnantLength: remnantLength,
-                    remnantArea: remnantArea,
-                    direction: "along width"
                 };
             }
         }
@@ -1060,32 +1060,7 @@
             const lineColor = 0x000000; // Black color
 
             if (!flipLines) {
-                // Lines running along the length (default)
-                const numLines = Math.floor(length / lineInterval);
-                
-                for (let i = 1; i <= numLines; i++) {
-                    const linePosition = -length/2 + (i * lineInterval);
-                    
-                    // Create line as a thin rectangle spanning the entire width of all cages
-                    const lineGeometry = new THREE.PlaneGeometry(totalWidth - 0.5, 0.3);
-                    const lineMaterial = new THREE.MeshBasicMaterial({ 
-                        color: lineColor,
-                        side: THREE.DoubleSide,
-                        transparent: false,
-                        opacity: 1
-                    });
-                    
-                    // Create line as a mesh
-                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                    line.rotation.x = Math.PI / 2; // Make it horizontal
-                    line.position.set(centerXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
-                    
-                    scene.add(line);
-                    floors.push(line); // Add to floors array so it gets removed when dimensions change
-                }
-            } else {
-                // Lines running along the width (perpendicular to length)
-                // For multiple cages, we need lines across the entire width
+                // Lines running along the width (perpendicular to length) - default when unchecked
                 const totalLines = Math.floor(totalWidth / lineInterval);
                 
                 for (let i = 1; i <= totalLines; i++) {
@@ -1104,6 +1079,30 @@
                     const line = new THREE.Mesh(lineGeometry, lineMaterial);
                     line.rotation.x = Math.PI / 2; // Make it horizontal
                     line.position.set(centerXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
+                    
+                    scene.add(line);
+                    floors.push(line); // Add to floors array so it gets removed when dimensions change
+                }
+            } else {
+                // Lines running along the length (when checkbox is checked)
+                const numLines = Math.floor(length / lineInterval);
+                
+                for (let i = 1; i <= numLines; i++) {
+                    const linePosition = -length/2 + (i * lineInterval);
+                    
+                    // Create line as a thin rectangle spanning the entire width of all cages
+                    const lineGeometry = new THREE.PlaneGeometry(totalWidth - 0.5, 0.3);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
+                        color: lineColor,
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
+                    });
+                    
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(centerXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
                     
                     scene.add(line);
                     floors.push(line); // Add to floors array so it gets removed when dimensions change
@@ -1194,6 +1193,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
