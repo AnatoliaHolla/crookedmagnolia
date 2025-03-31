@@ -877,28 +877,24 @@
                 const lineInterval = 15; // 15 feet between lines
                 const numLines = Math.floor(length / lineInterval);
                 const lineColor = 0x000000; // Black color
-                const lineWidth = 1;
 
                 for (let i = 1; i <= numLines; i++) {
                     const linePosition = -length/2 + (i * lineInterval);
                     
-                    // Create line geometry
-                    const lineGeometry = new THREE.BufferGeometry();
-                    const lineVertices = new Float32Array([
-                        -width/2 + 0.1, 0, linePosition,
-                        width/2 - 0.1, 0, linePosition
-                    ]);
-                    lineGeometry.setAttribute('position', new THREE.BufferAttribute(lineVertices, 3));
-                    
-                    // Create line material
-                    const lineMaterial = new THREE.LineBasicMaterial({ 
+                    // Create line as a thin rectangle instead of a line
+                    // This makes it more visible than a simple line
+                    const lineGeometry = new THREE.PlaneGeometry(width - 0.5, 0.3);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
                         color: lineColor,
-                        linewidth: lineWidth
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
                     });
                     
-                    // Create line
-                    const line = new THREE.Line(lineGeometry, lineMaterial);
-                    line.position.set(xOffset, -height/2 + 0.06, 0); // Slightly above the floor
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(xOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
                     
                     scene.add(line);
                     floors.push(line); // Add to floors array so it gets removed when dimensions change
@@ -980,5 +976,7 @@
     </script>
 </body>
 </html>
+
+
 
 
