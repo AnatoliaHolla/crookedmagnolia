@@ -670,17 +670,17 @@
             if (remnantInfo.remnantWidth > 0) {
                 if (!isFlipped) {
                     // Rolls run along the length (default when checkbox is unchecked)
-                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sq ft).`;
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sf)`;
                 } else {
                     // Rolls run along the width (when checkbox is checked)
-                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sq ft).`;
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with a <span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant (${remnantInfo.remnantArea.toLocaleString()} sf)`;
                 }
             } else {
                 // No remnant (perfect fit)
                 if (!isFlipped) {
-                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit).`;
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit)`;
                 } else {
-                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit).`;
+                    remnantText = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}' with <span class="remnant-info-value">no remnant</span> (perfect fit)`;
                 }
             }
             
@@ -1193,6 +1193,7 @@
     </script>
 </body>
 </html>
+
 
 
 
