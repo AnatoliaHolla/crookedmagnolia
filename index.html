@@ -630,20 +630,6 @@
             
             if (!isFlipped) {
                 // Rolls run along the length (default when checkbox is unchecked)
-                const numRolls = Math.ceil(length / rollWidth);
-                remnantWidth = (numRolls * rollWidth) - length;
-                remnantLength = width * count;
-                remnantArea = remnantWidth * remnantLength;
-                
-                return {
-                    numRolls: numRolls,
-                    remnantWidth: remnantWidth,
-                    remnantLength: remnantLength,
-                    remnantArea: remnantArea,
-                    direction: "along width"
-                };
-            } else {
-                // Rolls run along the width (when checkbox is checked)
                 const totalWidth = width * count;
                 const numRolls = Math.ceil(totalWidth / rollWidth);
                 remnantWidth = (numRolls * rollWidth) - totalWidth;
@@ -656,6 +642,20 @@
                     remnantLength: remnantLength,
                     remnantArea: remnantArea,
                     direction: "along length"
+                };
+            } else {
+                // Rolls run along the width (when checkbox is checked)
+                const numRolls = Math.ceil(length / rollWidth);
+                remnantWidth = (numRolls * rollWidth) - length;
+                remnantLength = width * count;
+                remnantArea = remnantWidth * remnantLength;
+                
+                return {
+                    numRolls: numRolls,
+                    remnantWidth: remnantWidth,
+                    remnantLength: remnantLength,
+                    remnantArea: remnantArea,
+                    direction: "along width"
                 };
             }
         }
