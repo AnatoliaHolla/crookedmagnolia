@@ -865,13 +865,40 @@
                     transparent: true,
                     opacity: 0.7
                 });
-                
+
                 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
                 floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
                 floor.position.set(xOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
-                
+
                 scene.add(floor);
                 floors.push(floor);
+
+                // Add lines every 15 feet along the length
+                const lineInterval = 15; // 15 feet between lines
+                const numLines = Math.floor(length / lineInterval);
+                const lineColor = 0x000000; // Black color
+
+                for (let i = 1; i <= numLines; i++) {
+                    const linePosition = -length/2 + (i * lineInterval);
+                    
+                    // Create line as a thin rectangle instead of a line
+                    // This makes it more visible than a simple line
+                    const lineGeometry = new THREE.PlaneGeometry(width - 0.5, 0.3);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
+                        color: lineColor,
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
+                    });
+                    
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(xOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
+                    
+                    scene.add(line);
+                    floors.push(line); // Add to floors array so it gets removed when dimensions change
+                }
                 
                 // Add text labels to the cage
                 lastCageInfo = addTextToCage(length, width, height, xOffset);
@@ -949,5 +976,7 @@
     </script>
 </body>
 </html>
+
+
 
 
