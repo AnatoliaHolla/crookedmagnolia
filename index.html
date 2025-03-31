@@ -475,7 +475,7 @@
                 <!-- Checkbox to flip line direction -->
                 <div class="checkbox-container">
                     <input type="checkbox" id="flipLines" name="flipLines">
-                    <label for="flipLines">Flip line direction (currently running along length)</label>
+                    <label for="flipLines">Check to Flip Turf Roll Direction</label>
                 </div>
                 
                 <div class="totals-container">
@@ -593,9 +593,9 @@
                 // Update the label text based on checkbox state
                 const label = document.querySelector('label[for="flipLines"]');
                 if (this.checked) {
-                    label.textContent = 'Flip line direction (currently running along width)';
+                    label.textContent = 'Check to Flip Turf Roll Direction';
                 } else {
-                    label.textContent = 'Flip line direction (currently running along length)';
+                    label.textContent = 'Check to Flip Turf Roll Direction';
                 }
                 
                 // Trigger update to redraw the cage with new line orientation
@@ -1095,6 +1095,7 @@
     </script>
 </body>
 </html>
+
 
 
 
