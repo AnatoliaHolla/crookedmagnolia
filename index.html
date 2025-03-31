@@ -183,6 +183,30 @@
             box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
         }
 
+        /* Checkbox styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 0.75rem 0;
+            padding: 0.5rem;
+            background-color: rgba(0, 255, 157, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-container label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
         .totals-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -447,6 +471,13 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Checkbox to flip line direction -->
+                <div class="checkbox-container">
+                    <input type="checkbox" id="flipLines" name="flipLines">
+                    <label for="flipLines">Flip line direction (currently running along length)</label>
+                </div>
+                
                 <div class="totals-container">
                     <div class="total-square-feet">
                         <span class="total-square-feet-label">Total Sq Ft of Turf</span>
@@ -541,6 +572,34 @@
             
             // Set up custom number input controls
             setupNumberControls();
+            
+            // Set up flip lines checkbox
+            setupFlipLinesCheckbox();
+        }
+        
+        // Set up flip lines checkbox
+        function setupFlipLinesCheckbox() {
+            const flipLinesCheckbox = document.getElementById('flipLines');
+            
+            flipLinesCheckbox.addEventListener('change', function() {
+                // Update the label text based on checkbox state
+                const label = document.querySelector('label[for="flipLines"]');
+                if (this.checked) {
+                    label.textContent = 'Flip line direction (currently running along width)';
+                } else {
+                    label.textContent = 'Flip line direction (currently running along length)';
+                }
+                
+                // Trigger update to redraw the cage with new line orientation
+                const length = parseFloat(document.getElementById('length').value) || 70;
+                const width = parseFloat(document.getElementById('width').value) || 14;
+                const height = parseFloat(document.getElementById('height').value) || 12;
+                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
+                
+                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                    createCages(length, width, height, cageCount);
+                }
+            });
         }
         
         // Set up custom number input controls
@@ -795,187 +854,8 @@
         }
         
         // Create or update multiple cages
-        function createCages(length, width, height, count) {
-            // Round values to whole numbers
-            length = Math.round(length);
-            width = Math.round(width);
-            height = Math.round(height);
-            
-            // Remove existing cages and text labels
-            cages.forEach(cage => scene.remove(cage));
-            cages = [];
-            
-            textLabels.forEach(label => scene.remove(label));
-            textLabels = [];
-            
-            // Remove existing floor planes
-            floors.forEach(floor => scene.remove(floor));
-            floors = [];
-            
-            // Store info for the right side label of the last cage
-            let lastCageInfo;
-            
-            // Create multiple cages side by side
-            for (let i = 0; i < count; i++) {
-                // Calculate x offset for this cage
-                const xOffset = i * width - ((count - 1) * width / 2);
-                
-                // Create cage group
-                const cage = new THREE.Group();
-                
-                // Create wireframe material
-                const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
-                
-                // Create solid material with transparency
-                const solidMaterial = new THREE.MeshPhongMaterial({
-                    color: 0x00ff9d,
-                    transparent: true,
-                    opacity: 0.1,
-                    side: THREE.DoubleSide
-                });
-                
-                // Create cage geometry
-                const geometry = new THREE.BoxGeometry(width, height, length);
-                
-                // Create wireframe
-                const wireframe = new THREE.LineSegments(
-                    new THREE.EdgesGeometry(geometry),
-                    wireMaterial
-                );
-                
-                // Create solid mesh
-                const solid = new THREE.Mesh(geometry, solidMaterial);
-                
-                // Add to cage group
-                cage.add(wireframe);
-                cage.add(solid);
-                
-                // Position cage
-                cage.position.set(xOffset, 0, 0);
-                
-                // Add cage to scene
-                scene.add(cage);
-                cages.push(cage);
-                
-                // Add bright green floor inside the cage
-                const floorGeometry = new THREE.PlaneGeometry(width - 0.1, length - 0.1);
-                const floorMaterial = new THREE.MeshBasicMaterial({ 
-                    color: 0x00ff4c, // Bright green
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    opacity: 0.7
-                });
+        function createCages(length, width, height,
 
-                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-                floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
-                floor.position.set(xOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
-
-                scene.add(floor);
-                floors.push(floor);
-
-                // Add lines every 15 feet along the length
-                const lineInterval = 15; // 15 feet between lines
-                const numLines = Math.floor(length / lineInterval);
-                const lineColor = 0x000000; // Black color
-
-                for (let i = 1; i <= numLines; i++) {
-                    const linePosition = -length/2 + (i * lineInterval);
-                    
-                    // Create line as a thin rectangle instead of a line
-                    // This makes it more visible than a simple line
-                    const lineGeometry = new THREE.PlaneGeometry(width - 0.5, 0.3);
-                    const lineMaterial = new THREE.MeshBasicMaterial({ 
-                        color: lineColor,
-                        side: THREE.DoubleSide,
-                        transparent: false,
-                        opacity: 1
-                    });
-                    
-                    // Create line as a mesh
-                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                    line.rotation.x = Math.PI / 2; // Make it horizontal
-                    line.position.set(xOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
-                    
-                    scene.add(line);
-                    floors.push(line); // Add to floors array so it gets removed when dimensions change
-                }
-                
-                // Add text labels to the cage
-                lastCageInfo = addTextToCage(length, width, height, xOffset);
-            }
-            
-            // Add right side label for the last cage
-            if (lastCageInfo && count > 0) {
-                const rightPlane = new THREE.Mesh(
-                    new THREE.PlaneGeometry(lastCageInfo.length * 0.85, lastCageInfo.height * 0.45),
-                    lastCageInfo.rightMaterial
-                );
-                const lastXOffset = (count - 1) * width - ((count - 1) * width / 2);
-                rightPlane.position.set(lastXOffset + width / 2 + 0.1, 0, 0);
-                rightPlane.rotation.y = -Math.PI / 2;
-                scene.add(rightPlane);
-                textLabels.push(rightPlane);
-            }
-            
-            // Adjust camera position based on number of cages
-            if (count > 1) {
-                const totalWidth = count * width;
-                camera.position.set(totalWidth * 0.7, totalWidth * 0.8, totalWidth * 0.9);
-                camera.lookAt(0, 0, 0);
-            } else {
-                camera.position.set(50, 60, 70);
-                camera.lookAt(0, 0, 0);
-            }
-            
-            // Update dimensions display with whole numbers
-            document.getElementById('dimensionsDisplay').textContent = 
-                `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft × Count: ${count}`;
-                
-            // Update total square feet
-            updateTotalSquareFeet(length, width, count);
-            updateTotalSquareFeetNet(length, width, height, count);
-        }
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        
-        // Handle window resize
-        function onWindowResize() {
-            const container = document.querySelector('.canvas-container');
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        }
-        
-        // Handle form submission
-        document.getElementById('dimensionsForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-        });
-        
-        // Handle input changes for real-time updates
-        const inputs = document.querySelectorAll('#dimensionsForm input');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const length = parseFloat(document.getElementById('length').value) || 70;
-                const width = parseFloat(document.getElementById('width').value) || 14;
-                const height = parseFloat(document.getElementById('height').value) || 12;
-                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
-                
-                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
-                    createCages(length, width, height, cageCount);
-                }
-            });
-        });
-        
-        // Initialize the scene when the page loads
-        window.onload = init;
-    </script>
-</body>
-</html>
 
 
 
