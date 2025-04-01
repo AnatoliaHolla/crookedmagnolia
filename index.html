@@ -1282,15 +1282,14 @@
         
         // Initialize PayPal button
         function initPayPalButton() {
-            // Get the current turf cost
-            const costTurfText = document.getElementById('costTurf').textContent;
-            const costTurf = parseFloat(costTurfText.replace('$', '').replace(/,/g, ''));
+            // Clear any existing buttons first
+            document.getElementById('paypal-button-container').innerHTML = '';
             
             // Render the PayPal button
             paypal.Buttons({
                 // Set up the transaction
                 createOrder: function(data, actions) {
-                    // Get the latest cost value
+                    // Get the latest cost value directly from the DOM
                     const updatedCostTurfText = document.getElementById('costTurf').textContent;
                     const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
                     
@@ -1316,27 +1315,29 @@
                     layout: 'vertical',
                     color: 'gold',
                     shape: 'rect',
-                    label: 'paypal'
+                    label: 'paypal',
+                    height: 40
                 }
             }).render('#paypal-button-container');
         }
         
         // Update PayPal button when cost changes
         function updatePayPalButton() {
-            // Clear existing button
-            document.getElementById('paypal-button-container').innerHTML = '';
-            // Re-initialize with new amount
-            initPayPalButton();
+            // We don't need to re-render the button, as PayPal's SDK will use the latest amount
+            // when the createOrder function is called
         }
         
         // Initialize the scene when the page loads
         window.onload = function() {
             init();
+            // Initialize PayPal button only once
             initPayPalButton();
         };
     </script>
 </body>
 </html>
+
+
 
 
 
