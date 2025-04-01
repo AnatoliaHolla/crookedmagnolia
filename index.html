@@ -15,6 +15,8 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <!-- PayPal SDK with Pay Later disabled -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AaIgMrEkbAeIM9B6e0o_OYbWHohAUHqGOUbnvtcpreqO_DhDvLWBNmS72s4IgkHzWT1APuw358gKCsxz&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
             --primary: #00ff9d;
@@ -523,8 +525,6 @@
             align-items: center;
         }
     </style>
-    <!-- PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AaIgMrEkbAeIM9B6e0o_OYbWHohAUHqGOUbnvtcpreqO_DhDvLWBNmS72s4IgkHzWT1APuw358gKCsxz&currency=USD"></script>
 </head>
 <body>
     <div class="container">
@@ -767,6 +767,10 @@
             
             // In the init function, add this line after setupIncludeSeamCostsCheckbox();
             setupIncludeHardwareKitsCheckbox();
+            
+            // Initialize PayPal buttons
+            initPayPalButtonTurf();
+            initPayPalButtonNet();
         }
         
         // Set up include seam costs checkbox
@@ -1543,7 +1547,6 @@
                     
                     scene.add(line);
                     floors.push(line); // Add to floors array so it gets removed when dimensions change
-                  // Add to floors array so it gets removed when dimensions change
                 }
             }
 
@@ -1723,6 +1726,10 @@
     </script>
 </body>
 </html>
+
+
+
+
 
 
 
