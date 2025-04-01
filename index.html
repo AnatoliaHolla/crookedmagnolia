@@ -454,7 +454,17 @@
                 top: 3rem;
             }
         }
+
+        .paypal-button-container {
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AaIgMrEkbAeIM9B6e0o_OYbWHohAUHqGOUbnvtcpreqO_DhDvLWBNmS72s4IgkHzWT1APuw358gKCsxz&currency=USD"></script>
 </head>
 <body>
     <div class="container">
@@ -547,6 +557,7 @@
                     <div class="cost-turf">
                         <span class="cost-label">Turf @ $1.69 sf</span>
                         <div class="cost-value" id="costTurf">$1,656.20</div>
+                        <div class="paypal-button-container" id="paypal-button-container"></div>
                     </div>
                     <div class="cost-net">
                         <span class="cost-label">Net @ $0.43 sf</span>
@@ -870,6 +881,9 @@
             
             // Update the total cost display
             document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        
+            // Update PayPal button with new amount
+            updatePayPalButton();
         }
         
         // Create text texture
@@ -1266,10 +1280,63 @@
             });
         });
         
+        // Initialize PayPal button
+        function initPayPalButton() {
+            // Get the current turf cost
+            const costTurfText = document.getElementById('costTurf').textContent;
+            const costTurf = parseFloat(costTurfText.replace('$', '').replace(/,/g, ''));
+            
+            // Render the PayPal button
+            paypal.Buttons({
+                // Set up the transaction
+                createOrder: function(data, actions) {
+                    // Get the latest cost value
+                    const updatedCostTurfText = document.getElementById('costTurf').textContent;
+                    const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
+                    
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: 'ATX Turf for Batting Cage',
+                            amount: {
+                                value: updatedCostTurf.toFixed(2)
+                            }
+                        }]
+                    });
+                },
+                
+                // Finalize the transaction
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(orderData) {
+                        // Show a success message
+                        alert('Payment completed! Transaction ID: ' + orderData.id);
+                    });
+                },
+                
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal'
+                }
+            }).render('#paypal-button-container');
+        }
+        
+        // Update PayPal button when cost changes
+        function updatePayPalButton() {
+            // Clear existing button
+            document.getElementById('paypal-button-container').innerHTML = '';
+            // Re-initialize with new amount
+            initPayPalButton();
+        }
+        
         // Initialize the scene when the page loads
-        window.onload = init;
+        window.onload = function() {
+            init();
+            initPayPalButton();
+        };
     </script>
 </body>
 </html>
+
 
 
