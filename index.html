@@ -265,6 +265,24 @@
             color: var(--accent);
         }
 
+        .inline-checkbox {
+            display: flex;
+            align-items: center;
+            margin-left: 1rem;
+        }
+
+        .inline-checkbox input[type="checkbox"] {
+            margin-right: 0.25rem;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .inline-checkbox label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
         .totals-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -494,27 +512,15 @@
             margin-right: auto;
         }
 
-        .seam-info-label-container {
+        .seam-info-row {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .inline-checkbox {
-            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .inline-checkbox input[type="checkbox"] {
-            margin-right: 0.25rem;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .inline-checkbox label {
-            margin-bottom: 0;
-            cursor: pointer;
-            font-size: 0.75rem;
+        .seam-info-value-container {
+            display: flex;
+            align-items: center;
         }
     </style>
     <!-- PayPal SDK -->
@@ -588,33 +594,32 @@
                         <div class="remnant-info-line" id="remnantLine"></div>
                     </div>
                 </div>
-                <div class="seam-info">
-    <div class="seam-info-content">
-        <div class="seam-info-label-container">
-            <span class="seam-info-label">Seam Totals:</span>
-            <div class="inline-checkbox">
-                <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
-                <label for="includeSeamCosts">Add</label>
-            </div>
-        </div>
-        <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
-    </div>
-</div>
-                
                 
                 <div class="seam-info">
-    <div class="seam-info-content">
-        <div class="seam-info-label-container">
-            <span class="seam-info-label">Netting Hardware:</span>
-            <div class="inline-checkbox">
-                <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
-                <label for="includeHardwareKits">Add</label>
-            </div>
-        </div>
-        <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
-    </div>
-</div>
+                    <div class="seam-info-row">
+                        <span class="seam-info-label">Seam Totals:</span>
+                        <div class="seam-info-value-container">
+                            <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
+                            <div class="inline-checkbox">
+                                <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
+                                <label for="includeSeamCosts">Add</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
+                <div class="seam-info">
+                    <div class="seam-info-row">
+                        <span class="seam-info-label">Netting Hardware:</span>
+                        <div class="seam-info-value-container">
+                            <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
+                            <div class="inline-checkbox">
+                                <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
+                                <label for="includeHardwareKits">Add</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="totals-container">
                     <div class="total-square-feet">
@@ -671,6 +676,7 @@
         let cages = [];
         let textLabels = [];
         let floors = []; // Array to store floor planes
+        let targets = []; // Array to store target rectangles
         
         // Variables to store costs
         let seamFabricCost = 0;
@@ -1280,6 +1286,10 @@
             floors.forEach(floor => scene.remove(floor));
             floors = [];
             
+            // Remove existing targets
+            targets.forEach(target => scene.remove(target));
+            targets = [];
+            
             // Store info for the right side label of the last cage
             let lastCageInfo;
 
@@ -1347,6 +1357,43 @@
                 // Add door to scene
                 scene.add(doorWireframe);
                 cages.push(doorWireframe); // Add to cages array so it gets removed when dimensions change
+                
+                // Add target (6' x 4' black rectangle with 3' x 2' white rectangle inside)
+                // Create black outer rectangle
+                const targetOuterWidth = 4;
+                const targetOuterHeight = 6;
+                const targetOuterGeometry = new THREE.PlaneGeometry(targetOuterWidth, targetOuterHeight);
+                const targetOuterMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x000000, 
+                    side: THREE.DoubleSide 
+                });
+                const targetOuter = new THREE.Mesh(targetOuterGeometry, targetOuterMaterial);
+                
+                // Create white inner rectangle
+                const targetInnerWidth = 2;
+                const targetInnerHeight = 3;
+                const targetInnerGeometry = new THREE.PlaneGeometry(targetInnerWidth, targetInnerHeight);
+                const targetInnerMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0xffffff, 
+                    side: THREE.DoubleSide 
+                });
+                const targetInner = new THREE.Mesh(targetInnerGeometry, targetInnerMaterial);
+                
+                // Position inner rectangle slightly in front of outer rectangle
+                targetInner.position.z = 0.01;
+                
+                // Group the target rectangles
+                const targetGroup = new THREE.Group();
+                targetGroup.add(targetOuter);
+                targetGroup.add(targetInner);
+                
+                // Position target on the back face, 2 feet off the floor
+                targetGroup.position.set(xOffset, -height/2 + 2 + targetOuterHeight/2, -length/2 - 0.05);
+                targetGroup.rotation.y = Math.PI; // Face toward the front
+                
+                // Add target to scene
+                scene.add(targetGroup);
+                targets.push(targetGroup);
         
                 // Position cage
                 cage.position.set(xOffset, 0, 0);
@@ -1438,6 +1485,7 @@
                     
                     scene.add(line);
                     floors.push(line); // Add to floors array so it gets removed when dimensions change
+                  // Add to floors array so it gets removed when dimensions change
                 }
             }
 
@@ -1617,6 +1665,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
