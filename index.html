@@ -567,9 +567,15 @@
                 </div>
                 <div class="seam-info">
                     <div class="seam-info-content">
-                        <span class="seam-info-label">Total Length of Seams:</span>
+                        <span class="seam-info-label">Seam Totals:</span>
                         <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
                     </div>
+                </div>
+                
+                <!-- Checkbox to include seam costs in turf total -->
+                <div class="checkbox-container">
+                    <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
+                    <label for="includeSeamCosts">Include Seam Fabric & Glue Costs in Turf Total</label>
                 </div>
                 
                 <div class="totals-container">
@@ -594,7 +600,7 @@
                 
                 <div class="cost-container">
                     <div class="cost-turf">
-                        <span class="cost-label">Turf @ $1.69 sf</span>
+                        <span class="cost-label" id="costTurfLabel">Turf @ $1.69 sf</span>
                         <div class="cost-value" id="costTurf">$1,656.20</div>
                         <div class="paypal-button-container" id="paypal-button-container-turf"></div>
                     </div>
@@ -627,6 +633,11 @@
         let cages = [];
         let textLabels = [];
         let floors = []; // Array to store floor planes
+        
+        // Variables to store seam costs
+        let seamFabricCost = 0;
+        let glueCost = 0;
+        let baseTurfCost = 0;
         
         // Set up the scene
         function init() {
@@ -703,6 +714,38 @@
             
             // Set up flip lines checkbox
             setupFlipLinesCheckbox();
+            
+            // Set up include seam costs checkbox
+            setupIncludeSeamCostsCheckbox();
+        }
+        
+        // Set up include seam costs checkbox
+        function setupIncludeSeamCostsCheckbox() {
+            const includeSeamCostsCheckbox = document.getElementById('includeSeamCosts');
+            
+            includeSeamCostsCheckbox.addEventListener('change', function() {
+                // Update turf cost to include or exclude seam costs
+                updateTurfCostWithSeams();
+            });
+        }
+        
+        // Update turf cost to include or exclude seam costs
+        function updateTurfCostWithSeams() {
+            const includeSeamCosts = document.getElementById('includeSeamCosts').checked;
+            
+            if (includeSeamCosts) {
+                // Add seam fabric cost and glue cost to turf cost
+                const totalTurfCost = baseTurfCost + seamFabricCost + glueCost;
+                document.getElementById('costTurf').textContent = '$' + totalTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf + Seams';
+            } else {
+                // Use base turf cost only
+                document.getElementById('costTurf').textContent = '$' + baseTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf';
+            }
+            
+            // Update total cost
+            updateTotalCost();
         }
         
         // Calculate and update total seam length
@@ -724,15 +767,18 @@
             }
             
             // Calculate seam fabric cost ($0.30 per linear foot)
-            const seamCost = totalSeamLength * 0.30;
+            seamFabricCost = totalSeamLength * 0.30;
             
             // Calculate buckets of glue needed (1 bucket covers 150 feet of seam)
             const bucketsNeeded = Math.ceil(totalSeamLength / 150);
-            const glueCost = bucketsNeeded * 325;
+            glueCost = bucketsNeeded * 325;
             
             // Update the display with the total seam length in feet, cost, and glue buckets
             document.getElementById('totalSeamLength').textContent = 
-                `${totalSeamLength.toLocaleString()} feet ($${seamCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} bucket${bucketsNeeded !== 1 ? 's' : ''} of glue ($${glueCost.toLocaleString()})`;
+                `${totalSeamLength.toLocaleString()} feet ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} bucket${bucketsNeeded !== 1 ? 's' : ''} of glue ($${glueCost.toLocaleString()})`;
+            
+            // Update turf cost if include seam costs checkbox is checked
+            updateTurfCostWithSeams();
         }
         
         // Calculate remnant roll information
@@ -825,11 +871,10 @@
             document.getElementById('totalRollSquareFeet').textContent = roundedTotalRollSqFt.toLocaleString();
             
             // Update turf cost based on roll square feet
-            const costTurf = roundedTotalRollSqFt * 1.69;
-            document.getElementById('costTurf').textContent = '$' + costTurf.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            baseTurfCost = roundedTotalRollSqFt * 1.69;
             
-            // Update total cost
-            updateTotalCost();
+            // Update turf cost display (with or without seam costs)
+            updateTurfCostWithSeams();
         }
         
         // Calculate and update gravel needed
@@ -1446,6 +1491,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
