@@ -557,11 +557,12 @@
                     <div class="cost-turf">
                         <span class="cost-label">Turf @ $1.69 sf</span>
                         <div class="cost-value" id="costTurf">$1,656.20</div>
-                        <div class="paypal-button-container" id="paypal-button-container"></div>
+                        <div class="paypal-button-container" id="paypal-button-container-turf"></div>
                     </div>
                     <div class="cost-net">
                         <span class="cost-label">Net @ $0.43 sf</span>
                         <div class="cost-value" id="costNet">$1,276.24</div>
+                        <div class="paypal-button-container" id="paypal-button-container-net"></div>
                     </div>
                 </div>
                 
@@ -881,9 +882,6 @@
             
             // Update the total cost display
             document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        
-            // Update PayPal button with new amount
-            updatePayPalButton();
         }
         
         // Create text texture
@@ -1280,10 +1278,10 @@
             });
         });
         
-        // Initialize PayPal button
-        function initPayPalButton() {
+        // Initialize PayPal button for turf
+        function initPayPalButtonTurf() {
             // Clear any existing buttons first
-            document.getElementById('paypal-button-container').innerHTML = '';
+            document.getElementById('paypal-button-container-turf').innerHTML = '';
             
             // Render the PayPal button
             paypal.Buttons({
@@ -1307,7 +1305,7 @@
                 onApprove: function(data, actions) {
                     return actions.order.capture().then(function(orderData) {
                         // Show a success message
-                        alert('Payment completed! Transaction ID: ' + orderData.id);
+                        alert('Turf payment completed! Transaction ID: ' + orderData.id);
                     });
                 },
                 
@@ -1318,24 +1316,62 @@
                     label: 'paypal',
                     height: 40
                 }
-            }).render('#paypal-button-container');
+            }).render('#paypal-button-container-turf');
         }
         
-        // Update PayPal button when cost changes
-        function updatePayPalButton() {
-            // We don't need to re-render the button, as PayPal's SDK will use the latest amount
-            // when the createOrder function is called
+        // Initialize PayPal button for net
+        function initPayPalButtonNet() {
+            // Clear any existing buttons first
+            document.getElementById('paypal-button-container-net').innerHTML = '';
+            
+            // Render the PayPal button
+            paypal.Buttons({
+                // Set up the transaction
+                createOrder: function(data, actions) {
+                    // Get the latest cost value directly from the DOM
+                    const updatedCostNetText = document.getElementById('costNet').textContent;
+                    const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
+                    
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: 'ATX Net for Batting Cage',
+                            amount: {
+                                value: updatedCostNet.toFixed(2)
+                            }
+                        }]
+                    });
+                },
+                
+                // Finalize the transaction
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(orderData) {
+                        // Show a success message
+                        alert('Net payment completed! Transaction ID: ' + orderData.id);
+                    });
+                },
+                
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal',
+                    height: 40
+                }
+            }).render('#paypal-button-container-net');
         }
         
         // Initialize the scene when the page loads
         window.onload = function() {
             init();
-            // Initialize PayPal button only once
-            initPayPalButton();
+            // Initialize PayPal buttons
+            initPayPalButtonTurf();
+            initPayPalButtonNet();
         };
     </script>
 </body>
 </html>
+
+
 
 
 
