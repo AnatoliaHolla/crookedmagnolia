@@ -238,26 +238,29 @@
             color: var(--accent);
         }
 
-        /* Seam length info styling */
+        /* Seam info styling */
         .seam-info {
             margin: 0.5rem 0;
             padding: 0.5rem;
             background-color: rgba(0, 255, 157, 0.1);
             border-radius: 0.5rem;
             border: 1px solid rgba(0, 255, 157, 0.2);
-            text-align: center;
         }
 
-        .seam-info-title {
-            display: block;
+        .seam-info-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .seam-info-label {
             font-size: 0.8rem;
-            margin-bottom: 0.25rem;
             color: var(--primary);
             font-weight: 500;
         }
 
         .seam-info-value {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--accent);
         }
@@ -270,22 +273,26 @@
         }
 
         .total-square-feet {
-            text-align: center;
             padding: 0.5rem;
             background-color: rgba(0, 255, 157, 0.1);
             border-radius: 0.5rem;
             border: 1px solid rgba(0, 255, 157, 0.2);
         }
 
+        .total-square-feet-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .total-square-feet-label {
-            display: block;
-            font-size: 0.7rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
             color: var(--primary);
+            font-weight: 500;
         }
 
         .total-square-feet-value {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text);
         }
@@ -559,14 +566,18 @@
                     </div>
                 </div>
                 <div class="seam-info">
-                    <span class="seam-info-title">Total Length of Seams:</span>
-                    <div class="seam-info-value" id="totalSeamLength">Calculating...</div>
+                    <div class="seam-info-content">
+                        <span class="seam-info-label">Total Length of Seams:</span>
+                        <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
+                    </div>
                 </div>
                 
                 <div class="totals-container">
                     <div class="total-square-feet">
-                        <span class="total-square-feet-label">Sq Ft of Area</span>
-                        <div class="total-square-feet-value" id="totalSquareFeet">980</div>
+                        <div class="total-square-feet-content">
+                            <span class="total-square-feet-label">Sq Ft of Area:</span>
+                            <span class="total-square-feet-value" id="totalSquareFeet">980</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -712,8 +723,16 @@
                 totalSeamLength = numLines * (width * count);
             }
             
-            // Update the display with the total seam length in feet
-            document.getElementById('totalSeamLength').textContent = totalSeamLength.toLocaleString() + ' feet';
+            // Calculate seam fabric cost ($0.30 per linear foot)
+            const seamCost = totalSeamLength * 0.30;
+            
+            // Calculate buckets of glue needed (1 bucket covers 150 feet of seam)
+            const bucketsNeeded = Math.ceil(totalSeamLength / 150);
+            const glueCost = bucketsNeeded * 325;
+            
+            // Update the display with the total seam length in feet, cost, and glue buckets
+            document.getElementById('totalSeamLength').textContent = 
+                `${totalSeamLength.toLocaleString()} feet ($${seamCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} bucket${bucketsNeeded !== 1 ? 's' : ''} of glue ($${glueCost.toLocaleString()})`;
         }
         
         // Calculate remnant roll information
@@ -1205,7 +1224,7 @@
 
             if (!flipLines) {
                 // Lines running along the width (perpendicular to length) - default when unchecked
-                const totalLines = Math.floor(totalWidth / lineInterval);
+                const totalLines = Math.floor(totalWidth / 15);
                 
                 for (let i = 1; i <= totalLines; i++) {
                     const linePosition = -totalWidth/2 + (i * lineInterval);
@@ -1229,7 +1248,7 @@
                 }
             } else {
                 // Lines running along the length (when checkbox is checked)
-                const numLines = Math.floor(length / lineInterval);
+                const numLines = Math.floor(length / 15);
                 
                 for (let i = 1; i <= numLines; i++) {
                     const linePosition = -length/2 + (i * lineInterval);
@@ -1427,6 +1446,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
