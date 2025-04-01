@@ -841,17 +841,17 @@
             // Determine price per kit based on cage length
             const pricePerKit = length >= 56 ? 175 : 155;
             
-            // Calculate shipping cost ($19.95 per kit)
+            // Calculate shipping cost ($19.95 per kit) - still calculate this for the total cost
             const shippingCost = kitsNeeded * 19.95;
             
-            // Calculate total hardware cost
+            // Calculate total hardware cost (still needed for the checkbox functionality)
             const kitsCost = kitsNeeded * pricePerKit;
             hardwareKitsCost = kitsCost + shippingCost;
             
-            // Update the display
+            // Update the display - remove shipping and total
             document.getElementById('hardwareKitsInfo').textContent = 
-                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()}) + Shipping ($${shippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) $${hardwareKitsCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    
+                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()})`;
+
             // Update net cost if include hardware kits checkbox is checked
             updateNetCostWithHardware();
         }
@@ -1320,7 +1320,34 @@
                 // Add to cage group
                 cage.add(wireframe);
                 cage.add(solid);
-
+        
+                // Add door wireframe (6ft x 3ft) to the left of center on the front face
+                const doorWidth = 3;
+                const doorHeight = 6;
+                
+                // Create door geometry
+                const doorGeometry = new THREE.BufferGeometry();
+                const doorVertices = new Float32Array([
+                    // Door outline vertices (rectangle)
+                    -1.5, -height/2 + 0.1, length/2 + 0.05,  // bottom left
+                    -1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,  // top left
+                    1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,   // top right
+                    1.5, -height/2 + 0.1, length/2 + 0.05,   // bottom right
+                    -1.5, -height/2 + 0.1, length/2 + 0.05   // back to bottom left to close the loop
+                ]);
+        
+                doorGeometry.setAttribute('position', new THREE.BufferAttribute(doorVertices, 3));
+        
+                // Create door wireframe
+                const doorWireframe = new THREE.Line(doorGeometry, wireMaterial);
+        
+                // Position door on the front face, slightly to the left of center
+                doorWireframe.position.set(xOffset - width/6, 0, 0);
+        
+                // Add door to scene
+                scene.add(doorWireframe);
+                cages.push(doorWireframe); // Add to cages array so it gets removed when dimensions change
+        
                 // Position cage
                 cage.position.set(xOffset, 0, 0);
 
@@ -1590,6 +1617,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
