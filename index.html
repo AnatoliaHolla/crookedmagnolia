@@ -495,7 +495,7 @@
         }
     </style>
     <!-- PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AaIgMrEkbAeIM9B6e0o_OYbWHohAUHqGOUbnvtcpreqO_DhDvLWBNmS72s4IgkHzWT1APuw358gKCsxz&currency=USD"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
 </head>
 <body>
     <div class="container">
@@ -578,6 +578,18 @@
                     <label for="includeSeamCosts">Include Seam Fabric & Glue Costs in Turf Total</label>
                 </div>
                 
+                <!-- Checkbox for hardware install kits -->
+                <div class="checkbox-container">
+                    <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
+                    <label for="includeHardwareKits">Include Hardware Install Kits in Total</label>
+                </div>
+                <div class="seam-info">
+                    <div class="seam-info-content">
+                        <span class="seam-info-label">Hardware Install Kits:</span>
+                        <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
+                    </div>
+                </div>
+                
                 <div class="totals-container">
                     <div class="total-square-feet">
                         <div class="total-square-feet-content">
@@ -634,10 +646,11 @@
         let textLabels = [];
         let floors = []; // Array to store floor planes
         
-        // Variables to store seam costs
+        // Variables to store costs
         let seamFabricCost = 0;
         let glueCost = 0;
         let baseTurfCost = 0;
+        let hardwareKitsCost = 0;
         
         // Set up the scene
         function init() {
@@ -717,6 +730,9 @@
             
             // Set up include seam costs checkbox
             setupIncludeSeamCostsCheckbox();
+            
+            // In the init function, add this line after setupIncludeSeamCostsCheckbox();
+            setupIncludeHardwareKitsCheckbox();
         }
         
         // Set up include seam costs checkbox
@@ -726,6 +742,16 @@
             includeSeamCostsCheckbox.addEventListener('change', function() {
                 // Update turf cost to include or exclude seam costs
                 updateTurfCostWithSeams();
+            });
+        }
+        
+        // Set up include hardware kits checkbox
+        function setupIncludeHardwareKitsCheckbox() {
+            const includeHardwareKitsCheckbox = document.getElementById('includeHardwareKits');
+            
+            includeHardwareKitsCheckbox.addEventListener('change', function() {
+                // Update total cost when checkbox state changes
+                updateTotalCost();
             });
         }
         
@@ -775,10 +801,35 @@
             
             // Update the display with the total seam length in feet, cost, and glue buckets
             document.getElementById('totalSeamLength').textContent = 
-                `${totalSeamLength.toLocaleString()} feet ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} bucket${bucketsNeeded !== 1 ? 's' : ''} of glue ($${glueCost.toLocaleString()})`;
+                `${totalSeamLength.toLocaleString()} feet ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} Glue Bucket${bucketsNeeded !== 1 ? 's' : ''} ($${glueCost.toLocaleString()})`;
             
             // Update turf cost if include seam costs checkbox is checked
             updateTurfCostWithSeams();
+        }
+        
+        // Calculate and update hardware kits information
+        function updateHardwareKits(length, count) {
+            // Each cage needs one hardware kit
+            const kitsNeeded = count;
+            
+            // Determine price per kit based on cage length
+            const pricePerKit = length >= 56 ? 175 : 155;
+            
+            // Calculate shipping cost ($19.95 per kit)
+            const shippingCost = kitsNeeded * 19.95;
+            
+            // Calculate total hardware cost
+            const kitsCost = kitsNeeded * pricePerKit;
+            hardwareKitsCost = kitsCost + shippingCost;
+            
+            // Update the display
+            document.getElementById('hardwareKitsInfo').textContent = 
+                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()}) + Shipping ($${shippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) = $${hardwareKitsCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            // Update total cost if include hardware kits checkbox is checked
+            if (document.getElementById('includeHardwareKits').checked) {
+                updateTotalCost();
+            }
         }
         
         // Calculate remnant roll information
@@ -986,7 +1037,7 @@
             updateTotalCost();
         }
         
-        // Update total cost (turf + net)
+        // Update total cost (turf + net + optional hardware)
         function updateTotalCost() {
             // Get the current cost values
             const costTurfText = document.getElementById('costTurf').textContent;
@@ -997,7 +1048,12 @@
             const costNet = parseFloat(costNetText.replace('$', '').replace(/,/g, ''));
             
             // Calculate total
-            const totalCost = costTurf + costNet;
+            let totalCost = costTurf + costNet;
+            
+            // Add hardware kits cost if checkbox is checked
+            if (document.getElementById('includeHardwareKits').checked) {
+                totalCost += hardwareKitsCost;
+            }
             
             // Update the total cost display
             document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -1362,6 +1418,8 @@
             updateRemnantInfo(length, width, count);
             // Update total seam length
             updateTotalSeamLength(length, width, count);
+            // In the createCages function, add this line after updateTotalSeamLength(length, width, count);
+            updateHardwareKits(length, count);
         }
         
         // Animation loop
@@ -1491,6 +1549,7 @@
     </script>
 </body>
 </html>
+
 
 
 
