@@ -677,6 +677,8 @@
         let textLabels = [];
         let floors = []; // Array to store floor planes
         let targets = []; // Array to store target rectangles
+        // In the global variables section, add a new array to store the home plates
+        let homePlates = []; // Array to store home plate elements
         
         // Variables to store costs
         let seamFabricCost = 0;
@@ -1288,6 +1290,8 @@
             
             // Remove existing targets
             targets.forEach(target => scene.remove(target));
+            homePlates.forEach(plate => scene.remove(plate));
+            homePlates = [];
             targets = [];
             
             // Store info for the right side label of the last cage
@@ -1394,6 +1398,60 @@
                 // Add target to scene
                 scene.add(targetGroup);
                 targets.push(targetGroup);
+        
+                // Add maroon rectangle with home plate
+                const maroonWidth = 12; // 12 feet wide
+                const maroonLength = 6; // 6 feet long
+                const maroonGeometry = new THREE.PlaneGeometry(maroonWidth, maroonLength);
+                const maroonMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x800000, // Maroon color
+                    side: THREE.DoubleSide 
+                });
+                const maroonRect = new THREE.Mesh(maroonGeometry, maroonMaterial);
+
+                // Position maroon rectangle on the floor, 2 feet from the back wall
+                maroonRect.rotation.x = -Math.PI / 2; // Make it horizontal
+                maroonRect.position.set(
+                    xOffset, 
+                    -height/2 + 0.08, // Slightly above the floor
+                    -length/2 + 2 + maroonLength/2 // 2 feet from back wall
+                );
+
+                // Create home plate (pentagon shape)
+                const homePlateSize = 17/12; // 17 inches in feet
+                const homePlateShape = new THREE.Shape();
+
+                // Home plate is a pentagon with a 17-inch square and two 12-inch sides forming a point
+                homePlateShape.moveTo(0, homePlateSize/2); // Top point
+                homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/6); // Left corner
+                homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/2); // Left back
+                homePlateShape.lineTo(homePlateSize/2, -homePlateSize/2); // Right back
+                homePlateShape.lineTo(homePlateSize/2, -homePlateSize/6); // Right corner
+                homePlateShape.lineTo(0, homePlateSize/2); // Back to top point
+
+                const homePlateGeometry = new THREE.ShapeGeometry(homePlateShape);
+                const homePlateMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0xffffff, // White color
+                    side: THREE.DoubleSide 
+                });
+                const homePlate = new THREE.Mesh(homePlateGeometry, homePlateMaterial);
+
+                // Position home plate in the center of the maroon rectangle
+                homePlate.rotation.x = -Math.PI / 2; // Make it horizontal
+                homePlate.position.set(
+                    xOffset, 
+                    -height/2 + 0.09, // Slightly above the maroon rectangle
+                    -length/2 + 2 + maroonLength/2 // Same position as maroon rectangle
+                );
+
+                // Group the home plate elements
+                const homePlateGroup = new THREE.Group();
+                homePlateGroup.add(maroonRect);
+                homePlateGroup.add(homePlate);
+
+                // Add to scene
+                scene.add(homePlateGroup);
+                homePlates.push(homePlateGroup);
         
                 // Position cage
                 cage.position.set(xOffset, 0, 0);
@@ -1665,6 +1723,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
