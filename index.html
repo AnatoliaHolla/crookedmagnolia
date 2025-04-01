@@ -238,6 +238,30 @@
             color: var(--accent);
         }
 
+        /* Seam length info styling */
+        .seam-info {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background-color: rgba(0, 255, 157, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            text-align: center;
+        }
+
+        .seam-info-title {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .seam-info-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
         .totals-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -534,6 +558,10 @@
                         <div class="remnant-info-line" id="remnantLine"></div>
                     </div>
                 </div>
+                <div class="seam-info">
+                    <span class="seam-info-title">Total Length of Seams:</span>
+                    <div class="seam-info-value" id="totalSeamLength">Calculating...</div>
+                </div>
                 
                 <div class="totals-container">
                     <div class="total-square-feet">
@@ -650,6 +678,9 @@
             // Update gravel calculation
             updateGravelCalculation(70, 14, 1);
             
+            // Update total seam length
+            updateTotalSeamLength(70, 14, 1);
+            
             // Animation loop
             animate();
             
@@ -661,6 +692,28 @@
             
             // Set up flip lines checkbox
             setupFlipLinesCheckbox();
+        }
+        
+        // Calculate and update total seam length
+        function updateTotalSeamLength(length, width, count) {
+            const isFlipped = document.getElementById('flipLines').checked;
+            let totalSeamLength = 0;
+            
+            if (!isFlipped) {
+                // Lines running along the width (perpendicular to length) - default when unchecked
+                const totalWidth = width * count;
+                const numLines = Math.floor(totalWidth / 15);
+                // Each line spans the length of the cage
+                totalSeamLength = numLines * length;
+            } else {
+                // Lines running along the length (when checkbox is checked)
+                const numLines = Math.floor(length / 15);
+                // Each line spans the total width of all cages
+                totalSeamLength = numLines * (width * count);
+            }
+            
+            // Update the display with the total seam length in feet
+            document.getElementById('totalSeamLength').textContent = totalSeamLength.toLocaleString() + ' feet';
         }
         
         // Calculate remnant roll information
@@ -795,6 +848,8 @@
                     updateRemnantInfo(length, width, cageCount);
                     // Update total roll square feet
                     updateTotalRollSquareFeet(length, width, cageCount);
+                    // Update total seam length
+                    updateTotalSeamLength(length, width, cageCount);
                 }
             });
         }
@@ -1241,6 +1296,8 @@
             
             // Update remnant roll information
             updateRemnantInfo(length, width, count);
+            // Update total seam length
+            updateTotalSeamLength(length, width, count);
         }
         
         // Animation loop
@@ -1370,6 +1427,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
