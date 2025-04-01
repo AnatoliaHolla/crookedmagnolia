@@ -594,7 +594,7 @@
             <span class="seam-info-label">Seam Totals:</span>
             <div class="inline-checkbox">
                 <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
-                <label for="includeSeamCosts">Include</label>
+                <label for="includeSeamCosts">Add</label>
             </div>
         </div>
         <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
@@ -608,7 +608,7 @@
             <span class="seam-info-label">Netting Hardware:</span>
             <div class="inline-checkbox">
                 <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
-                <label for="includeHardwareKits">Include</label>
+                <label for="includeHardwareKits">Add</label>
             </div>
         </div>
         <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
@@ -827,7 +827,7 @@
             
             // Update the display with the total seam length in feet, cost, and glue buckets
             document.getElementById('totalSeamLength').textContent = 
-                `${totalSeamLength.toLocaleString()} feet ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} Glue Bucket${bucketsNeeded !== 1 ? 's' : ''} ($${glueCost.toLocaleString()})`;
+                `${totalSeamLength.toLocaleString()} ft ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} Glue Bucket${bucketsNeeded !== 1 ? 's' : ''} ($${glueCost.toLocaleString()})`;
             
             // Update turf cost if include seam costs checkbox is checked
             updateTurfCostWithSeams();
@@ -850,7 +850,7 @@
             
             // Update the display
             document.getElementById('hardwareKitsInfo').textContent = 
-                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()}) + Shipping ($${shippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) = $${hardwareKitsCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()}) + Shipping ($${shippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) $${hardwareKitsCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     
             // Update net cost if include hardware kits checkbox is checked
             updateNetCostWithHardware();
@@ -1590,6 +1590,10 @@
     </script>
 </body>
 </html>
+
+
+
+
 
 
 
