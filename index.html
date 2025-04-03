@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <!-- PayPal SDK with Pay Later disabled -->
+    <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=AaIgMrEkbAeIM9B6e0o_OYbWHohAUHqGOUbnvtcpreqO_DhDvLWBNmS72s4IgkHzWT1APuw358gKCsxz&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -621,7 +621,7 @@
                     </div>
                     <div class="form-group">
                         <label for="width">Width (feet)</label>
-                        <input type="number" id="width" name="width" min="1" step="1" value="14" required>
+                        <input type="number" id="width" name="width" min="10" step="1" value="14" required>
                         <div class="number-controls">
                             <div class="number-control" data-input="width" data-action="increment">+</div>
                             <div class="number-control" data-input="width" data-action="decrement">-</div>
@@ -1135,7 +1135,7 @@
                     
                     let value = parseInt(input.value) || 0;
                     const step = parseInt(input.getAttribute('step')) || 1;
-                    const min = parseInt(input.getAttribute('min')) || 0;
+                    const min = parseInt(input.getAttribute('min')) || 10;
                     const max = parseInt(input.getAttribute('max')) || Infinity;
                     
                     if (action === 'increment') {
@@ -1867,6 +1867,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
