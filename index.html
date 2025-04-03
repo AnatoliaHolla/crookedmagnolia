@@ -16,7 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <!-- PayPal SDK with Pay Later disabled -->
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD&disable-funding=paylater&debug=true"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
             --primary: #00ff9d;
@@ -591,10 +591,36 @@
         .payment-error.visible {
             display: block;
         }
+
+        .sandbox-note {
+            background-color: #ffdd57; 
+            color: #333; 
+            padding: 10px; 
+            text-align: center; 
+            margin-bottom: 10px; 
+            border-radius: 5px;
+        }
+
+        .manual-payment-button {
+            background-color: var(--primary-dark);
+            color: var(--text);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .manual-payment-button:hover {
+            background-color: var(--primary);
+        }
     </style>
 </head>
 <body>
-    <div style="background-color: #ffdd57; color: #333; padding: 10px; text-align: center; margin-bottom: 10px; border-radius: 5px;">
+    <div class="sandbox-note">
         <strong>Note:</strong> PayPal is in sandbox/test mode. For production, replace "sb" with your actual PayPal client ID.
     </div>
     <div class="container">
@@ -715,12 +741,12 @@
                     <div class="cost-turf">
                         <span class="cost-label" id="costTurfLabel">Turf @ $1.69 sf</span>
                         <div class="cost-value" id="costTurf">$1,656.20</div>
-                        <div class="paypal-button-container" id="paypal-button-container-turf"></div>
+                        <button type="button" class="manual-payment-button" id="turfPaymentButton">Pay for Turf</button>
                     </div>
                     <div class="cost-net">
                         <span class="cost-label" id="costNetLabel">Net @ $0.43 sf</span>
                         <div class="cost-value" id="costNet">$1,276.24</div>
-                        <div class="paypal-button-container" id="paypal-button-container-net"></div>
+                        <button type="button" class="manual-payment-button" id="netPaymentButton">Pay for Net</button>
                     </div>
                 </div>
                 
@@ -771,6 +797,7 @@
                         <textarea id="customerNotes" name="customerNotes" rows="3"></textarea>
                     </div>
                     <div class="customer-form-group" style="margin-top: 1rem;">
+                        <button type="button" id="fillTestData  style="margin-top: 1rem;">
                         <button type="button" id="fillTestDataBtn" style="background-color: var(--primary-dark); color: var(--text); border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;">Fill Test Data (For Testing)</button>
                     </div>
                     <div class="payment-error" id="paymentError">
@@ -892,9 +919,177 @@
             // In the init function, add this line after setupIncludeSeamCostsCheckbox();
             setupIncludeHardwareKitsCheckbox();
             
-            // Initialize PayPal buttons
-            initPayPalButtonTurf();
-            initPayPalButtonNet();
+            // Set up payment buttons
+            setupPaymentButtons();
+        }
+        
+        // Set up payment buttons
+        function setupPaymentButtons() {
+            // Set up turf payment button
+            document.getElementById('turfPaymentButton').addEventListener('click', function() {
+                handleTurfPayment();
+            });
+            
+            // Set up net payment button
+            document.getElementById('netPaymentButton').addEventListener('click', function() {
+                handleNetPayment();
+            });
+        }
+        
+        // Handle turf payment
+        function handleTurfPayment() {
+            try {
+                // Validate customer information first
+                console.log("Validating customer info for turf payment...");
+                
+                // First, make sure customer info section is visible
+                document.getElementById('customerInfoSection').classList.add('active');
+                document.querySelector('.customer-info-toggle').classList.add('active');
+                
+                const validationResult = validateCustomerInfo();
+                console.log("Validation result:", validationResult);
+                
+                if (!validationResult) {
+                    document.getElementById('paymentError').classList.add('visible');
+                    return;
+                }
+                
+                // Get the latest cost value directly from the DOM
+                const updatedCostTurfText = document.getElementById('costTurf').textContent;
+                const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
+                
+                // Get all cage specifications
+                const length = document.getElementById('length').value;
+                const width = document.getElementById('width').value;
+                const height = document.getElementById('height').value;
+                const cageCount = document.getElementById('cageCount').value;
+                const isFlipped = document.getElementById('flipLines').checked ? "Yes" : "No";
+                const includeSeams = document.getElementById('includeSeamCosts').checked ? "Yes" : "No";
+                const totalRollSqFt = document.getElementById('totalRollSquareFeet').textContent;
+                const seamInfo = document.getElementById('totalSeamLength').textContent;
+                
+                // Get customer information
+                const customerName = document.getElementById('customerName').value;
+                const customerEmail = document.getElementById('customerEmail').value;
+                const customerPhone = document.getElementById('customerPhone').value;
+                const customerAddress = document.getElementById('customerAddress').value;
+                const customerCity = document.getElementById('customerCity').value;
+                const customerState = document.getElementById('customerState').value;
+                const customerZip = document.getElementById('customerZip').value;
+                const customerCountry = document.getElementById('customerCountry').value;
+                const customerNotes = document.getElementById('customerNotes').value;
+                
+                // Create a detailed order summary
+                const orderSummary = `
+                    ORDER SUMMARY - TURF
+                    -------------------
+                    Cage Dimensions: ${length}'L x ${width}'W x ${height}'H
+                    Number of Cages: ${cageCount}
+                    Turf Roll Direction: ${isFlipped ? "Along Width" : "Along Length"}
+                    Include Seam Costs: ${includeSeams}
+                    Total Roll Square Feet: ${totalRollSqFt}
+                    Seam Details: ${seamInfo}
+                    
+                    CUSTOMER INFORMATION
+                    -------------------
+                    Name: ${customerName}
+                    Email: ${customerEmail}
+                    Phone: ${customerPhone}
+                    Address: ${customerAddress}, ${customerCity}, ${customerState} ${customerZip}, ${customerCountry}
+                    Special Instructions: ${customerNotes || "None"}
+                    
+                    TOTAL COST: $${updatedCostTurf.toFixed(2)}
+                `;
+                
+                // Display the order summary and simulate payment
+                alert("Payment Processing Simulation\n\n" + orderSummary);
+                
+                // Simulate successful payment
+                setTimeout(function() {
+                    alert("Turf payment completed successfully! Order ID: SIM" + Math.floor(Math.random() * 1000000));
+                }, 1000);
+                
+            } catch (error) {
+                console.error("Error processing turf payment:", error);
+                alert("There was an error processing your payment. Please try again.");
+            }
+        }
+        
+        // Handle net payment
+        function handleNetPayment() {
+            try {
+                // Validate customer information first
+                console.log("Validating customer info for net payment...");
+                
+                // First, make sure customer info section is visible
+                document.getElementById('customerInfoSection').classList.add('active');
+                document.querySelector('.customer-info-toggle').classList.add('active');
+                
+                const validationResult = validateCustomerInfo();
+                console.log("Validation result:", validationResult);
+                
+                if (!validationResult) {
+                    document.getElementById('paymentError').classList.add('visible');
+                    return;
+                }
+                
+                // Get the latest cost value directly from the DOM
+                const updatedCostNetText = document.getElementById('costNet').textContent;
+                const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
+                
+                // Get all cage specifications
+                const length = document.getElementById('length').value;
+                const width = document.getElementById('width').value;
+                const height = document.getElementById('height').value;
+                const cageCount = document.getElementById('cageCount').value;
+                const includeHardware = document.getElementById('includeHardwareKits').checked ? "Yes" : "No";
+                const totalNetSqFt = document.getElementById('totalSquareFeetNet').textContent;
+                const hardwareInfo = document.getElementById('hardwareKitsInfo').textContent;
+                
+                // Get customer information
+                const customerName = document.getElementById('customerName').value;
+                const customerEmail = document.getElementById('customerEmail').value;
+                const customerPhone = document.getElementById('customerPhone').value;
+                const customerAddress = document.getElementById('customerAddress').value;
+                const customerCity = document.getElementById('customerCity').value;
+                const customerState = document.getElementById('customerState').value;
+                const customerZip = document.getElementById('customerZip').value;
+                const customerCountry = document.getElementById('customerCountry').value;
+                const customerNotes = document.getElementById('customerNotes').value;
+                
+                // Create a detailed order summary
+                const orderSummary = `
+                    ORDER SUMMARY - NET
+                    -------------------
+                    Cage Dimensions: ${length}'L x ${width}'W x ${height}'H
+                    Number of Cages: ${cageCount}
+                    Include Hardware: ${includeHardware}
+                    Total Net Square Feet: ${totalNetSqFt}
+                    Hardware Details: ${hardwareInfo}
+                    
+                    CUSTOMER INFORMATION
+                    -------------------
+                    Name: ${customerName}
+                    Email: ${customerEmail}
+                    Phone: ${customerPhone}
+                    Address: ${customerAddress}, ${customerCity}, ${customerState} ${customerZip}, ${customerCountry}
+                    Special Instructions: ${customerNotes || "None"}
+                    
+                    TOTAL COST: $${updatedCostNet.toFixed(2)}
+                `;
+                
+                // Display the order summary and simulate payment
+                alert("Payment Processing Simulation\n\n" + orderSummary);
+                
+                // Simulate successful payment
+                setTimeout(function() {
+                    alert("Net payment completed successfully! Order ID: SIM" + Math.floor(Math.random() * 1000000));
+                }, 1000);
+                
+            } catch (error) {
+                console.error("Error processing net payment:", error);
+                alert("There was an error processing your payment. Please try again.");
+            }
         }
         
         // Set up include seam costs checkbox
@@ -1758,147 +1953,6 @@
             });
         });
         
-        // Initialize PayPal button for turf
-        function initPayPalButtonTurf() {
-            // Clear any existing buttons first
-            document.getElementById('paypal-button-container-turf').innerHTML = '';
-            
-            // Render the PayPal button
-            paypal.Buttons({
-                // Set up the transaction
-                createOrder: function(data, actions) {
-    try {
-        // Validate customer information first
-        console.log("Validating customer info for turf payment...");
-        
-        // First, make sure customer info section is visible
-        document.getElementById('customerInfoSection').classList.add('active');
-        document.querySelector('.customer-info-toggle').classList.add('active');
-        
-        // Fill test data for debugging
-        fillTestCustomerData();
-        
-        const validationResult = validateCustomerInfo();
-        console.log("Validation result:", validationResult);
-        
-        if (!validationResult) {
-            document.getElementById('paymentError').classList.add('visible');
-            return Promise.reject(new Error('Customer validation failed'));
-        }
-        
-        // Get the latest cost value directly from the DOM
-        const updatedCostTurfText = document.getElementById('costTurf').textContent;
-        const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
-        console.log("Turf cost:", updatedCostTurf);
-        
-        // Create a simplified order for testing
-        console.log("Creating simplified PayPal order for testing");
-        return actions.order.create({
-            purchase_units: [{
-                description: "Batting Cage Turf",
-                amount: {
-                    value: updatedCostTurf.toFixed(2)
-                }
-            }]
-        });
-    } catch (error) {
-        console.error("Error in createOrder for turf:", error);
-        alert("There was an error processing your order: " + error.message);
-        return Promise.reject(error);
-    }
-},
-                
-                // Finalize the transaction
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(orderData) {
-                        // Show a success message
-                        alert('Turf payment completed! Transaction ID: ' + orderData.id);
-                    });
-                },
-                
-                onError: function(err) {
-                    console.error('PayPal Turf Button Error:', err);
-                    alert("There was an error with PayPal. Please try again.");
-                },
-                
-                style: {
-                    layout: 'vertical',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'paypal',
-                    height: 40
-                }
-            }).render('#paypal-button-container-turf');
-        }
-        
-        // Initialize PayPal button for net
-        function initPayPalButtonNet() {
-            // Clear any existing buttons first
-            document.getElementById('paypal-button-container-net').innerHTML = '';
-            
-            // Render the PayPal button
-            paypal.Buttons({
-                // Set up the transaction
-                createOrder: function(data, actions) {
-    try {
-        // Validate customer information first
-        console.log("Validating customer info for net payment...");
-        const validationResult = validateCustomerInfo();
-        console.log("Validation result:", validationResult);
-        
-        if (!validationResult) {
-            // Show the customer info section if validation fails
-            document.getElementById('customerInfoSection').classList.add('active');
-            document.querySelector('.customer-info-toggle').classList.add('active');
-            document.getElementById('paymentError').classList.add('visible');
-            return Promise.reject(new Error('Customer validation failed'));
-        }
-        
-        // Get the latest cost value directly from the DOM
-        const updatedCostNetText = document.getElementById('costNet').textContent;
-        const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
-        console.log("Net cost:", updatedCostNet);
-        
-        // Create a simplified order for testing
-        console.log("Creating simplified PayPal order for testing");
-        return actions.order.create({
-            purchase_units: [{
-                description: "Batting Cage Net",
-                amount: {
-                    value: updatedCostNet.toFixed(2)
-                }
-            }]
-        });
-    } catch (error) {
-        console.error("Error in createOrder for net:", error);
-        alert("There was an error processing your order: " + error.message);
-        return Promise.reject(error);
-    }
-},
-                
-                // Finalize the transaction
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(orderData) {
-                        // Show a success message
-                        alert('Net payment completed! Transaction ID: ' + orderData.id);
-                    });
-                },
-                
-                onError: function(err) {
-                    console.error('PayPal Net Button Error:', err);
-                    alert("There was an error with PayPal. Please try again.");
-                },
-                
-                style: {
-                    layout: 'vertical',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'paypal',
-                    height: 40
-                }
-            }).render('#paypal-button-container-net');
-        }
-        
         // Set up customer information section toggle
         function setupCustomerInfoToggle() {
             const customerInfoHeader = document.getElementById('customerInfoHeader');
@@ -1983,9 +2037,6 @@
         // Initialize the scene when the page loads
         window.onload = function() {
             init();
-            // Initialize PayPal buttons
-            initPayPalButtonTurf();
-            initPayPalButtonNet();
             // Set up customer info toggle
             setupCustomerInfoToggle();
             
@@ -1995,6 +2046,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
