@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-    <!-- PayPal SDK with Pay Later disabled -->
+  <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=AaIgMrEkbAeIM9B6e0o_OYbWHohAUHqGOUbnvtcpreqO_DhDvLWBNmS72s4IgkHzWT1APuw358gKCsxz&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -524,6 +524,73 @@
             display: flex;
             align-items: center;
         }
+
+        .customer-info-section {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: rgba(0, 255, 157, 0.1);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            display: none; /* Hidden by default */
+        }
+
+        .customer-info-section.active {
+            display: block;
+        }
+
+        .customer-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            background-color: rgba(0, 255, 157, 0.15);
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .customer-info-header h2 {
+            font-size: 0.9rem;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .customer-info-toggle {
+            color: var(--text);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .customer-info-toggle.active {
+            transform: rotate(180deg);
+        }
+
+        .customer-form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .customer-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #ff3e3e;
+            margin-left: 0.25rem;
+        }
+
+        .payment-error {
+            color: #ff3e3e;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .payment-error.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -651,6 +718,57 @@
                         <span class="cost-label" id="costNetLabel">Net @ $0.43 sf</span>
                         <div class="cost-value" id="costNet">$1,276.24</div>
                         <div class="paypal-button-container" id="paypal-button-container-net"></div>
+                    </div>
+                </div>
+                
+                <!-- Customer Information Section -->
+                <div class="customer-info-header" id="customerInfoHeader">
+                    <h2>Customer Information</h2>
+                    <span class="customer-info-toggle">▼</span>
+                </div>
+                <div class="customer-info-section" id="customerInfoSection">
+                    <div class="customer-form-group">
+                        <label for="customerName" class="required-field">Full Name</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerEmail" class="required-field">Email</label>
+                        <input type="email" id="customerEmail" name="customerEmail" required>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerPhone" class="required-field">Phone</label>
+                        <input type="tel" id="customerPhone" name="customerPhone" required>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerAddress" class="required-field">Street Address</label>
+                        <input type="text" id="customerAddress" name="customerAddress" required>
+                    </div>
+                    <div class="customer-form-row">
+                        <div class="customer-form-group">
+                            <label for="customerCity" class="required-field">City</label>
+                            <input type="text" id="customerCity" name="customerCity" required>
+                        </div>
+                        <div class="customer-form-group">
+                            <label for="customerState" class="required-field">State</label>
+                            <input type="text" id="customerState" name="customerState" required>
+                        </div>
+                    </div>
+                    <div class="customer-form-row">
+                        <div class="customer-form-group">
+                            <label for="customerZip" class="required-field">ZIP Code</label>
+                            <input type="text" id="customerZip" name="customerZip" required>
+                        </div>
+                        <div class="customer-form-group">
+                            <label for="customerCountry" class="required-field">Country</label>
+                            <input type="text" id="customerCountry" name="customerCountry" value="United States" required>
+                        </div>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerNotes">Special Instructions (Optional)</label>
+                        <textarea id="customerNotes" name="customerNotes" rows="3"></textarea>
+                    </div>
+                    <div class="payment-error" id="paymentError">
+                        Please fill out all required fields before proceeding with payment.
                     </div>
                 </div>
                 
@@ -1716,16 +1834,41 @@
             }).render('#paypal-button-container-net');
         }
         
+        // Set up customer information section toggle
+        function setupCustomerInfoToggle() {
+            const customerInfoHeader = document.getElementById('customerInfoHeader');
+            const customerInfoSection = document.getElementById('customerInfoSection');
+            const customerInfoToggle = document.querySelector('.customer-info-toggle');
+            
+            customerInfoHeader.addEventListener('click', function() {
+                customerInfoSection.classList.toggle('active');
+                customerInfoToggle.classList.toggle('active');
+            });
+            
+            // Add event listeners to clear error styling on input
+            const allInputs = document.querySelectorAll('#customerInfoSection input, #customerInfoSection textarea');
+            allInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.style.borderColor = 'rgba(0, 255, 157, 0.3)';
+                    document.getElementById('paymentError').classList.remove('visible');
+                });
+            });
+        }
+        
         // Initialize the scene when the page loads
         window.onload = function() {
             init();
             // Initialize PayPal buttons
             initPayPalButtonTurf();
             initPayPalButtonNet();
+            // Set up customer info toggle
+            setupCustomerInfoToggle();
         };
     </script>
 </body>
 </html>
+
+
 
 
 
