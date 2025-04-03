@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-   <!-- PayPal SDK with Pay Later disabled -->
+ <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -1208,7 +1208,7 @@
                 document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf + Hardware';
             } else {
                 // Use base net cost only
-                document.getElementById('costNet').textContent = '$' + baseNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, minimumFractionDigits: 2});
+                document.getElementById('costNet').textContent = '$' + baseNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf';
             }
             
@@ -1764,89 +1764,100 @@
             paypal.Buttons({
                 // Set up the transaction
                 createOrder: function(data, actions) {
-                    // Validate customer information first
-                    console.log("Validating customer info...");
-                    const validationResult = validateCustomerInfo();
-                    console.log("Validation result:", validationResult);
-                    
-                    if (!validationResult) {
-                        // Show the customer info section if validation fails
+                    try {
+                        // Validate customer information first
+                        console.log("Validating customer info for turf payment...");
+                        
+                        // First, make sure customer info section is visible
                         document.getElementById('customerInfoSection').classList.add('active');
                         document.querySelector('.customer-info-toggle').classList.add('active');
-                        document.getElementById('paymentError').classList.add('visible');
-                        return Promise.reject(new Error('Please fill out all required customer information'));
-                    }
-                    
-                    // Get the latest cost value directly from the DOM
-                    const updatedCostTurfText = document.getElementById('costTurf').textContent;
-                    const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
-                    
-                    // Get all cage specifications
-                    const length = document.getElementById('length').value;
-                    const width = document.getElementById('width').value;
-                    const height = document.getElementById('height').value;
-                    const cageCount = document.getElementById('cageCount').value;
-                    const isFlipped = document.getElementById('flipLines').checked ? "Yes" : "No";
-                    const includeSeams = document.getElementById('includeSeamCosts').checked ? "Yes" : "No";
-                    const totalRollSqFt = document.getElementById('totalRollSquareFeet').textContent;
-                    const seamInfo = document.getElementById('totalSeamLength').textContent;
-                    
-                    // Get customer information
-                    const customerName = document.getElementById('customerName').value;
-                    const customerEmail = document.getElementById('customerEmail').value;
-                    const customerPhone = document.getElementById('customerPhone').value;
-                    const customerAddress = document.getElementById('customerAddress').value;
-                    const customerCity = document.getElementById('customerCity').value;
-                    const customerState = document.getElementById('customerState').value;
-                    const customerZip = document.getElementById('customerZip').value;
-                    const customerCountry = document.getElementById('customerCountry').value;
-                    const customerNotes = document.getElementById('customerNotes').value;
-                    
-                    // Create a detailed description for the order
-                    const orderDescription = `Batting Cage Turf: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalRollSqFt} sq ft`;
-                    
-                    // Create a custom_id with all the detailed specifications
-                    const customId = JSON.stringify({
-                        specifications: {
-                            length: length,
-                            width: width,
-                            height: height,
-                            cageCount: cageCount,
-                            flippedRolls: isFlipped,
-                            includeSeams: includeSeams,
-                            totalRollSqFt: totalRollSqFt,
-                            seamDetails: seamInfo
-                        },
-                        customer: {
-                            email: customerEmail,
-                            phone: customerPhone,
-                            notes: customerNotes
+                        
+                        // Fill test data for debugging
+                        fillTestCustomerData();
+                        
+                        const validationResult = validateCustomerInfo();
+                        console.log("Validation result:", validationResult);
+                        
+                        if (!validationResult) {
+                            document.getElementById('paymentError').classList.add('visible');
+                            return actions.reject();
                         }
-                    });
-                    
-                    console.log("Creating PayPal order with description:", orderDescription);
-                    
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: orderDescription,
-                            custom_id: customId,
-                            amount: {
-                                value: updatedCostTurf.toFixed(2)
+                        
+                        // Get the latest cost value directly from the DOM
+                        const updatedCostTurfText = document.getElementById('costTurf').textContent;
+                        const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
+                        
+                        // Get all cage specifications
+                        const length = document.getElementById('length').value;
+                        const width = document.getElementById('width').value;
+                        const height = document.getElementById('height').value;
+                        const cageCount = document.getElementById('cageCount').value;
+                        const isFlipped = document.getElementById('flipLines').checked ? "Yes" : "No";
+                        const includeSeams = document.getElementById('includeSeamCosts').checked ? "Yes" : "No";
+                        const totalRollSqFt = document.getElementById('totalRollSquareFeet').textContent;
+                        const seamInfo = document.getElementById('totalSeamLength').textContent;
+                        
+                        // Get customer information
+                        const customerName = document.getElementById('customerName').value;
+                        const customerEmail = document.getElementById('customerEmail').value;
+                        const customerPhone = document.getElementById('customerPhone').value;
+                        const customerAddress = document.getElementById('customerAddress').value;
+                        const customerCity = document.getElementById('customerCity').value;
+                        const customerState = document.getElementById('customerState').value;
+                        const customerZip = document.getElementById('customerZip').value;
+                        const customerCountry = document.getElementById('customerCountry').value;
+                        const customerNotes = document.getElementById('customerNotes').value;
+                        
+                        // Create a detailed description for the order
+                        const orderDescription = `Batting Cage Turf: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalRollSqFt} sq ft`;
+                        
+                        // Create a custom_id with all the detailed specifications
+                        const customId = JSON.stringify({
+                            specifications: {
+                                length: length,
+                                width: width,
+                                height: height,
+                                cageCount: cageCount,
+                                flippedRolls: isFlipped,
+                                includeSeams: includeSeams,
+                                totalRollSqFt: totalRollSqFt,
+                                seamDetails: seamInfo
                             },
-                            shipping: {
-                                name: {
-                                    full_name: customerName
-                                },
-                                address: {
-                                    address_line_1: customerAddress,
-                                    admin_area_2: customerCity,
-                                    admin_area_1: customerState,
-                                    postal_code: customerZip,
-                                    country_code: customerCountry === "United States" ? "US" : customerCountry
-                                }
+                            customer: {
+                                email: customerEmail,
+                                phone: customerPhone,
+                                notes: customerNotes
                             }
-                        }]
-                    });
+                        });
+                        
+                        console.log("Creating PayPal order with description:", orderDescription);
+                        
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: orderDescription,
+                                custom_id: customId,
+                                amount: {
+                                    value: updatedCostTurf.toFixed(2)
+                                },
+                                shipping: {
+                                    name: {
+                                        full_name: customerName
+                                    },
+                                    address: {
+                                        address_line_1: customerAddress,
+                                        admin_area_2: customerCity,
+                                        admin_area_1: customerState,
+                                        postal_code: customerZip,
+                                        country_code: customerCountry === "United States" ? "US" : customerCountry
+                                    }
+                                }
+                            }]
+                        });
+                    } catch (error) {
+                        console.error("Error in createOrder for turf:", error);
+                        alert("There was an error processing your order. Please try again.");
+                        return actions.reject();
+                    }
                 },
                 
                 // Finalize the transaction
@@ -1855,6 +1866,11 @@
                         // Show a success message
                         alert('Turf payment completed! Transaction ID: ' + orderData.id);
                     });
+                },
+                
+                onError: function(err) {
+                    console.error('PayPal Turf Button Error:', err);
+                    alert("There was an error with PayPal. Please try again.");
                 },
                 
                 style: {
@@ -1876,87 +1892,93 @@
             paypal.Buttons({
                 // Set up the transaction
                 createOrder: function(data, actions) {
-                    // Validate customer information first
-                    console.log("Validating customer info...");
-                    const validationResult = validateCustomerInfo();
-                    console.log("Validation result:", validationResult);
-                    
-                    if (!validationResult) {
-                        // Show the customer info section if validation fails
-                        document.getElementById('customerInfoSection').classList.add('active');
-                        document.querySelector('.customer-info-toggle').classList.add('active');
-                        document.getElementById('paymentError').classList.add('visible');
-                        return Promise.reject(new Error('Please fill out all required customer information'));
-                    }
-                    
-                    // Get the latest cost value directly from the DOM
-                    const updatedCostNetText = document.getElementById('costNet').textContent;
-                    const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
-                    
-                    // Get all cage specifications
-                    const length = document.getElementById('length').value;
-                    const width = document.getElementById('width').value;
-                    const height = document.getElementById('height').value;
-                    const cageCount = document.getElementById('cageCount').value;
-                    const includeHardware = document.getElementById('includeHardwareKits').checked ? "Yes" : "No";
-                    const totalNetSqFt = document.getElementById('totalSquareFeetNet').textContent;
-                    const hardwareInfo = document.getElementById('hardwareKitsInfo').textContent;
-                    
-                    // Get customer information
-                    const customerName = document.getElementById('customerName').value;
-                    const customerEmail = document.getElementById('customerEmail').value;
-                    const customerPhone = document.getElementById('customerPhone').value;
-                    const customerAddress = document.getElementById('customerAddress').value;
-                    const customerCity = document.getElementById('customerCity').value;
-                    const customerState = document.getElementById('customerState').value;
-                    const customerZip = document.getElementById('customerZip').value;
-                    const customerCountry = document.getElementById('customerCountry').value;
-                    const customerNotes = document.getElementById('customerNotes').value;
-                    
-                    // Create a detailed description for the order
-                    const orderDescription = `Batting Cage Net: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalNetSqFt} sq ft`;
-                    
-                    // Create a custom_id with all the detailed specifications
-                    const customId = JSON.stringify({
-                        specifications: {
-                            length: length,
-                            width: width,
-                            height: height,
-                            cageCount: cageCount,
-                            includeHardware: includeHardware,
-                            totalNetSqFt: totalNetSqFt,
-                            hardwareDetails: hardwareInfo
-                        },
-                        customer: {
-                            email: customerEmail,
-                            phone: customerPhone,
-                            notes: customerNotes
+                    try {
+                        // Validate customer information first
+                        console.log("Validating customer info for net payment...");
+                        const validationResult = validateCustomerInfo();
+                        console.log("Validation result:", validationResult);
+                        
+                        if (!validationResult) {
+                            // Show the customer info section if validation fails
+                            document.getElementById('customerInfoSection').classList.add('active');
+                            document.querySelector('.customer-info-toggle').classList.add('active');
+                            document.getElementById('paymentError').classList.add('visible');
+                            return actions.reject();
                         }
-                    });
-                    
-                    console.log("Creating PayPal order with description:", orderDescription);
-                    
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: orderDescription,
-                            custom_id: customId,
-                            amount: {
-                                value: updatedCostNet.toFixed(2)
+                        
+                        // Get the latest cost value directly from the DOM
+                        const updatedCostNetText = document.getElementById('costNet').textContent;
+                        const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
+                        
+                        // Get all cage specifications
+                        const length = document.getElementById('length').value;
+                        const width = document.getElementById('width').value;
+                        const height = document.getElementById('height').value;
+                        const cageCount = document.getElementById('cageCount').value;
+                        const includeHardware = document.getElementById('includeHardwareKits').checked ? "Yes" : "No";
+                        const totalNetSqFt = document.getElementById('totalSquareFeetNet').textContent;
+                        const hardwareInfo = document.getElementById('hardwareKitsInfo').textContent;
+                        
+                        // Get customer information
+                        const customerName = document.getElementById('customerName').value;
+                        const customerEmail = document.getElementById('customerEmail').value;
+                        const customerPhone = document.getElementById('customerPhone').value;
+                        const customerAddress = document.getElementById('customerAddress').value;
+                        const customerCity = document.getElementById('customerCity').value;
+                        const customerState = document.getElementById('customerState').value;
+                        const customerZip = document.getElementById('customerZip').value;
+                        const customerCountry = document.getElementById('customerCountry').value;
+                        const customerNotes = document.getElementById('customerNotes').value;
+                        
+                        // Create a detailed description for the order
+                        const orderDescription = `Batting Cage Net: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalNetSqFt} sq ft`;
+                        
+                        // Create a custom_id with all the detailed specifications
+                        const customId = JSON.stringify({
+                            specifications: {
+                                length: length,
+                                width: width,
+                                height: height,
+                                cageCount: cageCount,
+                                includeHardware: includeHardware,
+                                totalNetSqFt: totalNetSqFt,
+                                hardwareDetails: hardwareInfo
                             },
-                            shipping: {
-                                name: {
-                                    full_name: customerName
-                                },
-                                address: {
-                                    address_line_1: customerAddress,
-                                    admin_area_2: customerCity,
-                                    admin_area_1: customerState,
-                                    postal_code: customerZip,
-                                    country_code: customerCountry === "United States" ? "US" : customerCountry
-                                }
+                            customer: {
+                                email: customerEmail,
+                                phone: customerPhone,
+                                notes: customerNotes
                             }
-                        }]
-                    });
+                        });
+                        
+                        console.log("Creating PayPal order with description:", orderDescription);
+                        
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: orderDescription,
+                                custom_id: customId,
+                                amount: {
+                                    value: updatedCostNet.toFixed(2)
+                                },
+                                shipping: {
+                                    name: {
+                                        full_name: customerName
+                                    },
+                                    address: {
+                                        address_line_1: customerAddress,
+                                        admin_area_2: customerCity,
+                                        admin_area_1: customerState,
+                                        postal_code: customerZip,
+                                        country_code: customerCountry === "United States" ? "US" : customerCountry
+                                    }
+                                }
+                            }]
+                        });
+                    } catch (error) {
+                        console.error("Error in createOrder for net:", error);
+                        alert("There was an error processing your order. Please try again.");
+                        return actions.reject();
+                    }
                 },
                 
                 // Finalize the transaction
@@ -1965,6 +1987,11 @@
                         // Show a success message
                         alert('Net payment completed! Transaction ID: ' + orderData.id);
                     });
+                },
+                
+                onError: function(err) {
+                    console.error('PayPal Net Button Error:', err);
+                    alert("There was an error with PayPal. Please try again.");
                 },
                 
                 style: {
@@ -2073,6 +2100,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
