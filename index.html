@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-    <!-- PayPal SDK with Pay Later disabled -->
+   <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -766,6 +766,9 @@
                     <div class="customer-form-group">
                         <label for="customerNotes">Special Instructions (Optional)</label>
                         <textarea id="customerNotes" name="customerNotes" rows="3"></textarea>
+                    </div>
+                    <div class="customer-form-group" style="margin-top: 1rem;">
+                        <button type="button" id="fillTestDataBtn" style="background-color: var(--primary-dark); color: var(--text); border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;">Fill Test Data (For Testing)</button>
                     </div>
                     <div class="payment-error" id="paymentError">
                         Please fill out all required fields before proceeding with payment.
@@ -1762,12 +1765,16 @@
                 // Set up the transaction
                 createOrder: function(data, actions) {
                     // Validate customer information first
-                    if (!validateCustomerInfo()) {
+                    console.log("Validating customer info...");
+                    const validationResult = validateCustomerInfo();
+                    console.log("Validation result:", validationResult);
+                    
+                    if (!validationResult) {
                         // Show the customer info section if validation fails
                         document.getElementById('customerInfoSection').classList.add('active');
                         document.querySelector('.customer-info-toggle').classList.add('active');
                         document.getElementById('paymentError').classList.add('visible');
-                        return false; // Prevent order creation
+                        return Promise.reject(new Error('Please fill out all required customer information'));
                     }
                     
                     // Get the latest cost value directly from the DOM
@@ -1816,6 +1823,8 @@
                             notes: customerNotes
                         }
                     });
+                    
+                    console.log("Creating PayPal order with description:", orderDescription);
                     
                     return actions.order.create({
                         purchase_units: [{
@@ -1868,12 +1877,16 @@
                 // Set up the transaction
                 createOrder: function(data, actions) {
                     // Validate customer information first
-                    if (!validateCustomerInfo()) {
+                    console.log("Validating customer info...");
+                    const validationResult = validateCustomerInfo();
+                    console.log("Validation result:", validationResult);
+                    
+                    if (!validationResult) {
                         // Show the customer info section if validation fails
                         document.getElementById('customerInfoSection').classList.add('active');
                         document.querySelector('.customer-info-toggle').classList.add('active');
                         document.getElementById('paymentError').classList.add('visible');
-                        return false; // Prevent order creation
+                        return Promise.reject(new Error('Please fill out all required customer information'));
                     }
                     
                     // Get the latest cost value directly from the DOM
@@ -1920,6 +1933,8 @@
                             notes: customerNotes
                         }
                     });
+                    
+                    console.log("Creating PayPal order with description:", orderDescription);
                     
                     return actions.order.create({
                         purchase_units: [{
@@ -1985,6 +2000,7 @@
         
         // Validate customer information
         function validateCustomerInfo() {
+            console.log("Running customer info validation");
             const requiredFields = [
                 'customerName',
                 'customerEmail',
@@ -1997,6 +2013,7 @@
             ];
             
             let isValid = true;
+            let invalidFields = [];
             
             // Check each required field
             requiredFields.forEach(fieldId => {
@@ -2004,6 +2021,7 @@
                 if (!field.value.trim()) {
                     field.style.borderColor = '#ff3e3e';
                     isValid = false;
+                    invalidFields.push(fieldId);
                 }
             });
             
@@ -2013,9 +2031,31 @@
             if (emailField.value.trim() && !emailPattern.test(emailField.value)) {
                 emailField.style.borderColor = '#ff3e3e';
                 isValid = false;
+                invalidFields.push('customerEmail (invalid format)');
+            }
+            
+            console.log("Validation result:", isValid, "Invalid fields:", invalidFields);
+            
+            // If validation fails, make sure the customer info section is visible
+            if (!isValid) {
+                document.getElementById('customerInfoSection').classList.add('active');
+                document.querySelector('.customer-info-toggle').classList.add('active');
+                document.getElementById('paymentError').classList.add('visible');
             }
             
             return isValid;
+        }
+        
+        // Add a function to pre-fill customer info with test data for debugging
+        function fillTestCustomerData() {
+            document.getElementById('customerName').value = "Test Customer";
+            document.getElementById('customerEmail').value = "test@example.com";
+            document.getElementById('customerPhone').value = "555-123-4567";
+            document.getElementById('customerAddress').value = "123 Test St";
+            document.getElementById('customerCity').value = "Test City";
+            document.getElementById('customerState').value = "TX";
+            document.getElementById('customerZip').value = "12345";
+            document.getElementById('customerCountry').value = "United States";
         }
         
         // Initialize the scene when the page loads
@@ -2026,10 +2066,14 @@
             initPayPalButtonNet();
             // Set up customer info toggle
             setupCustomerInfoToggle();
+            
+            // Add test data button functionality
+            document.getElementById('fillTestDataBtn').addEventListener('click', fillTestCustomerData);
         };
     </script>
 </body>
 </html>
+
 
 
 
