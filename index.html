@@ -1251,20 +1251,32 @@
       
       // Load state cost data
       function loadStateCostData() {
-          // Sample data - in production this would be loaded from a file or API
-          stateCostData = {
-              "AL": 0.12, "AK": 0, "AZ": 0.15, "AR": 0.11, "CA": 0.18, "CO": 0.14, 
-              "CT": 0.16, "DE": 0.13, "FL": 0.14, "GA": 0.12, "HI": 0, "ID": 0.15, 
-              "IL": 0.13, "IN": 0.12, "IA": 0.11, "KS": 0.11, "KY": 0.12, "LA": 0.12, 
-              "ME": 0.16, "MD": 0.14, "MA": 0.16, "MI": 0.13, "MN": 0.13, "MS": 0.11, 
-              "MO": 0.12, "MT": 0.15, "NE": 0.12, "NV": 0.15, "NH": 0.15, "NJ": 0.15, 
-              "NM": 0.14, "NY": 0.16, "NC": 0.13, "ND": 0.14, "OH": 0.13, "OK": 0.12, 
-              "OR": 0.16, "PA": 0.14, "RI": 0.15, "SC": 0.12, "SD": 0.13, "TN": 0.12, 
-              "TX": 0.11, "UT": 0.14, "VT": 0.15, "VA": 0.13, "WA": 0.16, "WV": 0.13, 
-              "WI": 0.13, "WY": 0.14, "DC": 0.15
-          };
-          
-          console.log('State cost data loaded:', stateCostData);
+          fetch('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/CoPeSt%20-%20Sheet1-nIbtSVhDiMbedBOTguDyAD5QYal2w5.csv')
+              .then(response => response.text())
+              .then(data => {
+                  // Parse CSV data
+                  const lines = data.split('\n');
+                  const headers = lines[0].split(',');
+                  
+                  // Skip header row and process data rows
+                  for (let i = 1; i < lines.length; i++) {
+                      const currentLine = lines[i].split(',');
+                      if (currentLine.length >= 2) {
+                          // Normalize state abbreviation to uppercase
+                          const state = currentLine[0].trim().toUpperCase();
+                          // Remove $ and convert to number
+                          const costPerSqFt = parseFloat(currentLine[1].replace('$', '').trim());
+                          if (state && !isNaN(costPerSqFt)) {
+                              stateCostData[state] = costPerSqFt;
+                          }
+                      }
+                  }
+                  
+                  console.log('State cost data loaded:', stateCostData);
+              })
+              .catch(error => {
+                  console.error('Error loading state cost data:', error);
+              });
       }
       
       // Set up shipping calculator
@@ -2458,6 +2470,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
