@@ -1,2035 +1,2464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X8ZRM5LHC6"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-X8ZRM5LHC6');
-    </script>
-    <title>ATX TURF - Batting Cage Dimensions</title>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-    <!-- PayPal SDK with Pay Later disabled -->
-    <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
-    <style>
-        :root {
-            --primary: #00ff9d;
-            --primary-dark: #00cc7d;
-            --secondary: #0a1a12;
-            --accent: #00ffcc;
-            --text: #e0ffe9;
-            --background: #0a1a12;
-            --card: #112218;
-            --atx-green: #008f39; /* Darker green for ATXTurf text */
-            --floor-green: #00ff4c; /* Brighter green for the floor */
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--background);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.75rem;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 204, 0.05) 0%, transparent 20%);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                grid-template-columns: 1.5fr 1fr;
-            }
-        }
-
-        .form-container {
-            background-color: var(--card);
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
-            border: 1px solid rgba(0, 255, 157, 0.1);
-            backdrop-filter: blur(4px);
-        }
-
-        h1 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            padding-bottom: 0.25rem;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 25%;
-            width: 50%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
-
-        .form-group {
-            margin-bottom: 0.5rem;
-            position: relative;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-            font-weight: 500;
-            font-size: 0.85rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.3);
-            background-color: rgba(10, 26, 18, 0.8);
-            color: var(--text);
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        /* Ensure number input controls are visible */
-        input[type="number"] {
-            -moz-appearance: textfield; /* Firefox */
-            padding-right: 1.5rem; /* Make room for custom controls */
-        }
-
-        /* Hide default controls but keep them accessible */
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { 
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* Custom number controls */
-        .number-controls {
-            position: absolute;
-            right: 0;
-            top: 1.4rem; /* Position below label */
-            display: flex;
-            flex-direction: column;
-            height: calc(100% - 1.4rem);
-        }
-
-        .number-control {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.5rem;
-            height: 50%;
-            background-color: rgba(0, 255, 157, 0.2);
-            color: var(--text);
-            font-size: 0.8rem;
-            cursor: pointer;
-            user-select: none;
-            transition: background-color 0.2s;
-        }
-
-        .number-control:first-child {
-            border-top-right-radius: 0.5rem;
-        }
-
-        .number-control:last-child {
-            border-bottom-right-radius: 0.5rem;
-        }
-
-        .number-control:hover {
-            background-color: rgba(0, 255, 157, 0.4);
-        }
-
-        .number-control:active {
-            background-color: rgba(0, 255, 157, 0.6);
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
-        }
-
-        /* Checkbox styling */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 157, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.2);
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            width: auto;
-            margin-right: 0.5rem;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .checkbox-container label {
-            margin-bottom: 0;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        /* Remnant roll info styling */
-        .remnant-info {
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 204, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 204, 0.2);
-        }
-
-        .remnant-info-title {
-            display: block;
-            font-size: 0.8rem;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .remnant-info-content {
-            font-size: 0.85rem;
-            color: var(--text);
-        }
-
-        .remnant-info-line {
-            margin-bottom: 0.25rem;
-        }
-
-        .remnant-info-value {
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        /* Seam info styling */
-        .seam-info {
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 157, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.2);
-        }
-
-        .seam-info-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .seam-info-label {
-            font-size: 0.8rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .seam-info-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .inline-checkbox {
-            display: flex;
-            align-items: center;
-            margin-left: 1rem;
-        }
-
-        .inline-checkbox input[type="checkbox"] {
-            margin-right: 0.25rem;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .inline-checkbox label {
-            margin-bottom: 0;
-            cursor: pointer;
-            font-size: 0.75rem;
-        }
-
-        .totals-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .total-square-feet {
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 157, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.2);
-        }
-
-        .total-square-feet-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .total-square-feet-label {
-            font-size: 0.8rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .total-square-feet-value {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .total-square-feet-net {
-            text-align: center;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 204, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 204, 0.2);
-        }
-
-        .cost-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .cost-turf {
-            text-align: center;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 157, 0.15);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.3);
-        }
-
-        .cost-net {
-            text-align: center;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 204, 0.15);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 204, 0.3);
-        }
-
-        .cost-label {
-            display: block;
-            font-size: 0.7rem;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-        }
-
-        .cost-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .total-cost-container {
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-
-        .total-cost {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background: linear-gradient(90deg, rgba(0, 255, 157, 0.2), rgba(0, 255, 204, 0.2));
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.3);
-        }
-
-        .total-cost-label {
-            display: block;
-            font-size: 0.7rem;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .total-cost-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .additional-note {
-            text-align: center;
-            margin-top: 0.5rem;
-            font-size: 0.7rem;
-            color: rgba(224, 255, 233, 0.7);
-            font-style: italic;
-        }
-
-        .gravel-note {
-            text-align: center;
-            margin-top: 0.25rem;
-            font-size: 0.7rem;
-            color: rgba(224, 255, 233, 0.7);
-        }
-
-        .canvas-container {
-            background-color: var(--card);
-            border-radius: 0.75rem;
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 16/15.21;
-            box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
-            border: 1px solid rgba(0, 255, 157, 0.1);
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .dimensions-display {
-            position: absolute;
-            bottom: 1rem;
-            left: 1rem;
-            background-color: rgba(10, 26, 18, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border-left: 3px solid var(--primary);
-            font-size: 0.5rem;
-        }
-
-        .instructions {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(10, 26, 18, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.7rem;
-            color: var(--text);
-            opacity: 0.8;
-        }
-
-        .powered-by {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background-color: rgba(10, 26, 18, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem; /* Increased from 0.7rem */
-            color: var(--text);
-            border-left: 3px solid var(--atx-green);
-            z-index: 10;
-        }
-
-        .powered-by span {
-            color: var(--atx-green);
-            font-weight: 600;
-        }
-
-        .powered-by a {
-            text-decoration: none;
-            color: inherit;
-            transition: opacity 0.2s ease;
-        }
-
-        .powered-by a:hover {
-            opacity: 0.8;
-        }
-
-        /* Mobile-specific adjustments */
-        @media (max-width: 767px) {
-            .container {
-                gap: 0.5rem;
-            }
-            
-            .canvas-container {
-                aspect-ratio: 16/12; /* Shorter viewport on mobile */
-            }
-            
-            .form-container {
-                padding: 0.75rem;
-            }
-            
-            .dimensions-display, .instructions {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.6rem;
-            }
-            
-            .powered-by {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.7rem; /* Slightly larger on mobile too */
-            }
-            
-            /* Ensure number controls are visible and easy to tap on mobile */
-            .number-control {
-                width: 1.8rem;
-                font-size: 1rem;
-            }
-            
-            /* Ensure instructions and powered-by don't overlap */
-            .instructions {
-                top: 3rem;
-            }
-        }
-
-        .paypal-button-container {
-            margin-top: 0.5rem;
-            width: 100%;
-            max-width: 250px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .seam-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .seam-info-value-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .customer-info-section {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background-color: rgba(0, 255, 157, 0.1);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(0, 255, 157, 0.2);
-            display: none; /* Hidden by default */
-        }
-
-        .customer-info-section.active {
-            display: block;
-        }
-
-        .customer-info-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 157, 0.15);
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .customer-info-header h2 {
-            font-size: 0.9rem;
-            margin: 0;
-            color: var(--primary);
-        }
-
-        .customer-info-toggle {
-            color: var(--text);
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-        }
-
-        .customer-info-toggle.active {
-            transform: rotate(180deg);
-        }
-
-        .customer-form-group {
-            margin-bottom: 0.75rem;
-        }
-
-        .customer-form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-
-        .required-field::after {
-            content: "*";
-            color: #ff3e3e;
-            margin-left: 0.25rem;
-        }
-
-        .payment-error {
-            color: #ff3e3e;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        .payment-error.visible {
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X8ZRM5LHC6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-X8ZRM5LHC6');
+  </script>
+  <title>ATX TURF - Batting Cage Calculator v42</title>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+  <style>
+      :root {
+          --primary: #00ff9d;
+          --primary-dark: #00cc7d;
+          --secondary: #0a1a12;
+          --accent: #00ffcc;
+          --text: #e0ffe9;
+          --background: #0a1a12;
+          --card: #112218;
+          --atx-green: #008f39; /* Darker green for ATXTurf text */
+          --floor-green: #00ff4c; /* Brighter green for the floor */
+      }
+
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+          background-color: var(--background);
+          color: var(--text);
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0.75rem;
+          background-image: 
+              radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.05) 0%, transparent 20%),
+              radial-gradient(circle at 90% 80%, rgba(0, 255, 204, 0.05) 0%, transparent 20%);
+      }
+
+      .container {
+          width: 100%;
+          max-width: 1200px;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          margin-top: 0.5rem;
+      }
+
+      @media (min-width: 768px) {
+          .container {
+              grid-template-columns: 1.5fr 1fr;
+          }
+      }
+
+      .form-container {
+          background-color: var(--card);
+          border-radius: 0.75rem;
+          padding: 0.75rem;
+          box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
+          border: 1px solid rgba(0, 255, 157, 0.1);
+          backdrop-filter: blur(4px);
+      }
+
+      h1 {
+          color: var(--primary);
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          font-size: 1rem;
+          text-align: center;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          position: relative;
+          padding-bottom: 0.25rem;
+      }
+
+      h1::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 25%;
+          width: 50%;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      }
+
+      .form-group {
+          margin-bottom: 0.5rem;
+          position: relative;
+      }
+
+      .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+      }
+
+      label {
+          display: block;
+          margin-bottom: 0.25rem;
+          color: var(--primary);
+          font-weight: 500;
+          font-size: 0.85rem;
+      }
+
+      input {
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.3);
+          background-color: rgba(10, 26, 18, 0.8);
+          color: var(--text);
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+      }
+
+      /* Ensure number input controls are visible */
+      input[type="number"] {
+          -moz-appearance: textfield; /* Firefox */
+          padding-right: 1.5rem; /* Make room for custom controls */
+      }
+
+      /* Hide default controls but keep them accessible */
+      input[type="number"]::-webkit-inner-spin-button, 
+      input[type="number"]::-webkit-outer-spin-button { 
+          -webkit-appearance: none;
+          margin: 0;
+      }
+
+      /* Custom number controls */
+      .number-controls {
+          position: absolute;
+          right: 0;
+          top: 1.4rem; /* Position below label */
+          display: flex;
+          flex-direction: column;
+          height: calc(100% - 1.4rem);
+      }
+
+      .number-control {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 1.5rem;
+          height: 50%;
+          background-color: rgba(0, 255, 157, 0.2);
+          color: var(--text);
+          font-size: 0.8rem;
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.2s;
+      }
+
+      .number-control:first-child {
+          border-top-right-radius: 0.5rem;
+      }
+
+      .number-control:last-child {
+          border-bottom-right-radius: 0.5rem;
+      }
+
+      .number-control:hover {
+          background-color: rgba(0, 255, 157, 0.4);
+      }
+
+      .number-control:active {
+          background-color: rgba(0, 255, 157, 0.6);
+      }
+
+      input:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
+      }
+
+      /* Checkbox styling */
+      .checkbox-container {
+          display: flex;
+          align-items: center;
+          margin: 0.5rem 0;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 157, 0.1);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.2);
+      }
+
+      .checkbox-container input[type="checkbox"] {
+          width: auto;
+          margin-right: 0.5rem;
+          cursor: pointer;
+          accent-color: var(--primary);
+      }
+
+      .checkbox-container label {
+          margin-bottom: 0;
+          cursor: pointer;
+          font-size: 0.85rem;
+      }
+
+      /* Roll Size Information styling */
+      .roll-info {
+          margin: 0.5rem 0;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 204, 0.1);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 204, 0.2);
+      }
+
+      .roll-info-title {
+          display: block;
+          font-size: 0.8rem;
+          margin-bottom: 0.25rem;
+          color: var(--primary);
+          font-weight: 500;
+      }
+
+      .roll-info-content {
+          font-size: 0.85rem;
+          color: var(--text);
+      }
+
+      .roll-info-line {
+          margin-bottom: 0.25rem;
+      }
+
+      .roll-info-value {
+          font-weight: 700;
+          color: var(--accent);
+      }
+
+      /* Seam info styling */
+      .seam-info {
+          margin: 0.5rem 0;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 157, 0.1);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.2);
+      }
+
+      .seam-info-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .seam-info-label {
+          font-size: 0.8rem;
+          color: var(--primary);
+          font-weight: 500;
+      }
+
+      .seam-info-value-container {
+          display: flex;
+          align-items: center;
+      }
+
+      .seam-info-value {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--accent);
+      }
+
+      .inline-checkbox {
+          display: flex;
+          align-items: center;
+          margin-left: 1rem;
+      }
+
+      .inline-checkbox input[type="checkbox"] {
+          margin-right: 0.25rem;
+          cursor: pointer;
+          accent-color: var(--primary);
+      }
+
+      .inline-checkbox label {
+          margin-bottom: 0;
+          cursor: pointer;
+          font-size: 0.75rem;
+      }
+
+      .totals-container {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+      }
+
+      .total-square-feet {
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 157, 0.1);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.2);
+      }
+
+      .total-square-feet-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .total-square-feet-label {
+          font-size: 0.8rem;
+          color: var(--primary);
+          font-weight: 500;
+      }
+
+      .total-square-feet-value {
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--text);
+      }
+
+      .cost-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+      }
+
+      .cost-turf {
+          text-align: center;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 157, 0.15);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.3);
+      }
+
+      .cost-net {
+          text-align: center;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 204, 0.15);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 204, 0.3);
+      }
+
+      .cost-label {
+          display: block;
+          font-size: 0.7rem;
+          margin-bottom: 0.25rem;
+          color: var(--primary);
+      }
+
+      .cost-value {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: var(--text);
+      }
+
+      .total-cost-container {
+          margin-top: 0.5rem;
+          text-align: center;
+      }
+
+      .total-cost {
+          display: inline-block;
+          padding: 0.5rem 1.5rem;
+          background: linear-gradient(90deg, rgba(0, 255, 157, 0.2), rgba(0, 255, 204, 0.2));
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.3);
+      }
+
+      .total-cost-label {
+          display: block;
+          font-size: 0.7rem;
+          margin-bottom: 0.25rem;
+          color: var(--primary);
+          font-weight: 500;
+      }
+
+      .total-cost-value {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: var(--text);
+      }
+
+      .additional-note {
+          text-align: center;
+          margin-top: 0.5rem;
+          font-size: 0.7rem;
+          color: rgba(224, 255, 233, 0.7);
+          font-style: italic;
+      }
+
+      .gravel-note {
+          text-align: center;
+          margin-top: 0.25rem;
+          font-size: 0.7rem;
+          color: rgba(224, 255, 233, 0.7);
+      }
+
+      .canvas-container {
+          background-color: var(--card);
+          border-radius: 0.75rem;
+          overflow: hidden;
+          position: relative;
+          aspect-ratio: 16/15.21;
+          box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
+          border: 1px solid rgba(0, 255, 157, 0.1);
+      }
+
+      canvas {
+          width: 100%;
+          height: 100%;
+          display: block;
+      }
+
+      .dimensions-display {
+          position: absolute;
+          bottom: 1rem;
+          left: 1rem;
+          background-color: rgba(10, 26, 18, 0.8);
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          border-left: 3px solid var(--primary);
+          font-size: 0.5rem;
+      }
+
+      .instructions {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background-color: rgba(10, 26, 18, 0.8);
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          font-size: 0.7rem;
+          color: var(--text);
+          opacity: 0.8;
+      }
+
+      .powered-by {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          background-color: rgba(10, 26, 18, 0.8);
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          font-size: 0.8rem;
+          color: var(--text);
+          border-left: 3px solid var(--atx-green);
+          z-index: 10;
+      }
+
+      .powered-by span {
+          color: var(--atx-green);
+          font-weight: 600;
+      }
+
+      .powered-by a {
+          text-decoration: none;
+          color: inherit;
+          transition: opacity 0.2s ease;
+      }
+
+      .powered-by a:hover {
+          opacity: 0.8;
+      }
+
+      /* Mobile-specific adjustments */
+      @media (max-width: 767px) {
+          .container {
+              gap: 0.5rem;
+          }
+          
+          .canvas-container {
+              aspect-ratio: 16/12; /* Shorter viewport on mobile */
+          }
+          
+          .form-container {
+              padding: 0.75rem;
+          }
+          
+          .dimensions-display, .instructions {
+              padding: 0.25rem 0.5rem;
+              font-size: 0.6rem;
+          }
+          
+          .powered-by {
+              padding: 0.25rem 0.5rem;
+              font-size: 0.7rem;
+          }
+          
+          /* Ensure number controls are visible and easy to tap on mobile */
+          .number-control {
+              width: 1.8rem;
+              font-size: 1rem;
+          }
+          
+          /* Ensure instructions and powered-by don't overlap */
+          .instructions {
+              top: 3rem;
+          }
+      }
+
+      /* Order button styling */
+      .order-button {
+          width: 100%;
+          margin-top: 0.5rem;
+          padding: 0.75rem;
+          background-color: var(--primary-dark);
+          color: var(--text);
+          border: none;
+          border-radius: 0.5rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          text-align: center;
+      }
+
+      .order-button:hover {
+          background-color: var(--primary);
+      }
+
+      /* Shipping calculator styles */
+      .shipping-calculator {
+          margin: 0.5rem 0;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 204, 0.1);
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 204, 0.2);
+      }
+
+      .shipping-calculator-title {
+          display: block;
+          font-size: 0.8rem;
+          margin-bottom: 0.25rem;
+          color: var(--primary);
+          font-weight: 500;
+      }
+
+      .shipping-calculator-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+      }
+
+      .shipping-zip-container {
+          display: flex;
+          gap: 0.5rem;
+      }
+
+      .shipping-zip-container input {
+          flex: 1;
+      }
+
+      .shipping-zip-container button {
+          background-color: var(--primary-dark);
+          color: var(--text);
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0 1rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+      }
+
+      .shipping-zip-container button:hover {
+          background-color: var(--primary);
+      }
+
+      .shipping-result {
+          display: none;
+          margin-top: 0.5rem;
+      }
+
+      .shipping-result.visible {
+          display: block;
+      }
+
+      .shipping-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.25rem;
+      }
+
+      .shipping-info-label {
+          font-size: 0.8rem;
+          color: var(--text);
+          opacity: 0.8;
+      }
+
+      .shipping-info-value {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: var(--accent);
+      }
+
+      .shipping-total {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 0.5rem;
+          padding-top: 0.5rem;
+          border-top: 1px solid rgba(0, 255, 157, 0.2);
+      }
+
+      .shipping-total-label {
+          font-size: 0.9rem;
+          color: var(--primary);
+          font-weight: 500;
+      }
+
+      .shipping-total-value {
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--text);
+      }
+
+      .shipping-error {
+          color: #ff3e3e;
+          font-size: 0.8rem;
+          margin-top: 0.5rem;
+          display: none;
+      }
+
+      .shipping-error.visible {
+          display: block;
+      }
+
+      /* Customer info section */
+      .customer-info-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: pointer;
+          padding: 0.5rem;
+          background-color: rgba(0, 255, 157, 0.15);
+          border-radius: 0.5rem;
+          margin-top: 1rem;
+      }
+
+      .customer-info-header h2 {
+          font-size: 0.9rem;
+          margin: 0;
+          color: var(--primary);
+      }
+
+      .customer-info-toggle {
+          color: var(--text);
+          font-size: 1.2rem;
+          transition: transform 0.3s ease;
+      }
+
+      .customer-info-toggle.active {
+          transform: rotate(180deg);
+      }
+
+      .customer-info-section {
+          margin-top: 1rem;
+          padding: 0.75rem;
+          background-color: rgba(0, 255, 157, 0.1);
+          border-radius: 0.75rem;
+          border: 1px solid rgba(0, 255, 157, 0.2);
+          display: none; /* Hidden by default */
+      }
+
+      .customer-info-section.active {
+          display: block;
+      }
+
+      .customer-form-group {
+          margin-bottom: 0.75rem;
+      }
+
+      .customer-form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.75rem;
+      }
+
+      .required-field::after {
+          content: "*";
+          color: #ff3e3e;
+          margin-left: 0.25rem;
+      }
+
+      textarea {
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          border: 1px solid rgba(0, 255, 157, 0.3);
+          background-color: rgba(10, 26, 18, 0.8);
+          color: var(--text);
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+          resize: vertical;
+      }
+
+      textarea:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
+      }
+
+      /* Order confirmation modal */
+      .order-confirmation-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s, visibility 0.3s;
+      }
+
+      .order-confirmation-modal.active {
+          opacity: 1;
+          visibility: visible;
+      }
+
+      .modal-content {
+          background-color: var(--card);
+          border-radius: 0.75rem;
+          padding: 1.5rem;
+          width: 90%;
+          max-width: 600px;
+          max-height: 90vh;
+          overflow-y: auto;
+          border: 1px solid var(--primary);
+          box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+      }
+
+      .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid rgba(0, 255, 157, 0.3);
+      }
+
+      .modal-header h2 {
+          color: var(--primary);
+          font-size: 1.2rem;
+          margin: 0;
+      }
+
+      .close-modal {
+          background: none;
+          border: none;
+          color: var(--text);
+          font-size: 1.5rem;
+          cursor: pointer;
+          padding: 0;
+          line-height: 1;
+      }
+
+      .order-summary {
+          margin-bottom: 1.5rem;
+      }
+
+      .order-summary h3 {
+          color: var(--primary);
+          font-size: 1rem;
+          margin: 1rem 0 0.5rem;
+      }
+
+      .summary-item {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
+      }
+
+      .summary-item-label {
+          color: var(--text);
+          opacity: 0.8;
+      }
+
+      .summary-item-value {
+          color: var(--text);
+          font-weight: 600;
+      }
+
+      .summary-total {
+          margin-top: 1rem;
+          padding-top: 0.5rem;
+          border-top: 1px solid rgba(0, 255, 157, 0.3);
+          font-size: 1.1rem;
+          font-weight: 700;
+      }
+
+      .modal-actions {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 1.5rem;
+      }
+
+      .modal-button {
+          padding: 0.75rem 1.5rem;
+          border-radius: 0.5rem;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s;
+      }
+
+      .cancel-button {
+          background-color: rgba(255, 255, 255, 0.1);
+          color: var(--text);
+      }
+
+      .cancel-button:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .confirm-button {
+          background-color: var(--primary-dark);
+          color: var(--text);
+      }
+
+      .confirm-button:hover {
+          background-color: var(--primary);
+      }
+
+      .payment-error {
+          color: #ff3e3e;
+          font-size: 0.8rem;
+          margin-top: 0.5rem;
+          display: none;
+      }
+
+      .payment-error.visible {
+          display: block;
+      }
+
+      /* Version number */
+      .version {
+          position: absolute;
+          bottom: 0.5rem;
+          right: 0.5rem;
+          font-size: 0.6rem;
+          color: rgba(224, 255, 233, 0.5);
+      }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="canvas-container">
-            <canvas id="cageCanvas"></canvas>
-            <div class="dimensions-display" id="dimensionsDisplay">
-                Length: 70 ft × Width: 14 ft × Height: 12 ft
-            </div>
-            <div class="instructions">
-                Drag to rotate | Pinch to zoom
-            </div>
-            <div class="powered-by">
-                Powered by <a href="https://www.atxturf.com" target="_blank" rel="noopener noreferrer"><span>ATXTurf, LLC</span></a>
-            </div>
-        </div>
-        <div class="form-container">
-            <h1>Enter Cage Size</h1>
-            <form id="dimensionsForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="length">Length (feet)</label>
-                        <input type="number" id="length" name="length" min="1" step="1" value="70" required>
-                        <div class="number-controls">
-                            <div class="number-control" data-input="length" data-action="increment">+</div>
-                            <div class="number-control" data-input="length" data-action="decrement">-</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="width">Width (feet)</label>
-                        <input type="number" id="width" name="width" min="10" step="1" value="14" required>
-                        <div class="number-controls">
-                            <div class="number-control" data-input="width" data-action="increment">+</div>
-                            <div class="number-control" data-input="width" data-action="decrement">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="height">Height (feet)</label>
-                        <input type="number" id="height" name="height" min="1" step="1" value="12" required>
-                        <div class="number-controls">
-                            <div class="number-control" data-input="height" data-action="increment">+</div>
-                            <div class="number-control" data-input="height" data-action="decrement">-</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="cageCount">How Many Cages?</label>
-                        <input type="number" id="cageCount" name="cageCount" min="1" max="10" step="1" value="1" required>
-                        <div class="number-controls">
-                            <div class="number-control" data-input="cageCount" data-action="increment">+</div>
-                            <div class="number-control" data-input="cageCount" data-action="decrement">-</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Checkbox to flip line direction -->
-                <div class="checkbox-container">
-                    <input type="checkbox" id="flipLines" name="flipLines">
-                    <label for="flipLines">Check to Flip Turf Roll Direction</label>
-                </div>
-                
-                <!-- Roll Size Information (formerly Remnant Roll Information) -->
-                <div class="remnant-info" id="remnantInfo">
-                    <span class="remnant-info-title">Roll Size Information:</span>
-                    <div class="remnant-info-content" id="remnantContent">
-                        <div class="remnant-info-line" id="rollsLine">Calculating...</div>
-                        <div class="remnant-info-line" id="remnantLine"></div>
-                    </div>
-                </div>
-                
-                <div class="seam-info">
-                    <div class="seam-info-row">
-                        <span class="seam-info-label">Seam Totals:</span>
-                        <div class="seam-info-value-container">
-                            <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
-                            <div class="inline-checkbox">
-                                <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
-                                <label for="includeSeamCosts">Add</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="seam-info">
-                    <div class="seam-info-row">
-                        <span class="seam-info-label">Netting Hardware:</span>
-                        <div class="seam-info-value-container">
-                            <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
-                            <div class="inline-checkbox">
-                                <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
-                                <label for="includeHardwareKits">Add</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="totals-container">
-                    <div class="total-square-feet">
-                        <div class="total-square-feet-content">
-                            <span class="total-square-feet-label">Sq Ft of Area:</span>
-                            <span class="total-square-feet-value" id="totalSquareFeet">980</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cost-container">
-                    <div class="cost-turf">
-                        <span class="total-square-feet-label">Sq Ft in 15' Wide Rolls</span>
-                        <div class="total-square-feet-value" id="totalRollSquareFeet">1,050</div>
-                    </div>
-                    <div class="total-square-feet-net">
-                        <span class="total-square-feet-label">Total Sq Ft of Net</span>
-                        <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
-                    </div>
-                </div>
-                
-                <div class="cost-container">
-                    <div class="cost-turf">
-                        <span class="cost-label" id="costTurfLabel">Turf @ $1.69 sf</span>
-                        <div class="cost-value" id="costTurf">$1,656.20</div>
-                        <div class="paypal-button-container" id="paypal-button-container-turf"></div>
-                    </div>
-                    <div class="cost-net">
-                        <span class="cost-label" id="costNetLabel">Net @ $0.43 sf</span>
-                        <div class="cost-value" id="costNet">$1,276.24</div>
-                        <div class="paypal-button-container" id="paypal-button-container-net"></div>
-                    </div>
-                </div>
-                
-                <!-- Customer Information Section -->
-                <div class="customer-info-header" id="customerInfoHeader">
-                    <h2>Customer Information</h2>
-                    <span class="customer-info-toggle">▼</span>
-                </div>
-                <div class="customer-info-section" id="customerInfoSection">
-                    <div class="customer-form-group">
-                        <label for="customerName" class="required-field">Full Name</label>
-                        <input type="text" id="customerName" name="customerName" required>
-                    </div>
-                    <div class="customer-form-group">
-                        <label for="customerEmail" class="required-field">Email</label>
-                        <input type="email" id="customerEmail" name="customerEmail" required>
-                    </div>
-                    <div class="customer-form-group">
-                        <label for="customerPhone" class="required-field">Phone</label>
-                        <input type="tel" id="customerPhone" name="customerPhone" required>
-                    </div>
-                    <div class="customer-form-group">
-                        <label for="customerAddress" class="required-field">Street Address</label>
-                        <input type="text" id="customerAddress" name="customerAddress" required>
-                    </div>
-                    <div class="customer-form-row">
-                        <div class="customer-form-group">
-                            <label for="customerCity" class="required-field">City</label>
-                            <input type="text" id="customerCity" name="customerCity" required>
-                        </div>
-                        <div class="customer-form-group">
-                            <label for="customerState" class="required-field">State</label>
-                            <input type="text" id="customerState" name="customerState" required>
-                        </div>
-                    </div>
-                    <div class="customer-form-row">
-                        <div class="customer-form-group">
-                            <label for="customerZip" class="required-field">ZIP Code</label>
-                            <input type="text" id="customerZip" name="customerZip" required>
-                        </div>
-                        <div class="customer-form-group">
-                            <label for="customerCountry" class="required-field">Country</label>
-                            <input type="text" id="customerCountry" name="customerCountry" value="United States" required>
-                        </div>
-                    </div>
-                    <div class="customer-form-group">
-                        <label for="customerNotes">Special Instructions (Optional)</label>
-                        <textarea id="customerNotes" name="customerNotes" rows="3"></textarea>
-                    </div>
-                    <div class="payment-error" id="paymentError">
-                        Please fill out all required fields before proceeding with payment.
-                    </div>
-                </div>
-                
-                <div class="total-cost-container">
-                    <div class="total-cost">
-                        <span class="total-cost-label">Turf & Net Total</span>
-                        <div class="total-cost-value" id="totalCost">$2,932.44</div>
-                    </div>
-                </div>
-                <div class="additional-note">
-                    Hardware & Shipping Additional
-                </div>
-                <div class="gravel-note" id="gravelNote">
-                    Going Outside? <span id="gravelTons">4.2</span> tons of 89 gravel needed for 4 inch deep subbase
-                </div>
-            </form>
-        </div>
-    </div>
+  <div class="container">
+      <div class="canvas-container">
+          <canvas id="cageCanvas"></canvas>
+          <div class="dimensions-display" id="dimensionsDisplay">
+              Length: 70 ft × Width: 14 ft × Height: 12 ft
+          </div>
+          <div class="instructions">
+              Drag to rotate | Pinch to zoom
+          </div>
+          <div class="powered-by">
+              Powered by <a href="https://www.atxturf.com" target="_blank" rel="noopener noreferrer"><span>ATXTurf, LLC</span></a>
+          </div>
+          <div class="version">v42</div>
+      </div>
+      <div class="form-container">
+          <h1>Enter Cage Size</h1>
+          <form id="dimensionsForm">
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="length">Length (feet)</label>
+                      <input type="number" id="length" name="length" min="1" step="1" value="70" required>
+                      <div class="number-controls">
+                          <div class="number-control" data-input="length" data-action="increment">+</div>
+                          <div class="number-control" data-input="length" data-action="decrement">-</div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="width">Width (feet)</label>
+                      <input type="number" id="width" name="width" min="10" step="1" value="14" required>
+                      <div class="number-controls">
+                          <div class="number-control" data-input="width" data-action="increment">+</div>
+                          <div class="number-control" data-input="width" data-action="decrement">-</div>
+                      </div>
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="height">Height (feet)</label>
+                      <input type="number" id="height" name="height" min="1" step="1" value="12" required>
+                      <div class="number-controls">
+                          <div class="number-control" data-input="height" data-action="increment">+</div>
+                          <div class="number-control" data-input="height" data-action="decrement">-</div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="cageCount">How Many Cages?</label>
+                      <input type="number" id="cageCount" name="cageCount" min="1" max="10" step="1" value="1" required>
+                      <div class="number-controls">
+                          <div class="number-control" data-input="cageCount" data-action="increment">+</div>
+                          <div class="number-control" data-input="cageCount" data-action="decrement">-</div>
+                      </div>
+                  </div>
+              </div>
+              
+              <!-- Checkbox to flip line direction -->
+              <div class="checkbox-container">
+                  <input type="checkbox" id="flipLines" name="flipLines">
+                  <label for="flipLines">Check to Flip Turf Roll Direction</label>
+              </div>
+              
+              <!-- Roll Size Information -->
+              <div class="roll-info" id="rollInfo">
+                  <span class="roll-info-title">Roll Size Information:</span>
+                  <div class="roll-info-content" id="rollContent">
+                      <div class="roll-info-line" id="rollsLine">Calculating...</div>
+                      <div class="roll-info-line  id="rollsLine">Calculating...</div>
+                      <div class="roll-info-line" id="remnantLine"></div>
+                  </div>
+              </div>
+              
+              <div class="seam-info">
+                  <div class="seam-info-row">
+                      <span class="seam-info-label">Seam Totals:</span>
+                      <div class="seam-info-value-container">
+                          <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
+                          <div class="inline-checkbox">
+                              <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
+                              <label for="includeSeamCosts">Add</label>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="seam-info">
+                  <div class="seam-info-row">
+                      <span class="seam-info-label">Netting Hardware:</span>
+                      <div class="seam-info-value-container">
+                          <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
+                          <div class="inline-checkbox">
+                              <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
+                              <label for="includeHardwareKits">Add</label>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="totals-container">
+                  <div class="total-square-feet">
+                      <div class="total-square-feet-content">
+                          <span class="total-square-feet-label">Sq Ft of Area:</span>
+                          <span class="total-square-feet-value" id="totalSquareFeet">980</span>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="cost-container">
+                  <div class="cost-turf">
+                      <span class="total-square-feet-label">Sq Ft in 15' Wide Rolls</span>
+                      <div class="total-square-feet-value" id="totalRollSquareFeet">1,050</div>
+                  </div>
+                  <div class="cost-turf">
+                      <span class="total-square-feet-label">Total Sq Ft of Net</span>
+                      <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
+                  </div>
+              </div>
+              
+              <!-- Shipping Calculator -->
+              <div class="shipping-calculator">
+                  <span class="shipping-calculator-title">Calculate Shipping Cost:</span>
+                  <div class="shipping-calculator-content">
+                      <div class="shipping-zip-container">
+                          <input type="text" id="shippingZip" name="shippingZip" placeholder="Enter US ZIP Code" maxlength="5" pattern="[0-9]{5}">
+                          <button type="button" id="calculateShipping">Calculate</button>
+                      </div>
+                      <div class="shipping-error" id="shippingError">
+                          Please enter a valid US ZIP code (excluding Hawaii and Alaska).
+                      </div>
+                      <div class="shipping-result" id="shippingResult">
+                          <div class="shipping-info">
+                              <span class="shipping-info-label">State:</span>
+                              <span class="shipping-info-value" id="shippingState">--</span>
+                          </div>
+                          <div class="shipping-info">
+                              <span class="shipping-info-label">Cost Per Square Foot:</span>
+                              <span class="shipping-info-value" id="shippingCostPerSqFt">--</span>
+                          </div>
+                          <div class="shipping-info">
+                              <span class="shipping-info-label">Square Feet:</span>
+                              <span class="shipping-info-value" id="shippingSquareFeet">--</span>
+                          </div>
+                          <div class="shipping-info">
+                              <span class="shipping-info-label">Base Fee:</span>
+                              <span class="shipping-info-value">$230.00</span>
+                          </div>
+                          <div class="shipping-total">
+                              <span class="shipping-total-label">Total Shipping Cost:</span>
+                              <span class="shipping-total-value" id="shippingTotal">--</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="cost-container">
+                  <div class="cost-turf">
+                      <span class="cost-label" id="costTurfLabel">Turf @ $1.69 sf</span>
+                      <div class="cost-value" id="costTurf">$1,656.20</div>
+                      <button type="button" class="order-button" id="turfOrderButton">Order Turf</button>
+                  </div>
+                  <div class="cost-net">
+                      <span class="cost-label" id="costNetLabel">Net @ $0.43 sf</span>
+                      <div class="cost-value" id="costNet">$1,276.24</div>
+                      <button type="button" class="order-button" id="netOrderButton">Order Net</button>
+                  </div>
+              </div>
+              
+              <div class="total-cost-container">
+                  <div class="total-cost">
+                      <span class="total-cost-label">Turf & Net Total</span>
+                      <div class="total-cost-value" id="totalCost">$2,932.44</div>
+                  </div>
+              </div>
+              <div class="additional-note">
+                  Hardware & Shipping Additional
+              </div>
+              <div class="gravel-note" id="gravelNote">
+                  Going Outside? <span id="gravelTons">4.2</span> tons of 89 gravel needed for 4 inch deep subbase
+              </div>
+              
+              <!-- Customer Information Section -->
+              <div class="customer-info-header" id="customerInfoHeader">
+                  <h2>Customer Information</h2>
+                  <span class="customer-info-toggle">▼</span>
+              </div>
+              <div class="customer-info-section" id="customerInfoSection">
+                  <div class="customer-form-group">
+                      <label for="customerName" class="required-field">Full Name</label>
+                      <input type="text" id="customerName" name="customerName" required>
+                  </div>
+                  <div class="customer-form-group">
+                      <label for="customerEmail" class="required-field">Email</label>
+                      <input type="email" id="customerEmail" name="customerEmail" required>
+                  </div>
+                  <div class="customer-form-group">
+                      <label for="customerPhone" class="required-field">Phone</label>
+                      <input type="tel" id="customerPhone" name="customerPhone" required>
+                  </div>
+                  <div class="customer-form-group">
+                      <label for="customerAddress" class="required-field">Street Address</label>
+                      <input type="text" id="customerAddress" name="customerAddress" required>
+                  </div>
+                  <div class="customer-form-row">
+                      <div class="customer-form-group">
+                          <label for="customerCity" class="required-field">City</label>
+                          <input type="text" id="customerCity" name="customerCity" required>
+                      </div>
+                      <div class="customer-form-group">
+                          <label for="customerState" class="required-field">State</label>
+                          <input type="text" id="customerState" name="customerState" required>
+                      </div>
+                  </div>
+                  <div class="customer-form-row">
+                      <div class="customer-form-group">
+                          <label for="customerZip" class="required-field">ZIP Code</label>
+                          <input type="text" id="customerZip" name="customerZip" required>
+                      </div>
+                      <div class="customer-form-group">
+                          <label for="customerCountry" class="required-field">Country</label>
+                          <input type="text" id="customerCountry" name="customerCountry" value="United States" required>
+                      </div>
+                  </div>
+                  <div class="customer-form-group">
+                      <label for="customerNotes">Special Instructions (Optional)</label>
+                      <textarea id="customerNotes" name="customerNotes" rows="3"></textarea>
+                  </div>
+                  <div class="payment-error" id="paymentError">
+                      Please fill out all required fields before proceeding with payment.
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
 
-    <script>
-        // Initialize Three.js scene
-        let scene, camera, renderer, controls;
-        let cages = [];
-        let textLabels = [];
-        let floors = []; // Array to store floor planes
-        let targets = []; // Array to store target rectangles
-        // In the global variables section, add a new array to store the home plates
-        let homePlates = []; // Array to store home plate elements
-        
-        // Variables to store costs
-        let seamFabricCost = 0;
-        let glueCost = 0;
-        let baseTurfCost = 0;
-        let hardwareKitsCost = 0;
-        
-        // Set up the scene
-        function init() {
-            // Create scene
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x112218);
-            
-            // Create camera
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            
-            // Position camera for overhead diagonal view
-            camera.position.set(50, 60, 70);
-            camera.lookAt(0, 0, 0);
-            
-            // Create renderer
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('cageCanvas'), antialias: true });
-            renderer.setSize(document.querySelector('.canvas-container').clientWidth, document.querySelector('.canvas-container').clientHeight);
-            
-            // Add orbit controls
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            
-            // Add lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0x00ff9d, 0.8);
-            directionalLight.position.set(5, 10, 7);
-            scene.add(directionalLight);
-            
-            const directionalLight2 = new THREE.DirectionalLight(0x00ffcc, 0.4);
-            directionalLight2.position.set(-5, -10, 7);
-            scene.add(directionalLight2);
+  <!-- Order Confirmation Modal -->
+  <div class="order-confirmation-modal" id="orderModal">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 id="modalTitle">Order Confirmation</h2>
+              <button class="close-modal" id="closeModal">&times;</button>
+          </div>
+          <div class="order-summary">
+              <h3>Cage Specifications</h3>
+              <div class="summary-item">
+                  <span class="summary-item-label">Dimensions:</span>
+                  <span class="summary-item-value" id="summaryDimensions">70' × 14' × 12'</span>
+              </div>
+              <div class="summary-item">
+                  <span class="summary-item-label">Number of Cages:</span>
+                  <span class="summary-item-value" id="summaryCageCount">1</span>
+              </div>
+              <div class="summary-item">
+                  <span class="summary-item-label">Roll Direction:</span>
+                  <span class="summary-item-value" id="summaryRollDirection">Along Length</span>
+              </div>
+              
+              <h3>Order Details</h3>
+              <div class="summary-item">
+                  <span class="summary-item-label">Product:</span>
+                  <span class="summary-item-value" id="summaryProduct">Turf</span>
+              </div>
+              <div class="summary-item">
+                  <span class="summary-item-label">Square Feet:</span>
+                  <span class="summary-item-value" id="summarySqFt">1,050</span>
+              </div>
+              <div class="summary-item" id="summarySeamsContainer">
+                  <span class="summary-item-label">Seams Included:</span>
+                  <span class="summary-item-value" id="summarySeams">Yes</span>
+              </div>
+              <div class="summary-item" id="summaryHardwareContainer">
+                  <span class="summary-item-label">Hardware Included:</span>
+                  <span class="summary-item-value" id="summaryHardware">Yes</span>
+              </div>
+              <div class="summary-total">
+                  <span class="summary-item-label">Total:</span>
+                  <span class="summary-item-value" id="summaryTotal">$1,656.20</span>
+              </div>
+          </div>
+          <div class="modal-actions">
+              <button class="modal-button cancel-button" id="cancelOrder">Cancel</button>
+              <button class="modal-button confirm-button" id="confirmOrder">Confirm Order</button>
+          </div>
+      </div>
+  </div>
 
-            // Add a spotlight to illuminate the floor
-            const spotLight = new THREE.SpotLight(0xffffff, 0.8);
-            spotLight.position.set(0, -height, 0);
-            spotLight.target.position.set(0, -height/2, 0);
-            spotLight.angle = Math.PI / 3;
-            scene.add(spotLight);
-            scene.add(spotLight.target);
-            
-            // Create grid
-            const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
-            gridHelper.position.y = -10;
-            scene.add(gridHelper);
-            
-            // Create initial cage(s)
-            createCages(70, 14, 12, 1);
-            
-            // Update total square feet display
-            updateTotalSquareFeet(70, 14, 1);
-            updateTotalSquareFeetNet(70, 14, 12, 1);
-            updateTotalRollSquareFeet(70, 14, 1);
-            
-            // Update remnant roll information
-            updateRemnantInfo(70, 14, 1);
-            
-            // Update gravel calculation
-            updateGravelCalculation(70, 14, 1);
-            
-            // Update total seam length
-            updateTotalSeamLength(70, 14, 1);
-            
-            // Animation loop
-            animate();
-            
-            // Handle window resize
-            window.addEventListener('resize', onWindowResize);
-            
-            // Set up custom number input controls
-            setupNumberControls();
-            
-            // Set up flip lines checkbox
-            setupFlipLinesCheckbox();
-            
-            // Set up include seam costs checkbox
-            setupIncludeSeamCostsCheckbox();
-            
-            // In the init function, add this line after setupIncludeSeamCostsCheckbox();
-            setupIncludeHardwareKitsCheckbox();
-            
-            // Initialize PayPal buttons
-            initPayPalButtonTurf();
-            initPayPalButtonNet();
-        }
-        
-        // Set up include seam costs checkbox
-        function setupIncludeSeamCostsCheckbox() {
-            const includeSeamCostsCheckbox = document.getElementById('includeSeamCosts');
-            
-            includeSeamCostsCheckbox.addEventListener('change', function() {
-                // Update turf cost to include or exclude seam costs
-                updateTurfCostWithSeams();
-            });
-        }
-        
-        // Set up include hardware kits checkbox
-        function setupIncludeHardwareKitsCheckbox() {
-            const includeHardwareKitsCheckbox = document.getElementById('includeHardwareKits');
-            
-            includeHardwareKitsCheckbox.addEventListener('change', function() {
-                // Update net cost to include or exclude hardware costs
-                updateNetCostWithHardware();
-            });
-        }
-        
-        // Update turf cost to include or exclude seam costs
-        function updateTurfCostWithSeams() {
-            const includeSeamCosts = document.getElementById('includeSeamCosts').checked;
-            
-            if (includeSeamCosts) {
-                // Add seam fabric cost and glue cost to turf cost
-                const totalTurfCost = baseTurfCost + seamFabricCost + glueCost;
-                document.getElementById('costTurf').textContent = '$' + totalTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf + Seams';
-            } else {
-                // Use base turf cost only
-                document.getElementById('costTurf').textContent = '$' + baseTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf';
-            }
-            
-            // Update total cost
-            updateTotalCost();
-        }
-        
-        // Calculate and update total seam length
-        function updateTotalSeamLength(length, width, count) {
-            const isFlipped = document.getElementById('flipLines').checked;
-            let totalSeamLength = 0;
-            
-            if (!isFlipped) {
-                // Lines running along the width (perpendicular to length) - default when unchecked
-                const totalWidth = width * count;
-                const numLines = Math.floor(totalWidth / 15);
-                // Each line spans the length of the cage
-                totalSeamLength = numLines * length;
-            } else {
-                // Lines running along the length (when checkbox is checked)
-                const numLines = Math.floor(length / 15);
-                // Each line spans the total width of all cages
-                totalSeamLength = numLines * (width * count);
-            }
-            
-            // Calculate seam fabric cost ($0.30 per linear foot)
-            seamFabricCost = totalSeamLength * 0.30;
-            
-            // Calculate buckets of glue needed (1 bucket covers 150 feet of seam)
-            const bucketsNeeded = Math.ceil(totalSeamLength / 150);
-            glueCost = bucketsNeeded * 325;
-            
-            // Update the display with the total seam length in feet, cost, and glue buckets
-            document.getElementById('totalSeamLength').textContent = 
-                `${totalSeamLength.toLocaleString()} ft ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} Glue Bucket${bucketsNeeded !== 1 ? 's' : ''} ($${glueCost.toLocaleString()})`;
-            
-            // Update turf cost if include seam costs checkbox is checked
-            updateTurfCostWithSeams();
-        }
-        
-        // Calculate and update hardware kits information
-        function updateHardwareKits(length, count) {
-            // Each cage needs one hardware kit
-            const kitsNeeded = count;
-            
-            // Determine price per kit based on cage length
-            const pricePerKit = length >= 56 ? 175 : 155;
-            
-            // Calculate shipping cost ($19.95 per kit) - still calculate this for the total cost
-            const shippingCost = kitsNeeded * 19.95;
-            
-            // Calculate total hardware cost (still needed for the checkbox functionality)
-            const kitsCost = kitsNeeded * pricePerKit;
-            hardwareKitsCost = kitsCost + shippingCost;
-            
-            // Update the display - remove shipping and total
-            document.getElementById('hardwareKitsInfo').textContent = 
-                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()})`;
+  <script>
+      // Initialize Three.js scene
+      let scene, camera, renderer, controls;
+      let cages = [];
+      let textLabels = [];
+      let floors = []; 
+      let targets = []; 
+      let homePlates = []; 
+      
+      // Variables to store costs
+      let seamFabricCost = 0;
+      let glueCost = 0;
+      let baseTurfCost = 0;
+      let hardwareKitsCost = 0;
+      
+      // State cost per square foot data
+      let stateCostData = {};
+      
+      // Set up the scene
+      function init() {
+          // Create scene
+          scene = new THREE.Scene();
+          scene.background = new THREE.Color(0x112218);
+          
+          // Create camera
+          camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+          
+          // Position camera for overhead diagonal view
+          camera.position.set(50, 60, 70);
+          camera.lookAt(0, 0, 0);
+          
+          // Create renderer
+          renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('cageCanvas'), antialias: true });
+          renderer.setSize(document.querySelector('.canvas-container').clientWidth, document.querySelector('.canvas-container').clientHeight);
+          
+          // Add orbit controls
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.05;
+          
+          // Add lights
+          const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+          scene.add(ambientLight);
+          
+          const directionalLight = new THREE.DirectionalLight(0x00ff9d, 0.8);
+          directionalLight.position.set(5, 10, 7);
+          scene.add(directionalLight);
+          
+          const directionalLight2 = new THREE.DirectionalLight(0x00ffcc, 0.4);
+          directionalLight2.position.set(-5, -10, 7);
+          scene.add(directionalLight2);
 
-            // Update net cost if include hardware kits checkbox is checked
-            updateNetCostWithHardware();
-        }
-        
-        // Calculate remnant roll information
-        function calculateRemnantRoll(length, width, count, isFlipped) {
-            const rollWidth = 15; // Standard roll width in feet
-            let remnantWidth, remnantLength, remnantArea;
-            
-            if (!isFlipped) {
-                // Rolls run along the length (default when checkbox is unchecked)
-                const totalWidth = width * count;
-                const numRolls = Math.ceil(totalWidth / rollWidth);
-                remnantWidth = (numRolls * rollWidth) - totalWidth;
-                remnantLength = length;
-                remnantArea = remnantWidth * remnantLength;
-                
-                return {
-                    numRolls: numRolls,
-                    remnantWidth: remnantWidth,
-                    remnantLength: remnantLength,
-                    remnantArea: remnantArea,
-                    direction: "along length"
-                };
-            } else {
-                // Rolls run along the width (when checkbox is checked)
-                const numRolls = Math.ceil(length / rollWidth);
-                remnantWidth = (numRolls * rollWidth) - length;
-                remnantLength = width * count;
-                remnantArea = remnantWidth * remnantLength;
-                
-                return {
-                    numRolls: numRolls,
-                    remnantWidth: remnantWidth,
-                    remnantLength: remnantLength,
-                    remnantArea: remnantArea,
-                    direction: "along width"
-                };
-            }
-        }
-        
-        // Update remnant roll information display
-        function updateRemnantInfo(length, width, count) {
-            const isFlipped = document.getElementById('flipLines').checked;
-            const remnantInfo = calculateRemnantRoll(length, width, count, isFlipped);
-            
-            let rollsLine = "";
-            let remnantLine = "";
-            
-            if (remnantInfo.remnantWidth > 0) {
-                if (!isFlipped) {
-                    // Rolls run along the length (default when checkbox is unchecked)
-                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                    remnantLine = `<span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
-                } else {
-                    // Rolls run along the width (when checkbox is checked)
-                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                    remnantLine = `<span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
-                }
-            } else {
-                // No remnant (perfect fit)
-                if (!isFlipped) {
-                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                    remnantLine = `<span class="remnant-info-value">No remnant</span> after installation (perfect fit)`;
-                } else {
-                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                    remnantLine = `<span class="remnant-info-value">No remnant</span> after installation (perfect fit)`;
-                }
-            }
-            
-            document.getElementById('rollsLine').innerHTML = rollsLine;
-            document.getElementById('remnantLine').innerHTML = remnantLine;
-        }
-        
-        // Calculate and update total roll square feet
-        function updateTotalRollSquareFeet(length, width, count) {
-            const isFlipped = document.getElementById('flipLines').checked;
-            let totalRollSqFt;
-            
-            if (!isFlipped) {
-                // When unchecked, multiply length by width rounded up to next 15' increment
-                const totalWidth = width * count;
-                const roundedWidth = Math.ceil(totalWidth / 15) * 15;
-                totalRollSqFt = length * roundedWidth;
-            } else {
-                // When checked, multiply width by length rounded up to next 15' increment
-                const roundedLength = Math.ceil(length / 15) * 15;
-                totalRollSqFt = (width * count) * roundedLength;
-            }
-            
-            const roundedTotalRollSqFt = Math.round(totalRollSqFt);
-            document.getElementById('totalRollSquareFeet').textContent = roundedTotalRollSqFt.toLocaleString();
-            
-            // Update turf cost based on roll square feet
-            baseTurfCost = roundedTotalRollSqFt * 1.69;
-            
-            // Update turf cost display (with or without seam costs)
-            updateTurfCostWithSeams();
-        }
-        
-        // Calculate and update gravel needed
-        function updateGravelCalculation(length, width, count) {
-            // Calculate total area
-            const totalArea = length * width * count;
-            
-            // Calculate cubic feet of gravel (4 inches deep = 1/3 foot)
-            const cubicFeet = totalArea * (4/12);
-            
-            // Convert to tons (approximately 1.4 tons per cubic yard, and 27 cubic feet per cubic yard)
-            const tons = cubicFeet * (1.4/27);
-            
-            // Round to 1 decimal place
-            const roundedTons = Math.round(tons * 10) / 10;
-            
-            // Update the display
-            document.getElementById('gravelTons').textContent = roundedTons.toLocaleString();
-        }
-        
-        // Set up flip lines checkbox
-        function setupFlipLinesCheckbox() {
-            const flipLinesCheckbox = document.getElementById('flipLines');
-            
-            flipLinesCheckbox.addEventListener('change', function() {
-                // Trigger update to redraw the cage with new line orientation
-                const length = parseFloat(document.getElementById('length').value) || 70;
-                const width = parseFloat(document.getElementById('width').value) || 14;
-                const height = parseFloat(document.getElementById('height').value) || 12;
-                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
-                
-                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
-                    createCages(length, width, height, cageCount);
-                    // Update remnant roll information
-                    updateRemnantInfo(length, width, cageCount);
-                    // Update total roll square feet
-                    updateTotalRollSquareFeet(length, width, cageCount);
-                    // Update total seam length
-                    updateTotalSeamLength(length, width, cageCount);
-                }
-            });
-        }
-        
-        // Set up custom number input controls
-        function setupNumberControls() {
-            const numberControls = document.querySelectorAll('.number-control');
-            
-            numberControls.forEach(control => {
-                control.addEventListener('click', function() {
-                    const inputId = this.getAttribute('data-input');
-                    const action = this.getAttribute('data-action');
-                    const input = document.getElementById(inputId);
-                    
-                    let value = parseInt(input.value) || 0;
-                    const step = parseInt(input.getAttribute('step')) || 1;
-                    const min = parseInt(input.getAttribute('min')) || 10;
-                    const max = parseInt(input.getAttribute('max')) || Infinity;
-                    
-                    if (action === 'increment') {
-                        value = Math.min(value + step, max);
-                    } else if (action === 'decrement') {
-                        value = Math.max(value - step, min);
-                    }
-                    
-                    input.value = value;
-                    
-                    // Trigger input event to update the 3D model
-                    const event = new Event('input', { bubbles: true });
-                    input.dispatchEvent(event);
-                });
-            });
-        }
-        
-        // Update total square feet display
-        function updateTotalSquareFeet(length, width, count) {
-            const totalSqFt = Math.round(length * width * count);
-            document.getElementById('totalSquareFeet').textContent = totalSqFt.toLocaleString();
-            
-            // Update gravel calculation
-            updateGravelCalculation(length, width, count);
-        }
-        
-        // Update total square feet of net display
-        function updateTotalSquareFeetNet(length, width, height, count) {
-            // Calculate net square footage for a single cage
-            const topSide = length * width;
-            const frontAndBackSides = length * height * 2;
-            const leftAndRightSides = width * height * 2;
-            const singleCageNet = topSide + frontAndBackSides + leftAndRightSides;
-            
-            // For multiple cages, subtract the redundant long sides
-            let totalNetSqFt;
-            if (count === 1) {
-                totalNetSqFt = singleCageNet;
-            } else {
-                // Subtract one long side (length × height) for each additional cage
-                const redundantSides = (length * height) * (count - 1);
-                totalNetSqFt = (singleCageNet * count) - redundantSides;
-            }
-            
-            const roundedNetSqFt = Math.round(totalNetSqFt);
-            document.getElementById('totalSquareFeetNet').textContent = roundedNetSqFt.toLocaleString();
-            
-            // Update net cost with hardware if checkbox is checked
-            updateNetCostWithHardware();
-        }
-        
-        // Update net cost to include or exclude hardware costs
-        function updateNetCostWithHardware() {
-            const includeHardwareKits = document.getElementById('includeHardwareKits').checked;
-            
-            // Get the current net square feet value
-            const netSqFtText = document.getElementById('totalSquareFeetNet').textContent;
-            const netSqFt = parseFloat(netSqFtText.replace(/,/g, ''));
-            
-            // Calculate base net cost
-            const baseNetCost = netSqFt * 0.43;
-            
-            if (includeHardwareKits) {
-                // Add hardware kits cost to net cost
-                const totalNetCost = baseNetCost + hardwareKitsCost;
-                document.getElementById('costNet').textContent = '$' + totalNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf + Hardware';
-            } else {
-                // Use base net cost only
-                document.getElementById('costNet').textContent = '$' + baseNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, minimumFractionDigits: 2});
-                document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf';
-            }
-            
-            // Update total cost
-            updateTotalCost();
-        }
-        
-        // Update total cost (turf + net)
-        function updateTotalCost() {
-            // Get the current cost values
-            const costTurfText = document.getElementById('costTurf').textContent;
-            const costNetText = document.getElementById('costNet').textContent;
-            
-            // Remove $ and commas, then parse as float
-            const costTurf = parseFloat(costTurfText.replace('$', '').replace(/,/g, ''));
-            const costNet = parseFloat(costNetText.replace('$', '').replace(/,/g, ''));
-            
-            // Calculate total
-            const totalCost = costTurf + costNet;
-            
-            // Update the total cost display
-            document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        }
-        
-        // Create text texture
-        function createTextTexture(text, width, height, rotate90 = false) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            
-            // Set canvas size - swap width and height if rotating
-            if (rotate90) {
-                canvas.width = height;
-                canvas.height = width;
-            } else {
-                canvas.width = width;
-                canvas.height = height;
-            }
-            
-            // Clear canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (rotate90) {
-                // Set text properties for rotated text
-                const fontSize = Math.min(width, height) * 0.3;
-                context.font = `bold ${fontSize}px Arial`;
-                
-                // Save the current context state
-                context.save();
-                
-                // Translate and rotate the context
-                context.translate(canvas.width / 2, canvas.height / 2);
-                context.rotate(Math.PI / 2);
-                
-                // Set text alignment for rotated text
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                
-                // Add gradient for better visibility
-                context.fillStyle = 'white';
-                context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-                context.lineWidth = fontSize * 0.05;
-                
-                // Draw rotated text
-                context.strokeText(text, 0, 0);
-                context.fillText(text, 0, 0);
-                
-                // Restore the context to its original state
-                context.restore();
-            } else {
-                // Set text properties for normal text
-                const fontSize = Math.min(width, height) * 0.3;
-                context.font = `bold ${fontSize}px Arial`;
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                
-                // Add gradient for better visibility
-                context.fillStyle = 'white';
-                context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-                context.lineWidth = fontSize * 0.05;
-                
-                // Draw text
-                context.strokeText(text, canvas.width / 2, canvas.height / 2);
-                context.fillText(text, canvas.width / 2, canvas.height / 2);
-            }
-            
-            // Create texture
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.needsUpdate = true;
-            
-            return texture;
-        }
-        
-        // Add text to cage
-        function addTextToCage(length, width, height, xOffset = 0) {
-            const text = "ATXTurf.com";
-            
-            // Create materials for each side with text
-            const frontTexture = createTextTexture(text, 1024, 512);
-            const backTexture = createTextTexture(text, 1024, 512);
-            const leftTexture = createTextTexture(text, 1024, 512);
-            const rightTexture = createTextTexture(text, 1024, 512);
-            const topTexture = createTextTexture(text, 1024, 512, true); // Rotate text 90 degrees
-            
-            // Create materials with the textures
-            const frontMaterial = new THREE.MeshBasicMaterial({ 
-                map: frontTexture, 
-                transparent: true,
-                side: THREE.DoubleSide
-            });
-            
-            const backMaterial = new THREE.MeshBasicMaterial({ 
-                map: backTexture, 
-                transparent: true,
-                side: THREE.DoubleSide
-            });
-            
-            const leftMaterial = new THREE.MeshBasicMaterial({ 
-                map: leftTexture, 
-                transparent: true,
-                side: THREE.DoubleSide
-            });
-            
-            const rightMaterial = new THREE.MeshBasicMaterial({ 
-                map: rightTexture, 
-                transparent: true,
-                side: THREE.DoubleSide
-            });
-            
-            const topMaterial = new THREE.MeshBasicMaterial({ 
-                map: topTexture, 
-                transparent: true,
-                side: THREE.DoubleSide
-            });
-            
-            // Create planes for each side
-            // Front side (positive Z)
-            const frontPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(width * 0.85, height * 0.45),
-                frontMaterial
-            );
-            frontPlane.position.set(xOffset, 0, length / 2 + 0.1);
-            frontPlane.rotation.y = Math.PI;
-            scene.add(frontPlane);
-            textLabels.push(frontPlane);
-            
-            // Back side (negative Z)
-            const backPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(width * 0.85, height * 0.45),
-                backMaterial
-            );
-            backPlane.position.set(xOffset, 0, -length / 2 - 0.1);
-            scene.add(backPlane);
-            textLabels.push(backPlane);
-            
-            // Only add side labels for the first and last cage
-            // Left side (negative X)
-            if (xOffset === 0) {
-                const leftPlane = new THREE.Mesh(
-                    new THREE.PlaneGeometry(length * 0.85, height * 0.45),
-                    leftMaterial
-                );
-                leftPlane.position.set(xOffset - width / 2 - 0.1, 0, 0);
-                leftPlane.rotation.y = Math.PI / 2;
-                scene.add(leftPlane);
-                textLabels.push(leftPlane);
-            }
-            
-            // Top side (positive Y)
-            const topPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(width * 0.85, length * 0.85),
-                topMaterial
-            );
-            topPlane.position.set(xOffset, height / 2 + 0.1, 0);
-            topPlane.rotation.x = -Math.PI / 2;
-            scene.add(topPlane);
-            textLabels.push(topPlane);
-            
-            // Right side label for the last cage will be added separately
-            return {
-                rightTexture: rightTexture,
-                rightMaterial: rightMaterial,
-                length: length,
-                height: height
-            };
-        }
-        
-        // Create or update multiple cages
-        function createCages(length, width, height, count) {
-            // Round values to whole numbers
-            length = Math.round(length);
-            width = Math.round(width);
-            height = Math.round(height);
-            
-            // Remove existing cages and text labels
-            cages.forEach(cage => scene.remove(cage));
-            cages = [];
-            
-            textLabels.forEach(label => scene.remove(label));
-            textLabels = [];
-            
-            // Remove existing floor planes
-            floors.forEach(floor => scene.remove(floor));
-            floors = [];
-            
-            // Remove existing targets
-            targets.forEach(target => scene.remove(target));
-            homePlates.forEach(plate => scene.remove(plate));
-            homePlates = [];
-            targets = [];
-            
-            // Store info for the right side label of the last cage
-            let lastCageInfo;
+          // Add a spotlight to illuminate the floor
+          const spotLight = new THREE.SpotLight(0xffffff, 0.8);
+          spotLight.position.set(0, -12, 0); // Use height variable
+          spotLight.target.position.set(0, -6, 0); // Half of height
+          spotLight.angle = Math.PI / 3;
+          scene.add(spotLight);
+          scene.add(spotLight.target);
+          
+          // Create grid
+          const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
+          gridHelper.position.y = -10;
+          scene.add(gridHelper);
+          
+          // Create initial cage(s)
+          createCages(70, 14, 12, 1);
+          
+          // Update total square feet display
+          updateTotalSquareFeet(70, 14, 1);
+          updateTotalSquareFeetNet(70, 14, 12, 1);
+          updateTotalRollSquareFeet(70, 14, 1);
+          
+          // Update remnant roll information
+          updateRemnantInfo(70, 14, 1);
+          
+          // Update gravel calculation
+          updateGravelCalculation(70, 14, 1);
+          
+          // Update total seam length
+          updateTotalSeamLength(70, 14, 1);
+          
+          // Update hardware kits
+          updateHardwareKits(70, 1);
+          
+          // Animation loop
+          animate();
+          
+          // Handle window resize
+          window.addEventListener('resize', onWindowResize);
+          
+          // Set up custom number input controls
+          setupNumberControls();
+          
+          // Set up flip lines checkbox
+          setupFlipLinesCheckbox();
+          
+          // Set up include seam costs checkbox
+          setupIncludeSeamCostsCheckbox();
+          
+          // Set up include hardware kits checkbox
+          setupIncludeHardwareKitsCheckbox();
+          
+          // Set up shipping calculator
+          setupShippingCalculator();
+          
+          // Set up customer info toggle
+          setupCustomerInfoToggle();
+          
+          // Set up order buttons
+          setupOrderButtons();
+          
+          // Load state cost data
+          loadStateCostData();
+      }
+      
+      // Load state cost data
+      function loadStateCostData() {
+          // Sample data - in production this would be loaded from a file or API
+          stateCostData = {
+              "AL": 0.12, "AK": 0, "AZ": 0.15, "AR": 0.11, "CA": 0.18, "CO": 0.14, 
+              "CT": 0.16, "DE": 0.13, "FL": 0.14, "GA": 0.12, "HI": 0, "ID": 0.15, 
+              "IL": 0.13, "IN": 0.12, "IA": 0.11, "KS": 0.11, "KY": 0.12, "LA": 0.12, 
+              "ME": 0.16, "MD": 0.14, "MA": 0.16, "MI": 0.13, "MN": 0.13, "MS": 0.11, 
+              "MO": 0.12, "MT": 0.15, "NE": 0.12, "NV": 0.15, "NH": 0.15, "NJ": 0.15, 
+              "NM": 0.14, "NY": 0.16, "NC": 0.13, "ND": 0.14, "OH": 0.13, "OK": 0.12, 
+              "OR": 0.16, "PA": 0.14, "RI": 0.15, "SC": 0.12, "SD": 0.13, "TN": 0.12, 
+              "TX": 0.11, "UT": 0.14, "VT": 0.15, "VA": 0.13, "WA": 0.16, "WV": 0.13, 
+              "WI": 0.13, "WY": 0.14, "DC": 0.15
+          };
+          
+          console.log('State cost data loaded:', stateCostData);
+      }
+      
+      // Set up shipping calculator
+      function setupShippingCalculator() {
+          const calculateButton = document.getElementById('calculateShipping');
+          const zipInput = document.getElementById('shippingZip');
+          
+          calculateButton.addEventListener('click', function() {
+              calculateShipping();
+          });
+          
+          zipInput.addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                  e.preventDefault();
+                  calculateShipping();
+              }
+          });
+          
+          // Validate zip code input (numbers only)
+          zipInput.addEventListener('input', function() {
+              this.value = this.value.replace(/[^0-9]/g, '');
+          });
+      }
+      
+      // Calculate shipping
+      function calculateShipping() {
+          const zipCode = document.getElementById('shippingZip').value;
+          const shippingError = document.getElementById('shippingError');
+          const shippingResult = document.getElementById('shippingResult');
+          
+          // Reset error and result visibility
+          shippingError.classList.remove('visible');
+          shippingResult.classList.remove('visible');
+          
+          // Validate zip code format
+          if (!zipCode || !/^\d{5}$/.test(zipCode)) {
+              shippingError.textContent = 'Please enter a valid 5-digit US ZIP code.';
+              shippingError.classList.add('visible');
+              return;
+          }
+          
+          // Get state from zip code
+          const state = getStateFromZipCode(zipCode);
+          console.log(`ZIP Code: ${zipCode}, Detected State: ${state}`);
+          
+          // Check if it's Hawaii or Alaska
+          if (state === 'HI' || state === 'AK') {
+              shippingError.textContent = 'Sorry, we do not ship to Hawaii or Alaska.';
+              shippingError.classList.add('visible');
+              return;
+          }
+          
+          // Check if state is valid
+          if (!state) {
+              shippingError.textContent = 'Invalid ZIP code. Please enter a valid US ZIP code.';
+              shippingError.classList.add('visible');
+              return;
+          }
+          
+          // Get cost per square foot for the state
+          const costPerSqFt = stateCostData[state] || 0;
+          console.log(`State: ${state}, Cost Per Sq Ft: $${costPerSqFt}`);
+          
+          if (costPerSqFt === 0) {
+              shippingError.textContent = `Sorry, we don't have shipping data for ${state}.`;
+              shippingError.classList.add('visible');
+              return;
+          }
+          
+          // Get square feet from the form
+          const squareFeet = parseInt(document.getElementById('totalRollSquareFeet').textContent.replace(/,/g, '')) || 0;
+          
+          // Calculate shipping cost
+          const baseFee = 230; // $230 base fee
+          const squareFootCost = squareFeet * costPerSqFt;
+          const totalShippingCost = baseFee + squareFootCost;
+          
+          // Update the shipping result display
+          document.getElementById('shippingState').textContent = state;
+          document.getElementById('shippingCostPerSqFt').textContent = `$${costPerSqFt.toFixed(2)}`;
+          document.getElementById('shippingSquareFeet').textContent = squareFeet.toLocaleString();
+          document.getElementById('shippingTotal').textContent = `$${totalShippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+          
+          // Show the result
+          shippingResult.classList.add('visible');
+      }
+      
+      // Get state from zip code
+      function getStateFromZipCode(zipCode) {
+          // Simplified mapping of ZIP code ranges to states
+          const zipRanges = [
+              { min: '00501', max: '14975', state: 'NY' }, // New York
+              { min: '15001', max: '19640', state: 'PA' }, // Pennsylvania
+              { min: '19701', max: '19980', state: 'DE' }, // Delaware
+              { min: '20001', max: '20599', state: 'DC' }, // District of Columbia
+              { min: '20600', max: '21930', state: 'MD' }, // Maryland
+              { min: '22001', max: '24658', state: 'VA' }, // Virginia
+              { min: '24701', max: '26886', state: 'WV' }, // West Virginia
+              { min: '27006', max: '28909', state: 'NC' }, // North Carolina
+              { min: '29001', max: '29948', state: 'SC' }, // South Carolina
+              { min: '30001', max: '31999', state: 'GA' }, // Georgia
+              { min: '32004', max: '34997', state: 'FL' }, // Florida
+              { min: '35004', max: '36925', state: 'AL' }, // Alabama
+              { min: '37010', max: '38589', state: 'TN' }, // Tennessee
+              { min: '38601', max: '39776', state: 'MS' }, // Mississippi
+              { min: '40003', max: '42788', state: 'KY' }, // Kentucky
+              { min: '43001', max: '45999', state: 'OH' }, // Ohio
+              { min: '46001', max: '47997', state: 'IN' }, // Indiana
+              { min: '48001', max: '49971', state: 'MI' }, // Michigan
+              { min: '50001', max: '52809', state: 'IA' }, // Iowa
+              { min: '53001', max: '54990', state: 'WI' }, // Wisconsin
+              { min: '55001', max: '56763', state: 'MN' }, // Minnesota
+              { min: '57001', max: '57799', state: 'SD' }, // South Dakota
+              { min: '58001', max: '58856', state: 'ND' }, // North Dakota
+              { min: '59001', max: '59937', state: 'MT' }, // Montana
+              { min: '60001', max: '62999', state: 'IL' }, // Illinois
+              { min: '63001', max: '65899', state: 'MO' }, // Missouri
+              { min: '66002', max: '67954', state: 'KS' }, // Kansas
+              { min: '68001', max: '69367', state: 'NE' }, // Nebraska
+              { min: '70001', max: '71497', state: 'LA' }, // Louisiana
+              { min: '71601', max: '72959', state: 'AR' }, // Arkansas
+              { min: '73001', max: '74966', state: 'OK' }, // Oklahoma
+              { min: '75001', max: '79999', state: 'TX' }, // Texas
+              { min: '80001', max: '81658', state: 'CO' }, // Colorado
+              { min: '82001', max: '83128', state: 'WY' }, // Wyoming
+              { min: '83201', max: '83876', state: 'ID' }, // Idaho
+              { min: '84001', max: '84791', state: 'UT' }, // Utah
+              { min: '85001', max: '86556', state: 'AZ' }, // Arizona
+              { min: '87001', max: '88439', state: 'NM' }, // New Mexico
+              { min: '89001', max: '89883', state: 'NV' }, // Nevada
+              { min: '90001', max: '96162', state: 'CA' }, // California
+              { min: '96701', max: '96898', state: 'HI' }, // Hawaii
+              { min: '97001', max: '97920', state: 'OR' }, // Oregon
+              { min: '98001', max: '99403', state: 'WA' }, // Washington
+              { min: '99501', max: '99950', state: 'AK' }  // Alaska
+          ];
 
-            // Check if lines should be flipped
-            const flipLines = document.getElementById('flipLines').checked;
+          // Find the state for the given ZIP code
+          for (const range of zipRanges) {
+              if (zipCode >= range.min && zipCode <= range.max) {
+                  return range.state;
+              }
+          }
+          
+          return null; // ZIP code not found
+      }
+      
+      // Set up order buttons
+      function setupOrderButtons() {
+          const turfOrderButton = document.getElementById('turfOrderButton');
+          const netOrderButton = document.getElementById('netOrderButton');
+          const closeModalButton = document.getElementById('closeModal');
+          const cancelOrderButton = document.getElementById('cancelOrder');
+          const confirmOrderButton = document.getElementById('confirmOrder');
+          const modal = document.getElementById('orderModal');
+          
+          // Turf order button
+          turfOrderButton.addEventListener('click', function() {
+              // Validate customer information
+              if (!validateCustomerInfo()) {
+                  return;
+              }
+              
+              // Set modal title and product
+              document.getElementById('modalTitle').textContent = 'Turf Order Confirmation';
+              document.getElementById('summaryProduct').textContent = 'Turf';
+              
+              // Set dimensions and cage count
+              const length = document.getElementById('length').value;
+              const width = document.getElementById('width').value;
+              const height = document.getElementById('height').value;
+              const cageCount = document.getElementById('cageCount').value;
+              document.getElementById('summaryDimensions').textContent = `${length}' × ${width}' × ${height}'`;
+              document.getElementById('summaryCageCount').textContent = cageCount;
+              
+              // Set roll direction
+              const isFlipped = document.getElementById('flipLines').checked;
+              document.getElementById('summaryRollDirection').textContent = isFlipped ? 'Along Width' : 'Along Length';
+              
+              // Set square feet
+              const sqFt = document.getElementById('totalRollSquareFeet').textContent;
+              document.getElementById('summarySqFt').textContent = sqFt;
+              
+              // Set seams included
+              const includeSeams = document.getElementById('includeSeamCosts').checked;
+              document.getElementById('summarySeams').textContent = includeSeams ? 'Yes' : 'No';
+              document.getElementById('summarySeamsContainer').style.display = 'flex';
+              document.getElementById('summaryHardwareContainer').style.display = 'none';
+              
+              // Set total
+              const total = document.getElementById('costTurf').textContent;
+              document.getElementById('summaryTotal').textContent = total;
+              
+              // Show modal
+              modal.classList.add('active');
+          });
+          
+          // Net order button
+          netOrderButton.addEventListener('click', function() {
+              // Validate customer information
+              if (!validateCustomerInfo()) {
+                  return;
+              }
+              
+              // Set modal title and product
+              document.getElementById('modalTitle').textContent = 'Net Order Confirmation';
+              document.getElementById('summaryProduct').textContent = 'Net';
+              
+              // Set dimensions and cage count
+              const length = document.getElementById('length').value;
+              const width = document.getElementById('width').value;
+              const height = document.getElementById('height').value;
+              const cageCount = document.getElementById('cageCount').value;
+              document.getElementById('summaryDimensions').textContent = `${length}' × ${width}' × ${height}'`;
+              document.getElementById('summaryCageCount').textContent = cageCount;
+              
+              // Set roll direction (not applicable for net)
+              document.getElementById('summaryRollDirection').textContent = 'N/A';
+              
+              // Set square feet
+              const sqFt = document.getElementById('totalSquareFeetNet').textContent;
+              document.getElementById('summarySqFt').textContent = sqFt;
+              
+              // Set hardware included
+              const includeHardware = document.getElementById('includeHardwareKits').checked;
+              document.getElementById('summaryHardware').textContent = includeHardware ? 'Yes' : 'No';
+              document.getElementById('summarySeamsContainer').style.display = 'none';
+              document.getElementById('summaryHardwareContainer').style.display = 'flex';
+              
+              // Set total
+              const total = document.getElementById('costNet').textContent;
+              document.getElementById('summaryTotal').textContent = total;
+              
+              // Show modal
+              modal.classList.add('active');
+          });
+          
+          // Close modal button
+          closeModalButton.addEventListener('click', function() {
+              modal.classList.remove('active');
+          });
+          
+          // Cancel order button
+          cancelOrderButton.addEventListener('click', function() {
+              modal.classList.remove('active');
+          });
+          
+          // Confirm order button
+          confirmOrderButton.addEventListener('click', function() {
+              // Here you would normally submit the order to a server
+              alert('Thank you for your order! We will contact you shortly to confirm the details.');
+              modal.classList.remove('active');
+          });
+      }
+      
+      // Set up include seam costs checkbox
+      function setupIncludeSeamCostsCheckbox() {
+          const includeSeamCostsCheckbox = document.getElementById('includeSeamCosts');
+          
+          includeSeamCostsCheckbox.addEventListener('change', function() {
+              // Update turf cost to include or exclude seam costs
+              updateTurfCostWithSeams();
+          });
+      }
+      
+      // Set up include hardware kits checkbox
+      function setupIncludeHardwareKitsCheckbox() {
+          const includeHardwareKitsCheckbox = document.getElementById('includeHardwareKits');
+          
+          includeHardwareKitsCheckbox.addEventListener('change', function() {
+              // Update net cost to include or exclude hardware costs
+              updateNetCostWithHardware();
+          });
+      }
+      
+      // Update turf cost to include or exclude seam costs
+      function updateTurfCostWithSeams() {
+          const includeSeamCosts = document.getElementById('includeSeamCosts').checked;
+          
+          if (includeSeamCosts) {
+              // Add seam fabric cost and glue cost to turf cost
+              const totalTurfCost = baseTurfCost + seamFabricCost + glueCost;
+              document.getElementById('costTurf').textContent = '$' + totalTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+              document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf + Seams';
+          } else {
+              // Use base turf cost only
+              document.getElementById('costTurf').textContent = '$' + baseTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+              document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf';
+          }
+          
+          // Update total cost
+          updateTotalCost();
+      }
+      
+      // Calculate and update total seam length
+      function updateTotalSeamLength(length, width, count) {
+          const isFlipped = document.getElementById('flipLines').checked;
+          let totalSeamLength = 0;
+          
+          if (!isFlipped) {
+              // Lines running along the width (perpendicular to length) - default when unchecked
+              const totalWidth = width * count;
+              const numLines = Math.floor(totalWidth / 15);
+              // Each line spans the length of the cage
+              totalSeamLength = numLines * length;
+          } else {
+              // Lines running along the length (when checkbox is checked)
+              const numLines = Math.floor(length / 15);
+              // Each line spans the total width of all cages
+              totalSeamLength = numLines * (width * count);
+          }
+          
+          // Calculate seam fabric cost ($0.30 per linear foot)
+          seamFabricCost = totalSeamLength * 0.30;
+          
+          // Calculate buckets of glue needed (1 bucket covers 150 feet of seam)
+          const bucketsNeeded = Math.ceil(totalSeamLength / 150);
+          glueCost = bucketsNeeded * 325;
+          
+          // Update the display with the total seam length in feet, cost, and glue buckets
+          document.getElementById('totalSeamLength').textContent = 
+              `${totalSeamLength.toLocaleString()} ft ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} Glue Bucket${bucketsNeeded !== 1 ? 's' : ''} ($${glueCost.toLocaleString()})`;
+          
+          // Update turf cost if include seam costs checkbox is checked
+          updateTurfCostWithSeams();
+      }
+      
+      // Calculate and update hardware kits information
+      function updateHardwareKits(length, count) {
+          // Each cage needs one hardware kit
+          const kitsNeeded = count;
+          
+          // Determine price per kit based on cage length
+          const pricePerKit = length >= 56 ? 175 : 155;
+          
+          // Calculate shipping cost ($19.95 per kit) - still calculate this for the total cost
+          const shippingCost = kitsNeeded * 19.95;
+          
+          // Calculate total hardware cost (still needed for the checkbox functionality)
+          const kitsCost = kitsNeeded * pricePerKit;
+          hardwareKitsCost = kitsCost + shippingCost;
+          
+          // Update the display - remove shipping and total
+          document.getElementById('hardwareKitsInfo').textContent = 
+              `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()})`;
 
-            // Create multiple cages side by side
-            for (let i = 0; i < count; i++) {
-                // Calculate x offset for this cage
-                const xOffset = i * width - ((count - 1) * width / 2);
+          // Update net cost if include hardware kits checkbox is checked
+          updateNetCostWithHardware();
+      }
+      
+      // Update net cost to include or exclude hardware costs
+      function updateNetCostWithHardware() {
+          const includeHardwareKits = document.getElementById('includeHardwareKits').checked;
+          
+          // Get the current net square feet value
+          const netSqFtText = document.getElementById('totalSquareFeetNet').textContent;
+          const netSqFt = parseFloat(netSqFtText.replace(/,/g, ''));
+          
+          // Calculate base net cost
+          const baseNetCost = netSqFt * 0.43;
+          
+          if (includeHardwareKits) {
+              // Add hardware kits cost to net cost
+              const totalNetCost = baseNetCost + hardwareKitsCost;
+              document.getElementById('costNet').textContent = '$' + totalNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+              document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf + Hardware';
+          } else {
+              // Use base net cost only
+              document.getElementById('costNet').textContent = '$' + baseNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+              document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf';
+          }
+          
+          // Update total cost
+          updateTotalCost();
+      }
+      
+      // Update total cost (turf + net)
+      function updateTotalCost() {
+          // Get the current cost values
+          const costTurfText = document.getElementById('costTurf').textContent;
+          const costNetText = document.getElementById('costNet').textContent;
+          
+          // Remove $ and commas, then parse as float
+          const costTurf = parseFloat(costTurfText.replace('$', '').replace(/,/g, ''));
+          const costNet = parseFloat(costNetText.replace('$', '').replace(/,/g, ''));
+          
+          // Calculate total
+          const totalCost = costTurf + costNet;
+          
+          // Update the total cost display
+          document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      }
+      
+      // Calculate remnant roll information
+      function calculateRemnantRoll(length, width, count, isFlipped) {
+          const rollWidth = 15; // Standard roll width in feet
+          let remnantWidth, remnantLength, remnantArea;
+          
+          if (!isFlipped) {
+              // Rolls run along the length (default when checkbox is unchecked)
+              const totalWidth = width * count;
+              const numRolls = Math.ceil(totalWidth / rollWidth);
+              remnantWidth = (numRolls * rollWidth) - totalWidth;
+              remnantLength = length;
+              remnantArea = remnantWidth * remnantLength;
+              
+              return {
+                  numRolls: numRolls,
+                  remnantWidth: remnantWidth,
+                  remnantLength: remnantLength,
+                  remnantArea: remnantArea,
+                  direction: "along length"
+              };
+          } else {
+              // Rolls run along the width (when checkbox is checked)
+              const numRolls = Math.ceil(length / rollWidth);
+              remnantWidth = (numRolls * rollWidth) - length;
+              remnantLength = width * count;
+              remnantArea = remnantWidth * remnantLength;
+              
+              return {
+                  numRolls: numRolls,
+                  remnantWidth: remnantWidth,
+                  remnantLength: remnantLength,
+                  remnantArea: remnantArea,
+                  direction: "along width"
+              };
+          }
+      }
+      
+      // Update remnant roll information display
+      function updateRemnantInfo(length, width, count) {
+          const isFlipped = document.getElementById('flipLines').checked;
+          const remnantInfo = calculateRemnantRoll(length, width, count, isFlipped);
+          
+          let rollsLine = "";
+          let remnantLine = "";
+          
+          if (remnantInfo.remnantWidth > 0) {
+              if (!isFlipped) {
+                  // Rolls run along the length (default when checkbox is unchecked)
+                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                  remnantLine = `<span class="roll-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
+              } else {
+                  // Rolls run along the width (when checkbox is checked)
+                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                  remnantLine = `<span class="roll-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
+              }
+          } else {
+              // No remnant (perfect fit)
+              if (!isFlipped) {
+                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                  remnantLine = `<span class="roll-info-value">No remnant</span> after installation (perfect fit)`;
+              } else {
+                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                  remnantLine = `<span class="roll-info-value">No remnant</span> after installation (perfect fit)`;
+              }
+          }
+          
+          document.getElementById('rollsLine').innerHTML = rollsLine;
+          document.getElementById('remnantLine').innerHTML = remnantLine;
+      }
+      
+      // Calculate and update total roll square feet
+      function updateTotalRollSquareFeet(length, width, count) {
+          const isFlipped = document.getElementById('flipLines').checked;
+          let totalRollSqFt;
+          
+          if (!isFlipped) {
+              // When unchecked, multiply length by width rounded up to next 15' increment
+              const totalWidth = width * count;
+              const roundedWidth = Math.ceil(totalWidth / 15) * 15;
+              totalRollSqFt = length * roundedWidth;
+          } else {
+              // When checked, multiply width by length rounded up to next 15' increment
+              const roundedLength = Math.ceil(length / 15) * 15;
+              totalRollSqFt = (width * count) * roundedLength;
+          }
+          
+          const roundedTotalRollSqFt = Math.round(totalRollSqFt);
+          document.getElementById('totalRollSquareFeet').textContent = roundedTotalRollSqFt.toLocaleString();
+          
+          // Update turf cost based on roll square feet
+          baseTurfCost = roundedTotalRollSqFt * 1.69;
+          
+          // Update turf cost display (with or without seam costs)
+          updateTurfCostWithSeams();
+      }
+      
+      // Calculate and update gravel needed
+      function updateGravelCalculation(length, width, count) {
+          // Calculate total area
+          const totalArea = length * width * count;
+          
+          // Calculate cubic feet of gravel (4 inches deep = 1/3 foot)
+          const cubicFeet = totalArea * (4/12);
+          
+          // Convert to tons (approximately 1.4 tons per cubic yard, and 27 cubic feet per cubic yard)
+          const tons = cubicFeet * (1.4/27);
+          
+          // Round to 1 decimal place
+          const roundedTons = Math.round(tons * 10) / 10;
+          
+          // Update the display
+          document.getElementById('gravelTons').textContent = roundedTons.toLocaleString();
+      }
+      
+      // Set up flip lines checkbox
+      function setupFlipLinesCheckbox() {
+          const flipLinesCheckbox = document.getElementById('flipLines');
+          
+          flipLinesCheckbox.addEventListener('change', function() {
+              // Trigger update to redraw the cage with new line orientation
+              const length = parseFloat(document.getElementById('length').value) || 70;
+              const width = parseFloat(document.getElementById('width').value) || 14;
+              const height = parseFloat(document.getElementById('height').value) || 12;
+              const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
+              
+              if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                  createCages(length, width, height, cageCount);
+                  // Update remnant roll information
+                  updateRemnantInfo(length, width, cageCount);
+                  // Update total roll square feet
+                  updateTotalRollSquareFeet(length, width, cageCount);
+                  // Update total seam length
+                  updateTotalSeamLength(length, width, cageCount);
+              }
+          });
+      }
+      
+      // Set up custom number input controls
+      function setupNumberControls() {
+          const numberControls = document.querySelectorAll('.number-control');
+          
+          numberControls.forEach(control => {
+              control.addEventListener('click', function() {
+                  const inputId = this.getAttribute('data-input');
+                  const action = this.getAttribute('data-action');
+                  const input = document.getElementById(inputId);
+                  
+                  let value = parseInt(input.value) || 0;
+                  const step = parseInt(input.getAttribute('step')) || 1;
+                  const min = parseInt(input.getAttribute('min')) || 1;
+                  const max = parseInt(input.getAttribute('max')) || Infinity;
+                  
+                  if (action === 'increment') {
+                      value = Math.min(value + step, max);
+                  } else if (action === 'decrement') {
+                      value = Math.max(value - step, min);
+                  }
+                  
+                  input.value = value;
+                  
+                  // Trigger input event to update the 3D model
+                  const event = new Event('input', { bubbles: true });
+                  input.dispatchEvent(event);
+              });
+          });
+      }
+      
+      // Update total square feet display
+      function updateTotalSquareFeet(length, width, count) {
+          const totalSqFt = Math.round(length * width * count);
+          document.getElementById('totalSquareFeet').textContent = totalSqFt.toLocaleString();
+          
+          // Update gravel calculation
+          updateGravelCalculation(length, width, count);
+      }
+      
+      // Update total square feet of net display
+      function updateTotalSquareFeetNet(length, width, height, count) {
+          // Calculate net square footage for a single cage
+          const topSide = length * width;
+          const frontAndBackSides = length * height * 2;
+          const leftAndRightSides = width * height * 2;
+          const singleCageNet = topSide + frontAndBackSides + leftAndRightSides;
+          
+          // For multiple cages, subtract the redundant long sides
+          let totalNetSqFt;
+          if (count === 1) {
+              totalNetSqFt = singleCageNet;
+          } else {
+              // Subtract one long side (length × height) for each additional cage
+              const redundantSides = (length * height) * (count - 1);
+              totalNetSqFt = (singleCageNet * count) - redundantSides;
+          }
+          
+          const roundedNetSqFt = Math.round(totalNetSqFt);
+          document.getElementById('totalSquareFeetNet').textContent = roundedNetSqFt.toLocaleString();
+          
+          // Update net cost with hardware if checkbox is checked
+          updateNetCostWithHardware();
+      }
+      
+      // Set up customer information section toggle
+      function setupCustomerInfoToggle() {
+          const customerInfoHeader = document.getElementById('customerInfoHeader');
+          const customerInfoSection = document.getElementById('customerInfoSection');
+          const customerInfoToggle = document.querySelector('.customer-info-toggle');
+          
+          customerInfoHeader.addEventListener('click', function() {
+              customerInfoSection.classList.toggle('active');
+              customerInfoToggle.classList.toggle('active');
+          });
+          
+          // Add event listeners to clear error styling on input
+          const allInputs = document.querySelectorAll('#customerInfoSection input, #customerInfoSection textarea');
+          allInputs.forEach(input => {
+              input.addEventListener('input', function() {
+                  this.style.borderColor = 'rgba(0, 255, 157, 0.3)';
+                  document.getElementById('paymentError').classList.remove('visible');
+              });
+          });
+      }
+      
+      // Validate customer information
+      function validateCustomerInfo() {
+          console.log("Running customer info validation");
+          const requiredFields = [
+              'customerName',
+              'customerEmail',
+              'customerPhone',
+              'customerAddress',
+              'customerCity',
+              'customerState',
+              'customerZip',
+              'customerCountry'
+          ];
+          
+          let isValid = true;
+          let invalidFields = [];
+          
+          // Check each required field
+          requiredFields.forEach(fieldId => {
+              const field = document.getElementById(fieldId);
+              if (!field.value.trim()) {
+                  field.style.borderColor = '#ff3e3e';
+                  isValid = false;
+                  invalidFields.push(fieldId);
+              }
+          });
+          
+          // Validate email format
+          const emailField = document.getElementById('customerEmail');
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (emailField.value.trim() && !emailPattern.test(emailField.value)) {
+              emailField.style.borderColor = '#ff3e3e';
+              isValid = false;
+              invalidFields.push('customerEmail (invalid format)');
+          }
+          
+          console.log("Validation result:", isValid, "Invalid fields:", invalidFields);
+          
+          // If validation fails, make sure the customer info section is visible
+          if (!isValid) {
+              document.getElementById('customerInfoSection').classList.add('active');
+              document.querySelector('.customer-info-toggle').classList.add('active');
+              document.getElementById('paymentError').classList.add('visible');
+          }
+          
+          return isValid;
+      }
+      
+      // Create text texture
+      function createTextTexture(text, width, height, rotate90 = false) {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          
+          // Set canvas size - swap width and height if rotating
+          if (rotate90) {
+              canvas.width = height;
+              canvas.height = width;
+          } else {
+              canvas.width = width;
+              canvas.height = height;
+          }
+          
+          // Clear canvas
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          
+          if (rotate90) {
+              // Set text properties for rotated text
+              const fontSize = Math.min(width, height) * 0.3;
+              context.font = `bold ${fontSize}px Arial`;
+              
+              // Save the current context state
+              context.save();
+              
+              // Translate and rotate the context
+              context.translate(canvas.width / 2, canvas.height / 2);
+              context.rotate(Math.PI / 2);
+              
+              // Set text alignment for rotated text
+              context.textAlign = 'center';
+              context.textBaseline = 'middle';
+              
+              // Add gradient for better visibility
+              context.fillStyle = 'white';
+              context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+              context.lineWidth = fontSize * 0.05;
+              
+              // Draw rotated text
+              context.strokeText(text, 0, 0);
+              context.fillText(text, 0, 0);
+              
+              // Restore the context to its original state
+              context.restore();
+          } else {
+              // Set text properties for normal text
+              const fontSize = Math.min(width, height) * 0.3;
+              context.font = `bold ${fontSize}px Arial`;
+              context.textAlign = 'center';
+              context.textBaseline = 'middle';
+              
+              // Add gradient for better visibility
+              context.fillStyle = 'white';
+              context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+              context.lineWidth = fontSize * 0.05;
+              
+              // Draw text
+              context.strokeText(text, canvas.width / 2, canvas.height / 2);
+              context.fillText(text, canvas.width / 2, canvas.height / 2);
+          }
+          
+          // Create texture
+          const texture = new THREE.CanvasTexture(canvas);
+          texture.needsUpdate = true;
+          
+          return texture;
+      }
+      
+      // Add text to cage
+      function addTextToCage(length, width, height, xOffset = 0) {
+          const text = "ATXTurf.com";
+          
+          // Create materials for each side with text
+          const frontTexture = createTextTexture(text, 1024, 512);
+          const backTexture = createTextTexture(text, 1024, 512);
+          const leftTexture = createTextTexture(text, 1024, 512);
+          const rightTexture = createTextTexture(text, 1024, 512);
+          const topTexture = createTextTexture(text, 1024, 512, true); // Rotate text 90 degrees
+          
+          // Create materials with the textures
+          const frontMaterial = new THREE.MeshBasicMaterial({ 
+              map: frontTexture, 
+              transparent: true,
+              side: THREE.DoubleSide
+          });
+          
+          const backMaterial = new THREE.MeshBasicMaterial({ 
+              map: backTexture, 
+              transparent: true,
+              side: THREE.DoubleSide
+          });
+          
+          const leftMaterial = new THREE.MeshBasicMaterial({ 
+              map: leftTexture, 
+              transparent: true,
+              side: THREE.DoubleSide
+          });
+          
+          const rightMaterial = new THREE.MeshBasicMaterial({ 
+              map: rightTexture, 
+              transparent: true,
+              side: THREE.DoubleSide
+          });
+          
+          const topMaterial = new THREE.MeshBasicMaterial({ 
+              map: topTexture, 
+              transparent: true,
+              side: THREE.DoubleSide
+          });
+          
+          // Create planes for each side
+          // Front side (positive Z)
+          const frontPlane = new THREE.Mesh(
+              new THREE.PlaneGeometry(width * 0.85, height * 0.45),
+              frontMaterial
+          );
+          frontPlane.position.set(xOffset, 0, length / 2 + 0.1);
+          frontPlane.rotation.y = Math.PI;
+          scene.add(frontPlane);
+          textLabels.push(frontPlane);
+          
+          // Back side (negative Z)
+          const backPlane = new THREE.Mesh(
+              new THREE.PlaneGeometry(width * 0.85, height * 0.45),
+              backMaterial
+          );
+          backPlane.position.set(xOffset, 0, -length / 2 - 0.1);
+          scene.add(backPlane);
+          textLabels.push(backPlane);
+          
+          // Only add side labels for the first and last cage
+          // Left side (negative X)
+          if (xOffset === 0) {
+              const leftPlane = new THREE.Mesh(
+                  new THREE.PlaneGeometry(length * 0.85, height * 0.45),
+                  leftMaterial
+              );
+              leftPlane.position.set(xOffset - width / 2 - 0.1, 0, 0);
+              leftPlane.rotation.y = Math.PI / 2;
+              scene.add(leftPlane);
+              textLabels.push(leftPlane);
+          }
+          
+          // Top side (positive Y)
+          const topPlane = new THREE.Mesh(
+              new THREE.PlaneGeometry(width * 0.85, length * 0.85),
+              topMaterial
+          );
+          topPlane.position.set(xOffset, height / 2 + 0.1, 0);
+          topPlane.rotation.x = -Math.PI / 2;
+          scene.add(topPlane);
+          textLabels.push(topPlane);
+          
+          // Right side label for the last cage will be added separately
+          return {
+              rightTexture: rightTexture,
+              rightMaterial: rightMaterial,
+              length: length,
+              height: height
+          };
+      }
+      
+      // Create or update multiple cages
+      function createCages(length, width, height, count) {
+          // Round values to whole numbers
+          length = Math.round(length);
+          width = Math.round(width);
+          height = Math.round(height);
+          
+          // Remove existing cages and text labels
+          cages.forEach(cage => scene.remove(cage));
+          cages = [];
+          
+          textLabels.forEach(label => scene.remove(label));
+          textLabels = [];
+          
+          // Remove existing floor planes
+          floors.forEach(floor => scene.remove(floor));
+          floors = [];
+          
+          // Remove existing targets
+          targets.forEach(target => scene.remove(target));
+          homePlates.forEach(plate => scene.remove(plate));
+          homePlates = [];
+          targets = [];
+          
+          // Store info for the right side label of the last cage
+          let lastCageInfo;
 
-                // Create cage group
-                const cage = new THREE.Group();
+          // Check if lines should be flipped
+          const flipLines = document.getElementById('flipLines').checked;
 
-                // Create wireframe material
-                const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
+          // Create multiple cages side by side
+          for (let i = 0; i < count; i++) {
+              // Calculate x offset for this cage
+              const xOffset = i * width - ((count - 1) * width / 2);
 
-                // Create solid material with transparency
-                const solidMaterial = new THREE.MeshPhongMaterial({
-                    color: 0x00ff9d,
-                    transparent: true,
-                    opacity: 0.1,
-                    side: THREE.DoubleSide
-                });
+              // Create cage group
+              const cage = new THREE.Group();
 
-                // Create cage geometry
-                const geometry = new THREE.BoxGeometry(width, height, length);
+              // Create wireframe material
+              const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
 
-                // Create wireframe
-                const wireframe = new THREE.LineSegments(
-                    new THREE.EdgesGeometry(geometry),
-                    wireMaterial
-                );
+              // Create solid material with transparency
+              const solidMaterial = new THREE.MeshPhongMaterial({
+                  color: 0x00ff9d,
+                  transparent: true,
+                  opacity: 0.1,
+                  side: THREE.DoubleSide
+              });
 
-                // Create solid mesh
-                const solid = new THREE.Mesh(geometry, solidMaterial);
+              // Create cage geometry
+              const geometry = new THREE.BoxGeometry(width, height, length);
 
-                // Add to cage group
-                cage.add(wireframe);
-                cage.add(solid);
-        
-                // Add door wireframe (6ft x 3ft) to the left of center on the front face
-                const doorWidth = 3;
-                const doorHeight = 6;
-                
-                // Create door geometry
-                const doorGeometry = new THREE.BufferGeometry();
-                const doorVertices = new Float32Array([
-                    // Door outline vertices (rectangle)
-                    -1.5, -height/2 + 0.1, length/2 + 0.05,  // bottom left
-                    -1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,  // top left
-                    1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,   // top right
-                    1.5, -height/2 + 0.1, length/2 + 0.05,   // bottom right
-                    -1.5, -height/2 + 0.1, length/2 + 0.05   // back to bottom left to close the loop
-                ]);
-        
-                doorGeometry.setAttribute('position', new THREE.BufferAttribute(doorVertices, 3));
-        
-                // Create door wireframe
-                const doorWireframe = new THREE.Line(doorGeometry, wireMaterial);
-        
-                // Position door on the front face, slightly to the left of center
-                doorWireframe.position.set(xOffset - width/6, 0, 0);
-        
-                // Add door to scene
-                scene.add(doorWireframe);
-                cages.push(doorWireframe); // Add to cages array so it gets removed when dimensions change
-                
-                // Add target (6' x 4' black rectangle with 3' x 2' white rectangle inside)
-                // Create black outer rectangle
-                const targetOuterWidth = 4;
-                const targetOuterHeight = 6;
-                const targetOuterGeometry = new THREE.PlaneGeometry(targetOuterWidth, targetOuterHeight);
-                const targetOuterMaterial = new THREE.MeshBasicMaterial({ 
-                    color: 0x000000, 
-                    side: THREE.DoubleSide 
-                });
-                const targetOuter = new THREE.Mesh(targetOuterGeometry, targetOuterMaterial);
-                
-                // Create white inner rectangle
-                const targetInnerWidth = 2;
-                const targetInnerHeight = 3;
-                const targetInnerGeometry = new THREE.PlaneGeometry(targetInnerWidth, targetInnerHeight);
-                const targetInnerMaterial = new THREE.MeshBasicMaterial({ 
-                    color: 0xffffff, 
-                    side: THREE.DoubleSide 
-                });
-                const targetInner = new THREE.Mesh(targetInnerGeometry, targetInnerMaterial);
-                
-                // Position inner rectangle slightly in front of outer rectangle
-                targetInner.position.z = 0.01;
-                
-                // Group the target rectangles
-                const targetGroup = new THREE.Group();
-                targetGroup.add(targetOuter);
-                targetGroup.add(targetInner);
-                
-                // Position target on the back face, 2 feet off the floor
-                targetGroup.position.set(xOffset, -height/2 + 2 + targetOuterHeight/2, -length/2 - 0.05);
-                targetGroup.rotation.y = Math.PI; // Face toward the front
-                
-                // Add target to scene
-                scene.add(targetGroup);
-                targets.push(targetGroup);
-        
-                // Add maroon rectangle with home plate
-                const maroonWidth = 12; // 12 feet wide
-                const maroonLength = 6; // 6 feet long
-                const maroonGeometry = new THREE.PlaneGeometry(maroonWidth, maroonLength);
-                const maroonMaterial = new THREE.MeshBasicMaterial({ 
-                    color: 0x800000, // Maroon color
-                    side: THREE.DoubleSide 
-                });
-                const maroonRect = new THREE.Mesh(maroonGeometry, maroonMaterial);
+              // Create wireframe
+              const wireframe = new THREE.LineSegments(
+                  new THREE.EdgesGeometry(geometry),
+                  wireMaterial
+              );
 
-                // Position maroon rectangle on the floor, 2 feet from the back wall
-                maroonRect.rotation.x = -Math.PI / 2; // Make it horizontal
-                maroonRect.position.set(
-                    xOffset, 
-                    -height/2 + 0.08, // Slightly above the floor
-                    -length/2 + 2 + maroonLength/2 // 2 feet from back wall
-                );
+              // Create solid mesh
+              const solid = new THREE.Mesh(geometry, solidMaterial);
 
-                // Create home plate (pentagon shape)
-                const homePlateSize = 17/12; // 17 inches in feet
-                const homePlateShape = new THREE.Shape();
+              // Add to cage group
+              cage.add(wireframe);
+              cage.add(solid);
+      
+              // Add door wireframe (6ft x 3ft) to the left of center on the front face
+              const doorWidth = 3;
+              const doorHeight = 6;
+              
+              // Create door geometry
+              const doorGeometry = new THREE.BufferGeometry();
+              const doorVertices = new Float32Array([
+                  // Door outline vertices (rectangle)
+                  -1.5, -height/2 + 0.1, length/2 + 0.05,  // bottom left
+                  -1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,  // top left
+                  1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,   // top right
+                  1.5, -height/2 + 0.1, length/2 + 0.05,   // bottom right
+                  -1.5, -height/2 + 0.1, length/2 + 0.05   // back to bottom left to close the loop
+              ]);
+      
+              doorGeometry.setAttribute('position', new THREE.BufferAttribute(doorVertices, 3));
+      
+              // Create door wireframe
+              const doorWireframe = new THREE.Line(doorGeometry, wireMaterial);
+      
+              // Position door on the front face, slightly to the left of center
+              doorWireframe.position.set(xOffset - width/6, 0, 0);
+      
+              // Add door to scene
+              scene.add(doorWireframe);
+              cages.push(doorWireframe); // Add to cages array so it gets removed when dimensions change
+              
+              // Add target (6' x 4' black rectangle with 3' x 2' white rectangle inside)
+              // Create black outer rectangle
+              const targetOuterWidth = 4;
+              const targetOuterHeight = 6;
+              const targetOuterGeometry = new THREE.PlaneGeometry(targetOuterWidth, targetOuterHeight);
+              const targetOuterMaterial = new THREE.MeshBasicMaterial({ 
+                  color: 0x000000, 
+                  side: THREE.DoubleSide 
+              });
+              const targetOuter = new THREE.Mesh(targetOuterGeometry, targetOuterMaterial);
+              
+              // Create white inner rectangle
+              const targetInnerWidth = 2;
+              const targetInnerHeight = 3;
+              const targetInnerGeometry = new THREE.PlaneGeometry(targetInnerWidth, targetInnerHeight);
+              const targetInnerMaterial = new THREE.MeshBasicMaterial({ 
+                  color: 0xffffff, 
+                  side: THREE.DoubleSide 
+              });
+              const targetInner = new THREE.Mesh(targetInnerGeometry, targetInnerMaterial);
+              
+              // Position inner rectangle slightly in front of outer rectangle
+              targetInner.position.z = 0.01;
+              
+              // Group the target rectangles
+              const targetGroup = new THREE.Group();
+              targetGroup.add(targetOuter);
+              targetGroup.add(targetInner);
+              
+              // Position target on the back face, 2 feet off the floor
+              targetGroup.position.set(xOffset, -height/2 + 2 + targetOuterHeight/2, -length/2 - 0.05);
+              targetGroup.rotation.y = Math.PI; // Face toward the front
+              
+              // Add target to scene
+              scene.add(targetGroup);
+              targets.push(targetGroup);
+      
+              // Add maroon rectangle with home plate
+              const maroonWidth = 12; // 12 feet wide
+              const maroonLength = 6; // 6 feet long
+              const maroonGeometry = new THREE.PlaneGeometry(maroonWidth, maroonLength);
+              const maroonMaterial = new THREE.MeshBasicMaterial({ 
+                  color: 0x800000, // Maroon color
+                  side: THREE.DoubleSide 
+              });
+              const maroonRect = new THREE.Mesh(maroonGeometry, maroonMaterial);
 
-                // Home plate is a pentagon with a 17-inch square and two 12-inch sides forming a point
-                homePlateShape.moveTo(0, homePlateSize/2); // Top point
-                homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/6); // Left corner
-                homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/2); // Left back
-                homePlateShape.lineTo(homePlateSize/2, -homePlateSize/2); // Right back
-                homePlateShape.lineTo(homePlateSize/2, -homePlateSize/6); // Right corner
-                homePlateShape.lineTo(0, homePlateSize/2); // Back to top point
+              // Position maroon rectangle on the floor, 2 feet from the back wall
+              maroonRect.rotation.x = -Math.PI / 2; // Make it horizontal
+              maroonRect.position.set(
+                  xOffset, 
+                  -height/2 + 0.08, // Slightly above the floor
+                  -length/2 + 2 + maroonLength/2 // 2 feet from back wall
+              );
 
-                const homePlateGeometry = new THREE.ShapeGeometry(homePlateShape);
-                const homePlateMaterial = new THREE.MeshBasicMaterial({ 
-                    color: 0xffffff, // White color
-                    side: THREE.DoubleSide 
-                });
-                const homePlate = new THREE.Mesh(homePlateGeometry, homePlateMaterial);
+              // Create home plate (pentagon shape)
+              const homePlateSize = 17/12; // 17 inches in feet
+              const homePlateShape = new THREE.Shape();
 
-                // Position home plate in the center of the maroon rectangle
-                homePlate.rotation.x = -Math.PI / 2; // Make it horizontal
-                homePlate.position.set(
-                    xOffset, 
-                    -height/2 + 0.09, // Slightly above the maroon rectangle
-                    -length/2 + 2 + maroonLength/2 // Same position as maroon rectangle
-                );
+              // Home plate is a pentagon with a 17-inch square and two 12-inch sides forming a point
+              homePlateShape.moveTo(0, homePlateSize/2); // Top point
+              homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/6); // Left corner
+              homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/2);  // Left corner
+              homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/2); // Left back
+              homePlateShape.lineTo(homePlateSize/2, -homePlateSize/2); // Right back
+              homePlateShape.lineTo(homePlateSize/2, -homePlateSize/6); // Right corner
+              homePlateShape.lineTo(0, homePlateSize/2); // Back to top point
 
-                // Group the home plate elements
-                const homePlateGroup = new THREE.Group();
-                homePlateGroup.add(maroonRect);
-                homePlateGroup.add(homePlate);
+              const homePlateGeometry = new THREE.ShapeGeometry(homePlateShape);
+              const homePlateMaterial = new THREE.MeshBasicMaterial({ 
+                  color: 0xffffff, // White color
+                  side: THREE.DoubleSide 
+              });
+              const homePlate = new THREE.Mesh(homePlateGeometry, homePlateMaterial);
 
-                // Add to scene
-                scene.add(homePlateGroup);
-                homePlates.push(homePlateGroup);
-        
-                // Position cage
-                cage.position.set(xOffset, 0, 0);
+              // Position home plate in the center of the maroon rectangle
+              homePlate.rotation.x = -Math.PI / 2; // Make it horizontal
+              homePlate.position.set(
+                  xOffset, 
+                  -height/2 + 0.09, // Slightly above the maroon rectangle
+                  -length/2 + 2 + maroonLength/2 // Same position as maroon rectangle
+              );
 
-                // Add cage to scene
-                scene.add(cage);
-                cages.push(cage);
-            }
-            
-            // Calculate the center x-offset for multiple cages
-            const centerXOffset = 0; // Center for all cages
-            
-            // For multiple cages, create a single continuous floor
-            const totalWidth = width * count;
-            const floorGeometry = new THREE.PlaneGeometry(totalWidth - 0.1, length - 0.1);
-            const floorMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0x00ff4c, // Bright green
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.8,
-                emissive: 0x00ff4c, // Add emissive color to make it glow
-                emissiveIntensity: 0.3, // Control the glow intensity
-                roughness: 0.5,
-                metalness: 0.2
-            });
+              // Group the home plate elements
+              const homePlateGroup = new THREE.Group();
+              homePlateGroup.add(maroonRect);
+              homePlateGroup.add(homePlate);
 
-            // Position the floor at the center of all cages
-            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-            floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
-            floor.position.set(centerXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
-            scene.add(floor);
-            floors.push(floor);
+              // Add to scene
+              scene.add(homePlateGroup);
+              homePlates.push(homePlateGroup);
+      
+              // Position cage
+              cage.position.set(xOffset, 0, 0);
 
-            // Add a duplicate floor facing the opposite direction for better visibility
-            const floorBottom = new THREE.Mesh(floorGeometry, floorMaterial);
-            floorBottom.rotation.x = -Math.PI / 2; // Rotate to face the opposite direction
-            floorBottom.position.set(centerXOffset, -height/2 + 0.04, 0); // Slightly below the main floor
-            scene.add(floorBottom);
-            floors.push(floorBottom);
+              // Add cage to scene
+              scene.add(cage);
+              cages.push(cage);
+          }
+          
+          // Calculate the center x-offset for multiple cages
+          const centerXOffset = 0; // Center for all cages
+          
+          // For multiple cages, create a single continuous floor
+          const totalWidth = width * count;
+          const floorGeometry = new THREE.PlaneGeometry(totalWidth - 0.1, length - 0.1);
+          const floorMaterial = new THREE.MeshStandardMaterial({ 
+              color: 0x00ff4c, // Bright green
+              side: THREE.DoubleSide,
+              transparent: true,
+              opacity: 0.8,
+              emissive: 0x00ff4c, // Add emissive color to make it glow
+              emissiveIntensity: 0.3, // Control the glow intensity
+              roughness: 0.5,
+              metalness: 0.2
+          });
 
-            // Add lines every 15 feet across the entire floor
-            const lineInterval = 15; // 15 feet between lines
-            const lineColor = 0x000000; // Black color
+          // Position the floor at the center of all cages
+          const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+          floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
+          floor.position.set(centerXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
+          scene.add(floor);
+          floors.push(floor);
 
-            if (!flipLines) {
-                // Lines running along the width (perpendicular to length) - default when unchecked
-                const totalLines = Math.floor(totalWidth / 15);
-                
-                for (let i = 1; i <= totalLines; i++) {
-                    const linePosition = -totalWidth/2 + (i * lineInterval);
-                    
-                    // Create line as a thin rectangle
-                    const lineGeometry = new THREE.PlaneGeometry(0.3, length - 0.5);
-                    const lineMaterial = new THREE.MeshBasicMaterial({ 
-                        color: lineColor,
-                        side: THREE.DoubleSide,
-                        transparent: false,
-                        opacity: 1
-                    });
-                    
-                    // Create line as a mesh
-                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                    line.rotation.x = Math.PI / 2; // Make it horizontal
-                    line.position.set(centerXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
-                    
-                    scene.add(line);
-                    floors.push(line); // Add to floors array so it gets removed when dimensions change
-                }
-            } else {
-                // Lines running along the length (when checkbox is checked)
-                const numLines = Math.floor(length / 15);
-                
-                for (let i = 1; i <= numLines; i++) {
-                    const linePosition = -length/2 + (i * lineInterval);
-                    
-                    // Create line as a thin rectangle spanning the entire width of all cages
-                    const lineGeometry = new THREE.PlaneGeometry(totalWidth - 0.5, 0.3);
-                    const lineMaterial = new THREE.MeshBasicMaterial({ 
-                        color: lineColor,
-                        side: THREE.DoubleSide,
-                        transparent: false,
-                        opacity: 1
-                    });
-                    
-                    // Create line as a mesh
-                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                    line.rotation.x = Math.PI / 2; // Make it horizontal
-                    line.position.set(centerXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
-                    
-                    scene.add(line);
-                    floors.push(line); // Add to floors array so it gets removed when dimensions change
-                }
-            }
+          // Add a duplicate floor facing the opposite direction for better visibility
+          const floorBottom = new THREE.Mesh(floorGeometry, floorMaterial);
+          floorBottom.rotation.x = -Math.PI / 2; // Rotate to face the opposite direction
+          floorBottom.position.set(centerXOffset, -height/2 + 0.04, 0); // Slightly below the main floor
+          scene.add(floorBottom);
+          floors.push(floorBottom);
 
-            // Now add the individual cages
-            for (let i = 0; i < count; i++) {
-                // Calculate x offset for this cage
-                const xOffset = i * width - ((count - 1) * width / 2);
-                
-                // Add text labels to the cage
-                lastCageInfo = addTextToCage(length, width, height, xOffset);
-            }
-            
-            // Add right side label for the last cage
-            if (lastCageInfo && count > 0) {
-                const rightPlane = new THREE.Mesh(
-                    new THREE.PlaneGeometry(lastCageInfo.length * 0.85, lastCageInfo.height * 0.45),
-                    lastCageInfo.rightMaterial
-                );
-                const lastXOffset = (count - 1) * width - ((count - 1) * width / 2);
-                rightPlane.position.set(lastXOffset + width / 2 + 0.1, 0, 0);
-                rightPlane.rotation.y = -Math.PI / 2;
-                scene.add(rightPlane);
-                textLabels.push(rightPlane);
-            }
-            
-            // Adjust camera position based on number of cages
-            if (count > 1) {
-                const totalWidth = count * width;
-                camera.position.set(totalWidth * 0.7, totalWidth * 0.8, totalWidth * 0.9);
-                camera.lookAt(0, 0, 0);
-            } else {
-                camera.position.set(50, 60, 70);
-                camera.lookAt(0, 0, 0);
-            }
-            
-            // Update dimensions display with whole numbers
-            document.getElementById('dimensionsDisplay').textContent = 
-                `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft × Count: ${count}`;
-                
-            // Update total square feet
-            updateTotalSquareFeet(length, width, count);
-            updateTotalSquareFeetNet(length, width, height, count);
-            updateTotalRollSquareFeet(length, width, count);
-            
-            // Update remnant roll information
-            updateRemnantInfo(length, width, count);
-            // Update total seam length
-            updateTotalSeamLength(length, width, count);
-            // In the createCages function, add this line after updateTotalSeamLength(length, width, count);
-            updateHardwareKits(length, count);
-        }
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        
-        // Handle window resize
-        function onWindowResize() {
-            const container = document.querySelector('.canvas-container');
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        }
-        
-        // Handle form submission
-        document.getElementById('dimensionsForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-        });
-        
-        // Handle input changes for real-time updates
-        const inputs = document.querySelectorAll('#dimensionsForm input');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const length = parseFloat(document.getElementById('length').value) || 70;
-                const width = parseFloat(document.getElementById('width').value) || 14;
-                const height = parseFloat(document.getElementById('height').value) || 12;
-                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
-                
-                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
-                    createCages(length, width, height, cageCount);
-                }
-            });
-        });
-        
-        // Initialize PayPal button for turf
-        function initPayPalButtonTurf() {
-            // Clear any existing buttons first
-            document.getElementById('paypal-button-container-turf').innerHTML = '';
-            
-            // Render the PayPal button
-            paypal.Buttons({
-                // Set up the transaction
-                createOrder: function(data, actions) {
-                    // Validate customer information first
-                    if (!validateCustomerInfo()) {
-                        // Show the customer info section if validation fails
-                        document.getElementById('customerInfoSection').classList.add('active');
-                        document.querySelector('.customer-info-toggle').classList.add('active');
-                        document.getElementById('paymentError').classList.add('visible');
-                        return false; // Prevent order creation
-                    }
-                    
-                    // Get the latest cost value directly from the DOM
-                    const updatedCostTurfText = document.getElementById('costTurf').textContent;
-                    const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
-                    
-                    // Get all cage specifications
-                    const length = document.getElementById('length').value;
-                    const width = document.getElementById('width').value;
-                    const height = document.getElementById('height').value;
-                    const cageCount = document.getElementById('cageCount').value;
-                    const isFlipped = document.getElementById('flipLines').checked ? "Yes" : "No";
-                    const includeSeams = document.getElementById('includeSeamCosts').checked ? "Yes" : "No";
-                    const totalRollSqFt = document.getElementById('totalRollSquareFeet').textContent;
-                    const seamInfo = document.getElementById('totalSeamLength').textContent;
-                    
-                    // Get customer information
-                    const customerName = document.getElementById('customerName').value;
-                    const customerEmail = document.getElementById('customerEmail').value;
-                    const customerPhone = document.getElementById('customerPhone').value;
-                    const customerAddress = document.getElementById('customerAddress').value;
-                    const customerCity = document.getElementById('customerCity').value;
-                    const customerState = document.getElementById('customerState').value;
-                    const customerZip = document.getElementById('customerZip').value;
-                    const customerCountry = document.getElementById('customerCountry').value;
-                    const customerNotes = document.getElementById('customerNotes').value;
-                    
-                    // Create a detailed description for the order
-                    const orderDescription = `Batting Cage Turf: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalRollSqFt} sq ft`;
-                    
-                    // Create a custom_id with all the detailed specifications
-                    const customId = JSON.stringify({
-                        specifications: {
-                            length: length,
-                            width: width,
-                            height: height,
-                            cageCount: cageCount,
-                            flippedRolls: isFlipped,
-                            includeSeams: includeSeams,
-                            totalRollSqFt: totalRollSqFt,
-                            seamDetails: seamInfo
-                        },
-                        customer: {
-                            email: customerEmail,
-                            phone: customerPhone,
-                            notes: customerNotes
-                        }
-                    });
-                    
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: orderDescription,
-                            custom_id: customId,
-                            amount: {
-                                value: updatedCostTurf.toFixed(2)
-                            },
-                            shipping: {
-                                name: {
-                                    full_name: customerName
-                                },
-                                address: {
-                                    address_line_1: customerAddress,
-                                    admin_area_2: customerCity,
-                                    admin_area_1: customerState,
-                                    postal_code: customerZip,
-                                    country_code: customerCountry === "United States" ? "US" : customerCountry
-                                }
-                            }
-                        }]
-                    });
-                },
-                
-                // Finalize the transaction
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(orderData) {
-                        // Show a success message
-                        alert('Turf payment completed! Transaction ID: ' + orderData.id);
-                    });
-                },
-                
-                style: {
-                    layout: 'vertical',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'paypal',
-                    height: 40
-                }
-            }).render('#paypal-button-container-turf');
-        }
-        
-        // Initialize PayPal button for net
-        function initPayPalButtonNet() {
-            // Clear any existing buttons first
-            document.getElementById('paypal-button-container-net').innerHTML = '';
-            
-            // Render the PayPal button
-            paypal.Buttons({
-                // Set up the transaction
-                createOrder: function(data, actions) {
-                    // Validate customer information first
-                    if (!validateCustomerInfo()) {
-                        // Show the customer info section if validation fails
-                        document.getElementById('customerInfoSection').classList.add('active');
-                        document.querySelector('.customer-info-toggle').classList.add('active');
-                        document.getElementById('paymentError').classList.add('visible');
-                        return false; // Prevent order creation
-                    }
-                    
-                    // Get the latest cost value directly from the DOM
-                    const updatedCostNetText = document.getElementById('costNet').textContent;
-                    const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
-                    
-                    // Get all cage specifications
-                    const length = document.getElementById('length').value;
-                    const width = document.getElementById('width').value;
-                    const height = document.getElementById('height').value;
-                    const cageCount = document.getElementById('cageCount').value;
-                    const includeHardware = document.getElementById('includeHardwareKits').checked ? "Yes" : "No";
-                    const totalNetSqFt = document.getElementById('totalSquareFeetNet').textContent;
-                    const hardwareInfo = document.getElementById('hardwareKitsInfo').textContent;
-                    
-                    // Get customer information
-                    const customerName = document.getElementById('customerName').value;
-                    const customerEmail = document.getElementById('customerEmail').value;
-                    const customerPhone = document.getElementById('customerPhone').value;
-                    const customerAddress = document.getElementById('customerAddress').value;
-                    const customerCity = document.getElementById('customerCity').value;
-                    const customerState = document.getElementById('customerState').value;
-                    const customerZip = document.getElementById('customerZip').value;
-                    const customerCountry = document.getElementById('customerCountry').value;
-                    const customerNotes = document.getElementById('customerNotes').value;
-                    
-                    // Create a detailed description for the order
-                    const orderDescription = `Batting Cage Net: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalNetSqFt} sq ft`;
-                    
-                    // Create a custom_id with all the detailed specifications
-                    const customId = JSON.stringify({
-                        specifications: {
-                            length: length,
-                            width: width,
-                            height: height,
-                            cageCount: cageCount,
-                            includeHardware: includeHardware,
-                            totalNetSqFt: totalNetSqFt,
-                            hardwareDetails: hardwareInfo
-                        },
-                        customer: {
-                            email: customerEmail,
-                            phone: customerPhone,
-                            notes: customerNotes
-                        }
-                    });
-                    
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: orderDescription,
-                            custom_id: customId,
-                            amount: {
-                                value: updatedCostNet.toFixed(2)
-                            },
-                            shipping: {
-                                name: {
-                                    full_name: customerName
-                                },
-                                address: {
-                                    address_line_1: customerAddress,
-                                    admin_area_2: customerCity,
-                                    admin_area_1: customerState,
-                                    postal_code: customerZip,
-                                    country_code: customerCountry === "United States" ? "US" : customerCountry
-                                }
-                            }
-                        }]
-                    });
-                },
-                
-                // Finalize the transaction
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(orderData) {
-                        // Show a success message
-                        alert('Net payment completed! Transaction ID: ' + orderData.id);
-                    });
-                },
-                
-                style: {
-                    layout: 'vertical',
-                    color: 'gold',
-                    shape: 'rect',
-                    label: 'paypal',
-                    height: 40
-                }
-            }).render('#paypal-button-container-net');
-        }
-        
-        // Set up customer information section toggle
-        function setupCustomerInfoToggle() {
-            const customerInfoHeader = document.getElementById('customerInfoHeader');
-            const customerInfoSection = document.getElementById('customerInfoSection');
-            const customerInfoToggle = document.querySelector('.customer-info-toggle');
-            
-            customerInfoHeader.addEventListener('click', function() {
-                customerInfoSection.classList.toggle('active');
-                customerInfoToggle.classList.toggle('active');
-            });
-            
-            // Add event listeners to clear error styling on input
-            const allInputs = document.querySelectorAll('#customerInfoSection input, #customerInfoSection textarea');
-            allInputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    this.style.borderColor = 'rgba(0, 255, 157, 0.3)';
-                    document.getElementById('paymentError').classList.remove('visible');
-                });
-            });
-        }
-        
-        // Validate customer information
-        function validateCustomerInfo() {
-            const requiredFields = [
-                'customerName',
-                'customerEmail',
-                'customerPhone',
-                'customerAddress',
-                'customerCity',
-                'customerState',
-                'customerZip',
-                'customerCountry'
-            ];
-            
-            let isValid = true;
-            
-            // Check each required field
-            requiredFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (!field.value.trim()) {
-                    field.style.borderColor = '#ff3e3e';
-                    isValid = false;
-                }
-            });
-            
-            // Validate email format
-            const emailField = document.getElementById('customerEmail');
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailField.value.trim() && !emailPattern.test(emailField.value)) {
-                emailField.style.borderColor = '#ff3e3e';
-                isValid = false;
-            }
-            
-            return isValid;
-        }
-        
-        // Initialize the scene when the page loads
-        window.onload = function() {
-            init();
-            // Initialize PayPal buttons
-            initPayPalButtonTurf();
-            initPayPalButtonNet();
-            // Set up customer info toggle
-            setupCustomerInfoToggle();
-        };
-    </script>
+          // Add lines every 15 feet across the entire floor
+          const lineInterval = 15; // 15 feet between lines
+          const lineColor = 0x000000; // Black color
+
+          if (!flipLines) {
+              // Lines running along the width (perpendicular to length) - default when unchecked
+              const totalLines = Math.floor(totalWidth / 15);
+              
+              for (let i = 1; i <= totalLines; i++) {
+                  const linePosition = -totalWidth/2 + (i * lineInterval);
+                  
+                  // Create line as a thin rectangle
+                  const lineGeometry = new THREE.PlaneGeometry(0.3, length - 0.5);
+                  const lineMaterial = new THREE.MeshBasicMaterial({ 
+                      color: lineColor,
+                      side: THREE.DoubleSide,
+                      transparent: false,
+                      opacity: 1
+                  });
+                  
+                  // Create line as a mesh
+                  const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                  line.rotation.x = Math.PI / 2; // Make it horizontal
+                  line.position.set(centerXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
+                  
+                  scene.add(line);
+                  floors.push(line); // Add to floors array so it gets removed when dimensions change
+              }
+          } else {
+              // Lines running along the length (when checkbox is checked)
+              const numLines = Math.floor(length / 15);
+              
+              for (let i = 1; i <= numLines; i++) {
+                  const linePosition = -length/2 + (i * lineInterval);
+                  
+                  // Create line as a thin rectangle spanning the entire width of all cages
+                  const lineGeometry = new THREE.PlaneGeometry(totalWidth - 0.5, 0.3);
+                  const lineMaterial = new THREE.MeshBasicMaterial({ 
+                      color: lineColor,
+                      side: THREE.DoubleSide,
+                      transparent: false,
+                      opacity: 1
+                  });
+                  
+                  // Create line as a mesh
+                  const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                  line.rotation.x = Math.PI / 2; // Make it horizontal
+                  line.position.set(centerXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
+                  
+                  scene.add(line);
+                  floors.push(line); // Add to floors array so it gets removed when dimensions change
+              }
+          }
+
+          // Now add the individual cages
+          for (let i = 0; i < count; i++) {
+              // Calculate x offset for this cage
+              const xOffset = i * width - ((count - 1) * width / 2);
+              
+              // Add text labels to the cage
+              lastCageInfo = addTextToCage(length, width, height, xOffset);
+          }
+          
+          // Add right side label for the last cage
+          if (lastCageInfo && count > 0) {
+              const rightPlane = new THREE.Mesh(
+                  new THREE.PlaneGeometry(lastCageInfo.length * 0.85, lastCageInfo.height * 0.45),
+                  lastCageInfo.rightMaterial
+              );
+              const lastXOffset = (count - 1) * width - ((count - 1) * width / 2);
+              rightPlane.position.set(lastXOffset + width / 2 + 0.1, 0, 0);
+              rightPlane.rotation.y = -Math.PI / 2;
+              scene.add(rightPlane);
+              textLabels.push(rightPlane);
+          }
+          
+          // Adjust camera position based on number of cages
+          if (count > 1) {
+              const totalWidth = count * width;
+              camera.position.set(totalWidth * 0.7, totalWidth * 0.8, totalWidth * 0.9);
+              camera.lookAt(0, 0, 0);
+          } else {
+              camera.position.set(50, 60, 70);
+              camera.lookAt(0, 0, 0);
+          }
+          
+          // Update dimensions display with whole numbers
+          document.getElementById('dimensionsDisplay').textContent = 
+              `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft × Count: ${count}`;
+              
+          // Update total square feet
+          updateTotalSquareFeet(length, width, count);
+          updateTotalSquareFeetNet(length, width, height, count);
+          updateTotalRollSquareFeet(length, width, count);
+          
+          // Update remnant roll information
+          updateRemnantInfo(length, width, count);
+          // Update total seam length
+          updateTotalSeamLength(length, width, count);
+          // Update hardware kits
+          updateHardwareKits(length, count);
+      }
+      
+      // Animation loop
+      function animate() {
+          requestAnimationFrame(animate);
+          controls.update();
+          renderer.render(scene, camera);
+      }
+      
+      // Handle window resize
+      function onWindowResize() {
+          const container = document.querySelector('.canvas-container');
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+      }
+      
+      // Handle form submission
+      document.getElementById('dimensionsForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+      });
+      
+      // Handle input changes for real-time updates
+      const inputs = document.querySelectorAll('#dimensionsForm input');
+      inputs.forEach(input => {
+          input.addEventListener('input', function() {
+              const length = parseFloat(document.getElementById('length').value) || 70;
+              const width = parseFloat(document.getElementById('width').value) || 14;
+              const height = parseFloat(document.getElementById('height').value) || 12;
+              const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
+              
+              if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                  createCages(length, width, height, cageCount);
+              }
+          });
+      });
+      
+      // Initialize the scene when the page loads
+      window.onload = function() {
+          init();
+      };
+  </script>
 </body>
 </html>
+
 
 
 
