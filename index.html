@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-   <!-- PayPal SDK with Pay Later disabled -->
+  <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -924,7 +924,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 
                 <div class="seam-info">
                     <div class="seam-info-row">
@@ -1261,6 +1260,7 @@
             
             // Get state from zip code
             const state = getStateFromZipCode(zipCode);
+            console.log(`ZIP Code: ${zipCode}, Detected State: ${state}`);
             
             // Check if it's Hawaii or Alaska
             if (state === 'HI' || state === 'AK') {
@@ -1278,6 +1278,7 @@
             
             // Get cost per square foot for the state
             const costPerSqFt = stateCostData[state] || 0;
+            console.log(`State: ${state}, Cost Per Sq Ft: $${costPerSqFt}`);
             
             if (costPerSqFt === 0) {
                 shippingError.textContent = `Sorry, we don't have shipping data for ${state}.`;
@@ -1305,73 +1306,67 @@
         
         // Get state from zip code
         function getStateFromZipCode(zipCode) {
-            // This is a simplified mapping of ZIP code ranges to states
-            const zipCodeRanges = {
-                '00501': 'NY', '00544': 'NY', // New York
-                '01001': 'MA', '02791': 'MA', // Massachusetts
-                '02801': 'RI', '02940': 'RI', // Rhode Island
-                '03031': 'NH', '03897': 'NH', // New Hampshire
-                '03901': 'ME', '04992': 'ME', // Maine
-                '05001': 'VT', '05907': 'VT', // Vermont
-                '06001': 'CT', '06928': 'CT', // Connecticut
-                '07001': 'NJ', '08989': 'NJ', // New Jersey
-                '10001': 'NY', '14975': 'NY', // New York
-                '15001': 'PA', '19640': 'PA', // Pennsylvania
-                '19701': 'DE', '19980': 'DE', // Delaware
-                '20001': 'DC', '20599': 'DC', // District of Columbia
-                '20600': 'MD', '21930': 'MD', // Maryland
-                '22001': 'VA', '24658': 'VA', // Virginia
-                '24701': 'WV', '26886': 'WV', // West Virginia
-                '27006': 'NC', '28909': 'NC', // North Carolina
-                '29001': 'SC', '29948': 'SC', // South Carolina
-                '30001': 'GA', '31999': 'GA', // Georgia
-                '32004': 'FL', '34997': 'FL', // Florida
-                '35004': 'AL', '36925': 'AL', // Alabama
-                '37010': 'TN', '38589': 'TN', // Tennessee
-                '38601': 'MS', '39776': 'MS', // Mississippi
-                '40003': 'KY', '42788': 'KY', // Kentucky
-                '43001': 'OH', '45999': 'OH', // Ohio
-                '46001': 'IN', '47997': 'IN', // Indiana
-                '48001': 'MI', '49971': 'MI', // Michigan
-                '50001': 'IA', '52809': 'IA', // Iowa
-                '53001': 'WI', '54990': 'WI', // Wisconsin
-                '55001': 'MN', '56763': 'MN', // Minnesota
-                '57001': 'SD', '57799': 'SD', // South Dakota
-                '58001': 'ND', '58856': 'ND', // North Dakota
-                '59001': 'MT', '59937': 'MT', // Montana
-                '60001': 'IL', '62999': 'IL', // Illinois
-                '63001': 'MO', '65899': 'MO', // Missouri
-                '66002': 'KS', '67954': 'KS', // Kansas
-                '68001': 'NE', '69367': 'NE', // Nebraska
-                '70001': 'LA', '71497': 'LA', // Louisiana
-                '71601': 'AR', '72959': 'AR', // Arkansas
-                '73001': 'OK', '74966': 'OK', // Oklahoma
-                '75001': 'TX', '79999': 'TX', // Texas
-                '80001': 'CO', '81658': 'CO', // Colorado
-                '82001': 'WY', '83128': 'WY', // Wyoming
-                '83201': 'ID', '83876': 'ID', // Idaho
-                '84001': 'UT', '84791': 'UT', // Utah
-                '85001': 'AZ', '86556': 'AZ', // Arizona
-                '87001': 'NM', '88439': 'NM', // New Mexico
-                '88901': 'TX', '88901': 'TX', // Texas
-                '89001': 'NV', '89883': 'NV', // Nevada
-                '90001': 'CA', '96162': 'CA', // California
-                '96701': 'HI', '96898': 'HI', // Hawaii
-                '97001': 'OR', '97920': 'OR', // Oregon
-                '98001': 'WA', '99403': 'WA', // Washington
-                '99501': 'AK', '99950': 'AK'  // Alaska
-            };
-            
-            const zip = parseInt(zipCode);
-            
+            // More accurate mapping of ZIP code ranges to states
+            const zipRanges = [
+                { min: '00501', max: '00544', state: 'NY' }, // New York
+                { min: '01001', max: '02791', state: 'MA' }, // Massachusetts
+                { min: '02801', max: '02940', state: 'RI' }, // Rhode Island
+                { min: '03031', max: '03897', state: 'NH' }, // New Hampshire
+                { min: '03901', max: '04992', state: 'ME' }, // Maine
+                { min: '05001', max: '05907', state: 'VT' }, // Vermont
+                { min: '06001', max: '06928', state: 'CT' }, // Connecticut
+                { min: '07001', max: '08989', state: 'NJ' }, // New Jersey
+                { min: '10001', max: '14975', state: 'NY' }, // New York
+                { min: '15001', max: '19640', state: 'PA' }, // Pennsylvania
+                { min: '19701', max: '19980', state: 'DE' }, // Delaware
+                { min: '20001', max: '20599', state: 'DC' }, // District of Columbia
+                { min: '20600', max: '21930', state: 'MD' }, // Maryland
+                { min: '22001', max: '24658', state: 'VA' }, // Virginia
+                { min: '24701', max: '26886', state: 'WV' }, // West Virginia
+                { min: '27006', max: '28909', state: 'NC' }, // North Carolina
+                { min: '29001', max: '29948', state: 'SC' }, // South Carolina
+                { min: '30001', max: '31999', state: 'GA' }, // Georgia
+                { min: '32004', max: '34997', state: 'FL' }, // Florida
+                { min: '35004', max: '36925', state: 'AL' }, // Alabama
+                { min: '37010', max: '38589', state: 'TN' }, // Tennessee
+                { min: '38601', max: '39776', state: 'MS' }, // Mississippi
+                { min: '40003', max: '42788', state: 'KY' }, // Kentucky
+                { min: '43001', max: '45999', state: 'OH' }, // Ohio
+                { min: '46001', max: '47997', state: 'IN' }, // Indiana
+                { min: '48001', max: '49971', state: 'MI' }, // Michigan
+                { min: '50001', max: '52809', state: 'IA' }, // Iowa
+                { min: '53001', max: '54990', state: 'WI' }, // Wisconsin
+                { min: '55001', max: '56763', state: 'MN' }, // Minnesota
+                { min: '57001', max: '57799', state: 'SD' }, // South Dakota
+                { min: '58001', max: '58856', state: 'ND' }, // North Dakota
+                { min: '59001', max: '59937', state: 'MT' }, // Montana
+                { min: '60001', max: '62999', state: 'IL' }, // Illinois
+                { min: '63001', max: '65899', state: 'MO' }, // Missouri
+                { min: '66002', max: '67954', state: 'KS' }, // Kansas
+                { min: '68001', max: '69367', state: 'NE' }, // Nebraska
+                { min: '70001', max: '71497', state: 'LA' }, // Louisiana
+                { min: '71601', max: '72959', state: 'AR' }, // Arkansas
+                { min: '73001', max: '74966', state: 'OK' }, // Oklahoma
+                { min: '75001', max: '79999', state: 'TX' }, // Texas
+                { min: '80001', max: '81658', state: 'CO' }, // Colorado
+                { min: '82001', max: '83128', state: 'WY' }, // Wyoming
+                { min: '83201', max: '83876', state: 'ID' }, // Idaho
+                { min: '84001', max: '84791', state: 'UT' }, // Utah
+                { min: '85001', max: '86556', state: 'AZ' }, // Arizona
+                { min: '87001', max: '88439', state: 'NM' }, // New Mexico
+                { min: '88901', max: '88901', state: 'TX' }, // Texas
+                { min: '89001', max: '89883', state: 'NV' }, // Nevada
+                { min: '90001', max: '96162', state: 'CA' }, // California
+                { min: '96701', max: '96898', state: 'HI' }, // Hawaii
+                { min: '97001', max: '97920', state: 'OR' }, // Oregon
+                { min: '98001', max: '99403', state: 'WA' }, // Washington
+                { min: '99501', max: '99950', state: 'AK' }  // Alaska
+            ];
+
             // Find the state for the given ZIP code
-            for (const [rangeStart, state] of Object.entries(zipCodeRanges)) {
-                const nextRangeStart = Object.keys(zipCodeRanges).find(key => 
-                    zipCodeRanges[key] === state && parseInt(key) > parseInt(rangeStart)
-                ) || '99999';
-                
-                if (zip >= parseInt(rangeStart) && zip <= parseInt(nextRangeStart)) {
-                    return state;
+            for (const range of zipRanges) {
+                if (zipCode >= range.min && zipCode <= range.max) {
+                    return range.state;
                 }
             }
             
@@ -2607,6 +2602,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
