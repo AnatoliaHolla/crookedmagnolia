@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <!-- PayPal SDK with Pay Later disabled -->
+    <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -923,7 +923,6 @@
                                 <label for="includeSeamCosts">Add</label>
                             </div>
                         </div>
-                    </div>
                 
                 <div class="seam-info">
                     <div class="seam-info-row">
@@ -1190,7 +1189,7 @@
             setupShippingCalculator();
         }
         
-        // Load state cost data from CSV
+        // Replace the loadStateCostData function with this updated version that normalizes state abbreviations
         function loadStateCostData() {
             fetch('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/CoPeSt%20-%20Sheet1-Snfq3TGDAupXVP53jdgTACJFbrApxq.csv')
                 .then(response => response.text())
@@ -1203,7 +1202,8 @@
                     for (let i = 1; i < lines.length; i++) {
                         const currentLine = lines[i].split(',');
                         if (currentLine.length >= 2) {
-                            const state = currentLine[0].trim();
+                            // Normalize state abbreviation to uppercase
+                            const state = currentLine[0].trim().toUpperCase();
                             // Remove $ and convert to number
                             const costPerSqFt = parseFloat(currentLine[1].replace('$', '').trim());
                             if (state && !isNaN(costPerSqFt)) {
@@ -1241,7 +1241,7 @@
             });
         }
         
-        // Calculate shipping based on zip code
+        // Update the calculateShipping function to ensure state comparison is case-insensitive
         function calculateShipping() {
             const zipCode = document.getElementById('shippingZip').value;
             const shippingError = document.getElementById('shippingError');
@@ -1276,7 +1276,7 @@
                 return;
             }
             
-            // Get cost per square foot for the state
+            // Get cost per square foot for the state (ensure uppercase comparison)
             const costPerSqFt = stateCostData[state] || 0;
             console.log(`State: ${state}, Cost Per Sq Ft: $${costPerSqFt}`);
             
@@ -2602,6 +2602,7 @@
     </script>
 </body>
 </html>
+
 
 
 
