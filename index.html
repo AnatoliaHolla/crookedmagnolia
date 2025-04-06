@@ -933,42 +933,9 @@
                   </div>
               </div>
               
-              <div class="seam-info">
-                  <div class="seam-info-row">
-                      <span class="seam-info-label">Netting Hardware:</span>
-                      <div class="seam-info-value-container">
-                          <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
-                          <div class="inline-checkbox">
-                              <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
-                              <label for="includeHardwareKits">Add</label>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              
-              <div class="totals-container">
-                  <div class="total-square-feet">
-                      <div class="total-square-feet-content">
-                          <span class="total-square-feet-label">Sq Ft of Area:</span>
-                          <span class="total-square-feet-value" id="totalSquareFeet">980</span>
-                      </div>
-                  </div>
-              </div>
-              
-              <div class="cost-container">
-                  <div class="cost-turf">
-                      <span class="total-square-feet-label">Sq Ft in 15' Wide Rolls</span>
-                      <div class="total-square-feet-value" id="totalRollSquareFeet">1,050</div>
-                  </div>
-                  <div class="cost-turf">
-                      <span class="total-square-feet-label">Total Sq Ft of Net</span>
-                      <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
-                  </div>
-              </div>
-              
               <!-- Shipping Calculator -->
               <div class="shipping-calculator">
-                  <span class="shipping-calculator-title">Calculate Shipping Cost:</span>
+                  <span class="shipping-calculator-title">Turf Shipping Cost:</span>
                   <div class="shipping-calculator-content">
                       <div class="shipping-zip-container">
                           <input type="text" id="shippingZip" name="shippingZip" placeholder="Enter US ZIP Code" maxlength="5" pattern="[0-9]{5}">
@@ -981,18 +948,6 @@
                           <div class="shipping-info">
                               <span class="shipping-info-label">State:</span>
                               <span class="shipping-info-value" id="shippingState">--</span>
-                          </div>
-                          <div class="shipping-info">
-                              <span class="shipping-info-label">Cost Per Square Foot:</span>
-                              <span class="shipping-info-value" id="shippingCostPerSqFt">--</span>
-                          </div>
-                          <div class="shipping-info">
-                              <span class="shipping-info-label">Square Feet:</span>
-                              <span class="shipping-info-value" id="shippingSquareFeet">--</span>
-                          </div>
-                          <div class="shipping-info">
-                              <span class="shipping-info-label">Base Fee:</span>
-                              <span class="shipping-info-value">$230.00</span>
                           </div>
                           <div class="shipping-total">
                               <span class="shipping-total-label">Total Shipping Cost:</span>
@@ -1147,6 +1102,7 @@
       let glueCost = 0;
       let baseTurfCost = 0;
       let hardwareKitsCost = 0;
+      window.shippingCost = 0;
       
       // State cost per square foot data
       let stateCostData = {};
@@ -1354,14 +1310,18 @@
           const squareFootCost = squareFeet * costPerSqFt;
           const totalShippingCost = baseFee + squareFootCost;
           
+          // Store shipping cost globally
+          window.shippingCost = totalShippingCost;
+          
           // Update the shipping result display
           document.getElementById('shippingState').textContent = state;
-          document.getElementById('shippingCostPerSqFt').textContent = `$${costPerSqFt.toFixed(2)}`;
-          document.getElementById('shippingSquareFeet').textContent = squareFeet.toLocaleString();
           document.getElementById('shippingTotal').textContent = `$${totalShippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
           
           // Show the result
           shippingResult.classList.add('visible');
+          
+          // Update turf cost to include shipping
+          updateTurfCostWithSeams();
       }
       
       // Get state from zip code
@@ -1555,17 +1515,28 @@
       // Update turf cost to include or exclude seam costs
       function updateTurfCostWithSeams() {
           const includeSeamCosts = document.getElementById('includeSeamCosts').checked;
+          const shippingCost = window.shippingCost || 0;
+          let totalTurfCost;
           
           if (includeSeamCosts) {
               // Add seam fabric cost and glue cost to turf cost
-              const totalTurfCost = baseTurfCost + seamFabricCost + glueCost;
-              document.getElementById('costTurf').textContent = '$' + totalTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-              document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf + Seams';
+              totalTurfCost = baseTurfCost + seamFabricCost + glueCost + shippingCost;
+              let label = 'Turf @ $1.69 sf + Seams';
+              if (shippingCost > 0) {
+                  label += ' + Shipping';
+              }
+              document.getElementById('costTurfLabel').textContent = label;
           } else {
-              // Use base turf cost only
-              document.getElementById('costTurf').textContent = '$' + baseTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-              document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf';
+              // Use base turf cost only plus shipping if available
+              totalTurfCost = baseTurfCost + shippingCost;
+              let label = 'Turf @ $1.69 sf';
+              if (shippingCost > 0) {
+                  label += ' + Shipping';
+              }
+              document.getElementById('costTurfLabel').textContent = label;
           }
+          
+          document.getElementById('costTurf').textContent = '$' + totalTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
           
           // Update total cost
           updateTotalCost();
@@ -2470,6 +2441,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
