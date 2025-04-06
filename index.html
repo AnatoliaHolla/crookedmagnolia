@@ -15,7 +15,7 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <!-- PayPal SDK with Pay Later disabled -->
+   <!-- PayPal SDK with Pay Later disabled -->
     <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
@@ -609,6 +609,239 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
         }
+
+        /* Add this CSS for the order confirmation modal */
+        .order-confirmation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .order-confirmation-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .order-summary {
+            margin-bottom: 1.5rem;
+        }
+
+        .order-summary h3 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-item-label {
+            color: var(--text);
+            opacity: 0.8;
+        }
+
+        .summary-item-value {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .summary-total {
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(0, 255, 157, 0.3);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .modal-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .cancel-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .cancel-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .confirm-button {
+            background-color: var(--primary-dark);
+            color: var(--text);
+        }
+
+        .confirm-button:hover {
+            background-color: var(--primary);
+        }
+
+        /* Shipping calculator styles */
+        .shipping-calculator {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background-color: rgba(0, 255, 204, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .shipping-calculator-title {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .shipping-calculator-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .shipping-zip-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .shipping-zip-container input {
+            flex: 1;
+        }
+
+        .shipping-zip-container button {
+            background-color: var(--primary-dark);
+            color: var(--text);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .shipping-zip-container button:hover {
+            background-color: var(--primary);
+        }
+
+        .shipping-result {
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .shipping-result.visible {
+            display: block;
+        }
+
+        .shipping-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .shipping-info-label {
+            font-size: 0.8rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+
+        .shipping-info-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .shipping-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(0, 255, 157, 0.2);
+        }
+
+        .shipping-total-label {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .shipping-total-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .shipping-error {
+            color: #ff3e3e;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .shipping-error.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -726,6 +959,42 @@
                     </div>
                 </div>
                 
+                <!-- Shipping Calculator -->
+                <div class="shipping-calculator">
+                    <span class="shipping-calculator-title">Calculate Shipping Cost:</span>
+                    <div class="shipping-calculator-content">
+                        <div class="shipping-zip-container">
+                            <input type="text" id="shippingZip" name="shippingZip" placeholder="Enter US ZIP Code" maxlength="5" pattern="[0-9]{5}">
+                            <button type="button" id="calculateShipping">Calculate</button>
+                        </div>
+                        <div class="shipping-error" id="shippingError">
+                            Please enter a valid US ZIP code (excluding Hawaii and Alaska).
+                        </div>
+                        <div class="shipping-result" id="shippingResult">
+                            <div class="shipping-info">
+                                <span class="shipping-info-label">State:</span>
+                                <span class="shipping-info-value" id="shippingState">--</span>
+                            </div>
+                            <div class="shipping-info">
+                                <span class="shipping-info-label">Cost Per Square Foot:</span>
+                                <span class="shipping-info-value" id="shippingCostPerSqFt">--</span>
+                            </div>
+                            <div class="shipping-info">
+                                <span class="shipping-info-label">Square Feet:</span>
+                                <span class="shipping-info-value" id="shippingSquareFeet">--</span>
+                            </div>
+                            <div class="shipping-info">
+                                <span class="shipping-info-label">Base Fee:</span>
+                                <span class="shipping-info-value">$230.00</span>
+                            </div>
+                            <div class="shipping-total">
+                                <span class="shipping-total-label">Total Shipping Cost:</span>
+                                <span class="shipping-total-value" id="shippingTotal">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Customer Information Section -->
                 <div class="customer-info-header" id="customerInfoHeader">
                     <h2>Customer Information</h2>
@@ -784,12 +1053,14 @@
                     <div class="cost-turf">
                         <span class="cost-label" id="costTurfLabel">Turf @ $1.69 sf</span>
                         <div class="cost-value" id="costTurf">$1,656.20</div>
-                        <div class="paypal-button-container" id="paypal-button-container-turf"></div>
+                        <button type="button" class="modal-button confirm-button" id="turfOrderButton" style="width: 100%; margin-top: 0.5rem;">Pay for Turf</button>
+                        <div class="paypal-button-container" id="paypal-button-container-turf" style="display: none;"></div>
                     </div>
                     <div class="cost-net">
                         <span class="cost-label" id="costNetLabel">Net @ $0.43 sf</span>
                         <div class="cost-value" id="costNet">$1,276.24</div>
-                        <div class="paypal-button-container" id="paypal-button-container-net"></div>
+                        <button type="button" class="modal-button confirm-button" id="netOrderButton" style="width: 100%; margin-top: 0.5rem;">Pay for Net</button>
+                        <div class="paypal-button-container" id="paypal-button-container-net" style="display: none;"></div>
                     </div>
                 </div>
                 
@@ -824,6 +1095,9 @@
         let glueCost = 0;
         let baseTurfCost = 0;
         let hardwareKitsCost = 0;
+        
+        // State cost per square foot data
+        let stateCostData = {};
         
         // Set up the scene
         function init() {
@@ -909,6 +1183,199 @@
             
             // Initialize PayPal buttons
             initPayPalButtons();
+            
+            // Load state cost data
+            loadStateCostData();
+            
+            // Set up shipping calculator
+            setupShippingCalculator();
+        }
+        
+        // Load state cost data from CSV
+        function loadStateCostData() {
+            fetch('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/CoPeSt%20-%20Sheet1-Snfq3TGDAupXVP53jdgTACJFbrApxq.csv')
+                .then(response => response.text())
+                .then(data => {
+                    // Parse CSV data
+                    const lines = data.split('\n');
+                    const headers = lines[0].split(',');
+                    
+                    // Skip header row and process data rows
+                    for (let i = 1; i < lines.length; i++) {
+                        const currentLine = lines[i].split(',');
+                        if (currentLine.length >= 2) {
+                            const state = currentLine[0].trim();
+                            // Remove $ and convert to number
+                            const costPerSqFt = parseFloat(currentLine[1].replace('$', '').trim());
+                            if (state && !isNaN(costPerSqFt)) {
+                                stateCostData[state] = costPerSqFt;
+                            }
+                        }
+                    }
+                    
+                    console.log('State cost data loaded:', stateCostData);
+                })
+                .catch(error => {
+                    console.error('Error loading state cost data:', error);
+                });
+        }
+        
+        // Set up shipping calculator
+        function setupShippingCalculator() {
+            const calculateButton = document.getElementById('calculateShipping');
+            const zipInput = document.getElementById('shippingZip');
+            
+            calculateButton.addEventListener('click', function() {
+                calculateShipping();
+            });
+            
+            zipInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    calculateShipping();
+                }
+            });
+            
+            // Validate zip code input (numbers only)
+            zipInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+        
+        // Calculate shipping based on zip code
+        function calculateShipping() {
+            const zipCode = document.getElementById('shippingZip').value;
+            const shippingError = document.getElementById('shippingError');
+            const shippingResult = document.getElementById('shippingResult');
+            
+            // Reset error and result visibility
+            shippingError.classList.remove('visible');
+            shippingResult.classList.remove('visible');
+            
+            // Validate zip code format
+            if (!zipCode || !/^\d{5}$/.test(zipCode)) {
+                shippingError.textContent = 'Please enter a valid 5-digit US ZIP code.';
+                shippingError.classList.add('visible');
+                return;
+            }
+            
+            // Get state from zip code
+            const state = getStateFromZipCode(zipCode);
+            
+            // Check if it's Hawaii or Alaska
+            if (state === 'HI' || state === 'AK') {
+                shippingError.textContent = 'Sorry, we do not ship to Hawaii or Alaska.';
+                shippingError.classList.add('visible');
+                return;
+            }
+            
+            // Check if state is valid
+            if (!state) {
+                shippingError.textContent = 'Invalid ZIP code. Please enter a valid US ZIP code.';
+                shippingError.classList.add('visible');
+                return;
+            }
+            
+            // Get cost per square foot for the state
+            const costPerSqFt = stateCostData[state] || 0;
+            
+            if (costPerSqFt === 0) {
+                shippingError.textContent = `Sorry, we don't have shipping data for ${state}.`;
+                shippingError.classList.add('visible');
+                return;
+            }
+            
+            // Get square feet from the form
+            const squareFeet = parseInt(document.getElementById('totalRollSquareFeet').textContent.replace(/,/g, '')) || 0;
+            
+            // Calculate shipping cost
+            const baseFee = 230; // $230 base fee
+            const squareFootCost = squareFeet * costPerSqFt;
+            const totalShippingCost = baseFee + squareFootCost;
+            
+            // Update the shipping result display
+            document.getElementById('shippingState').textContent = state;
+            document.getElementById('shippingCostPerSqFt').textContent = `$${costPerSqFt.toFixed(2)}`;
+            document.getElementById('shippingSquareFeet').textContent = squareFeet.toLocaleString();
+            document.getElementById('shippingTotal').textContent = `$${totalShippingCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            // Show the result
+            shippingResult.classList.add('visible');
+        }
+        
+        // Get state from zip code
+        function getStateFromZipCode(zipCode) {
+            // This is a simplified mapping of ZIP code ranges to states
+            const zipCodeRanges = {
+                '00501': 'NY', '00544': 'NY', // New York
+                '01001': 'MA', '02791': 'MA', // Massachusetts
+                '02801': 'RI', '02940': 'RI', // Rhode Island
+                '03031': 'NH', '03897': 'NH', // New Hampshire
+                '03901': 'ME', '04992': 'ME', // Maine
+                '05001': 'VT', '05907': 'VT', // Vermont
+                '06001': 'CT', '06928': 'CT', // Connecticut
+                '07001': 'NJ', '08989': 'NJ', // New Jersey
+                '10001': 'NY', '14975': 'NY', // New York
+                '15001': 'PA', '19640': 'PA', // Pennsylvania
+                '19701': 'DE', '19980': 'DE', // Delaware
+                '20001': 'DC', '20599': 'DC', // District of Columbia
+                '20600': 'MD', '21930': 'MD', // Maryland
+                '22001': 'VA', '24658': 'VA', // Virginia
+                '24701': 'WV', '26886': 'WV', // West Virginia
+                '27006': 'NC', '28909': 'NC', // North Carolina
+                '29001': 'SC', '29948': 'SC', // South Carolina
+                '30001': 'GA', '31999': 'GA', // Georgia
+                '32004': 'FL', '34997': 'FL', // Florida
+                '35004': 'AL', '36925': 'AL', // Alabama
+                '37010': 'TN', '38589': 'TN', // Tennessee
+                '38601': 'MS', '39776': 'MS', // Mississippi
+                '40003': 'KY', '42788': 'KY', // Kentucky
+                '43001': 'OH', '45999': 'OH', // Ohio
+                '46001': 'IN', '47997': 'IN', // Indiana
+                '48001': 'MI', '49971': 'MI', // Michigan
+                '50001': 'IA', '52809': 'IA', // Iowa
+                '53001': 'WI', '54990': 'WI', // Wisconsin
+                '55001': 'MN', '56763': 'MN', // Minnesota
+                '57001': 'SD', '57799': 'SD', // South Dakota
+                '58001': 'ND', '58856': 'ND', // North Dakota
+                '59001': 'MT', '59937': 'MT', // Montana
+                '60001': 'IL', '62999': 'IL', // Illinois
+                '63001': 'MO', '65899': 'MO', // Missouri
+                '66002': 'KS', '67954': 'KS', // Kansas
+                '68001': 'NE', '69367': 'NE', // Nebraska
+                '70001': 'LA', '71497': 'LA', // Louisiana
+                '71601': 'AR', '72959': 'AR', // Arkansas
+                '73001': 'OK', '74966': 'OK', // Oklahoma
+                '75001': 'TX', '79999': 'TX', // Texas
+                '80001': 'CO', '81658': 'CO', // Colorado
+                '82001': 'WY', '83128': 'WY', // Wyoming
+                '83201': 'ID', '83876': 'ID', // Idaho
+                '84001': 'UT', '84791': 'UT', // Utah
+                '85001': 'AZ', '86556': 'AZ', // Arizona
+                '87001': 'NM', '88439': 'NM', // New Mexico
+                '88901': 'TX', '88901': 'TX', // Texas
+                '89001': 'NV', '89883': 'NV', // Nevada
+                '90001': 'CA', '96162': 'CA', // California
+                '96701': 'HI', '96898': 'HI', // Hawaii
+                '97001': 'OR', '97920': 'OR', // Oregon
+                '98001': 'WA', '99403': 'WA', // Washington
+                '99501': 'AK', '99950': 'AK'  // Alaska
+            };
+            
+            const zip = parseInt(zipCode);
+            
+            // Find the state for the given ZIP code
+            for (const [rangeStart, state] of Object.entries(zipCodeRanges)) {
+                const nextRangeStart = Object.keys(zipCodeRanges).find(key => 
+                    zipCodeRanges[key] === state && parseInt(key) > parseInt(rangeStart)
+                ) || '99999';
+                
+                if (zip >= parseInt(rangeStart) && zip <= parseInt(nextRangeStart)) {
+                    return state;
+                }
+            }
+            
+            return null; // ZIP code not found
         }
         
         // Initialize PayPal buttons
@@ -2140,6 +2607,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
