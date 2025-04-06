@@ -15,8 +15,8 @@
     <title>ATX TURF - Batting Cage Dimensions</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-    <!-- PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_LIVE_CLIENT_ID&currency=USD"></script>
+    <!-- PayPal SDK with Pay Later disabled -->
+    <script src="https://www.paypal.com/sdk/js?client-id=Ad8bhr-SleyRSurvIXCIpovAQSvH2a-BABPPs5Rgh2h5RkrT_l23wepZv60tLaJ8SavvEcvHWkI9BOiA&currency=USD&disable-funding=paylater"></script>
     <style>
         :root {
             --primary: #00ff9d;
@@ -591,257 +591,6 @@
         .payment-error.visible {
             display: block;
         }
-
-        textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 157, 0.3);
-            background-color: rgba(10, 26, 18, 0.8);
-            color: var(--text);
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            resize: vertical;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(0, 255, 157, 0.2);
-        }
-
-        /* Add this CSS for the order confirmation modal */
-        .order-confirmation-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .order-confirmation-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background-color: var(--card);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(0, 255, 157, 0.3);
-        }
-
-        .modal-header h2 {
-            color: var(--primary);
-            font-size: 1.2rem;
-            margin: 0;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-        }
-
-        .order-summary {
-            margin-bottom: 1.5rem;
-        }
-
-        .order-summary h3 {
-            color: var(--primary);
-            font-size: 1rem;
-            margin: 1rem 0 0.5rem;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .summary-item-label {
-            color: var(--text);
-            opacity: 0.8;
-        }
-
-        .summary-item-value {
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        .summary-total {
-            margin-top: 1rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid rgba(0, 255, 157, 0.3);
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-        }
-
-        .modal-button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .cancel-button {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text);
-        }
-
-        .cancel-button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .confirm-button {
-            background-color: var(--primary-dark);
-            color: var(--text);
-        }
-
-        .confirm-button:hover {
-            background-color: var(--primary);
-        }
-
-        /* Shipping calculator styles */
-        .shipping-calculator {
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            background-color: rgba(0, 255, 204, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 255, 204, 0.2);
-        }
-
-        .shipping-calculator-title {
-            display: block;
-            font-size: 0.8rem;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .shipping-calculator-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .shipping-zip-container {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .shipping-zip-container input {
-            flex: 1;
-        }
-
-        .shipping-zip-container button {
-            background-color: var(--primary-dark);
-            color: var(--text);
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .shipping-zip-container button:hover {
-            background-color: var(--primary);
-        }
-
-        .shipping-result {
-            display: none;
-            margin-top: 0.5rem;
-        }
-
-        .shipping-result.visible {
-            display: block;
-        }
-
-        .shipping-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.25rem;
-        }
-
-        .shipping-info-label {
-            font-size: 0.8rem;
-            color: var(--text);
-            opacity: 0.8;
-        }
-
-        .shipping-info-value {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .shipping-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid rgba(0, 255, 157, 0.2);
-        }
-
-        .shipping-total-label {
-            font-size: 0.9rem;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .shipping-total-value {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .shipping-error {
-            color: #ff3e3e;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        .shipping-error.visible {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -922,6 +671,1366 @@
                                 <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
                                 <label for="includeSeamCosts">Add</label>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="seam-info">
+                    <div class="seam-info-row">
+                        <span class="seam-info-label">Netting Hardware:</span>
+                        <div class="seam-info-value-container">
+                            <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
+                            <div class="inline-checkbox">
+                                <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
+                                <label for="includeHardwareKits">Add</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="totals-container">
+                    <div class="total-square-feet">
+                        <div class="total-square-feet-content">
+                            <span class="total-square-feet-label">Sq Ft of Area:</span>
+                            <span class="total-square-feet-value" id="totalSquareFeet">980</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cost-container">
+                    <div class="cost-turf">
+                        <span class="total-square-feet-label">Sq Ft in 15' Wide Rolls</span>
+                        <div class="total-square-feet-value" id="totalRollSquareFeet">1,050</div>
+                    </div>
+                    <div class="total-square-feet-net">
+                        <span class="total-square-feet-label">Total Sq Ft of Net</span>
+                        <div class="total-square-feet-value" id="totalSquareFeetNet">2,968</div>
+                    </div>
+                </div>
+                
+                <div class="cost-container">
+                    <div class="cost-turf">
+                        <span class="cost-label" id="costTurfLabel">Turf @ $1.69 sf</span>
+                        <div class="cost-value" id="costTurf">$1,656.20</div>
+                        <div class="paypal-button-container" id="paypal-button-container-turf"></div>
+                    </div>
+                    <div class="cost-net">
+                        <span class="cost-label" id="costNetLabel">Net @ $0.43 sf</span>
+                        <div class="cost-value" id="costNet">$1,276.24</div>
+                        <div class="paypal-button-container" id="paypal-button-container-net"></div>
+                    </div>
+                </div>
+                
+                <!-- Customer Information Section -->
+                <div class="customer-info-header" id="customerInfoHeader">
+                    <h2>Customer Information</h2>
+                    <span class="customer-info-toggle">▼</span>
+                </div>
+                <div class="customer-info-section" id="customerInfoSection">
+                    <div class="customer-form-group">
+                        <label for="customerName" class="required-field">Full Name</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerEmail" class="required-field">Email</label>
+                        <input type="email" id="customerEmail" name="customerEmail" required>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerPhone" class="required-field">Phone</label>
+                        <input type="tel" id="customerPhone" name="customerPhone" required>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerAddress" class="required-field">Street Address</label>
+                        <input type="text" id="customerAddress" name="customerAddress" required>
+                    </div>
+                    <div class="customer-form-row">
+                        <div class="customer-form-group">
+                            <label for="customerCity" class="required-field">City</label>
+                            <input type="text" id="customerCity" name="customerCity" required>
+                        </div>
+                        <div class="customer-form-group">
+                            <label for="customerState" class="required-field">State</label>
+                            <input type="text" id="customerState" name="customerState" required>
+                        </div>
+                    </div>
+                    <div class="customer-form-row">
+                        <div class="customer-form-group">
+                            <label for="customerZip" class="required-field">ZIP Code</label>
+                            <input type="text" id="customerZip" name="customerZip" required>
+                        </div>
+                        <div class="customer-form-group">
+                            <label for="customerCountry" class="required-field">Country</label>
+                            <input type="text" id="customerCountry" name="customerCountry" value="United States" required>
+                        </div>
+                    </div>
+                    <div class="customer-form-group">
+                        <label for="customerNotes">Special Instructions (Optional)</label>
+                        <textarea id="customerNotes" name="customerNotes" rows="3"></textarea>
+                    </div>
+                    <div class="payment-error" id="paymentError">
+                        Please fill out all required fields before proceeding with payment.
+                    </div>
+                </div>
+                
+                <div class="total-cost-container">
+                    <div class="total-cost">
+                        <span class="total-cost-label">Turf & Net Total</span>
+                        <div class="total-cost-value" id="totalCost">$2,932.44</div>
+                    </div>
+                </div>
+                <div class="additional-note">
+                    Hardware & Shipping Additional
+                </div>
+                <div class="gravel-note" id="gravelNote">
+                    Going Outside? <span id="gravelTons">4.2</span> tons of 89 gravel needed for 4 inch deep subbase
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Three.js scene
+        let scene, camera, renderer, controls;
+        let cages = [];
+        let textLabels = [];
+        let floors = []; // Array to store floor planes
+        let targets = []; // Array to store target rectangles
+        // In the global variables section, add a new array to store the home plates
+        let homePlates = []; // Array to store home plate elements
+        
+        // Variables to store costs
+        let seamFabricCost = 0;
+        let glueCost = 0;
+        let baseTurfCost = 0;
+        let hardwareKitsCost = 0;
+        
+        // Set up the scene
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x112218);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            // Position camera for overhead diagonal view
+            camera.position.set(50, 60, 70);
+            camera.lookAt(0, 0, 0);
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('cageCanvas'), antialias: true });
+            renderer.setSize(document.querySelector('.canvas-container').clientWidth, document.querySelector('.canvas-container').clientHeight);
+            
+            // Add orbit controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0x00ff9d, 0.8);
+            directionalLight.position.set(5, 10, 7);
+            scene.add(directionalLight);
+            
+            const directionalLight2 = new THREE.DirectionalLight(0x00ffcc, 0.4);
+            directionalLight2.position.set(-5, -10, 7);
+            scene.add(directionalLight2);
+
+            // Add a spotlight to illuminate the floor
+            const spotLight = new THREE.SpotLight(0xffffff, 0.8);
+            spotLight.position.set(0, -height, 0);
+            spotLight.target.position.set(0, -height/2, 0);
+            spotLight.angle = Math.PI / 3;
+            scene.add(spotLight);
+            scene.add(spotLight.target);
+            
+            // Create grid
+            const gridHelper = new THREE.GridHelper(200, 200, 0x004d33, 0x004d33);
+            gridHelper.position.y = -10;
+            scene.add(gridHelper);
+            
+            // Create initial cage(s)
+            createCages(70, 14, 12, 1);
+            
+            // Update total square feet display
+            updateTotalSquareFeet(70, 14, 1);
+            updateTotalSquareFeetNet(70, 14, 12, 1);
+            updateTotalRollSquareFeet(70, 14, 1);
+            
+            // Update remnant roll information
+            updateRemnantInfo(70, 14, 1);
+            
+            // Update gravel calculation
+            updateGravelCalculation(70, 14, 1);
+            
+            // Update total seam length
+            updateTotalSeamLength(70, 14, 1);
+            
+            // Animation loop
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            // Set up custom number input controls
+            setupNumberControls();
+            
+            // Set up flip lines checkbox
+            setupFlipLinesCheckbox();
+            
+            // Set up include seam costs checkbox
+            setupIncludeSeamCostsCheckbox();
+            
+            // In the init function, add this line after setupIncludeSeamCostsCheckbox();
+            setupIncludeHardwareKitsCheckbox();
+            
+            // Initialize PayPal buttons
+            initPayPalButtonTurf();
+            initPayPalButtonNet();
+        }
+        
+        // Set up include seam costs checkbox
+        function setupIncludeSeamCostsCheckbox() {
+            const includeSeamCostsCheckbox = document.getElementById('includeSeamCosts');
+            
+            includeSeamCostsCheckbox.addEventListener('change', function() {
+                // Update turf cost to include or exclude seam costs
+                updateTurfCostWithSeams();
+            });
+        }
+        
+        // Set up include hardware kits checkbox
+        function setupIncludeHardwareKitsCheckbox() {
+            const includeHardwareKitsCheckbox = document.getElementById('includeHardwareKits');
+            
+            includeHardwareKitsCheckbox.addEventListener('change', function() {
+                // Update net cost to include or exclude hardware costs
+                updateNetCostWithHardware();
+            });
+        }
+        
+        // Update turf cost to include or exclude seam costs
+        function updateTurfCostWithSeams() {
+            const includeSeamCosts = document.getElementById('includeSeamCosts').checked;
+            
+            if (includeSeamCosts) {
+                // Add seam fabric cost and glue cost to turf cost
+                const totalTurfCost = baseTurfCost + seamFabricCost + glueCost;
+                document.getElementById('costTurf').textContent = '$' + totalTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf + Seams';
+            } else {
+                // Use base turf cost only
+                document.getElementById('costTurf').textContent = '$' + baseTurfCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('costTurfLabel').textContent = 'Turf @ $1.69 sf';
+            }
+            
+            // Update total cost
+            updateTotalCost();
+        }
+        
+        // Calculate and update total seam length
+        function updateTotalSeamLength(length, width, count) {
+            const isFlipped = document.getElementById('flipLines').checked;
+            let totalSeamLength = 0;
+            
+            if (!isFlipped) {
+                // Lines running along the width (perpendicular to length) - default when unchecked
+                const totalWidth = width * count;
+                const numLines = Math.floor(totalWidth / 15);
+                // Each line spans the length of the cage
+                totalSeamLength = numLines * length;
+            } else {
+                // Lines running along the length (when checkbox is checked)
+                const numLines = Math.floor(length / 15);
+                // Each line spans the total width of all cages
+                totalSeamLength = numLines * (width * count);
+            }
+            
+            // Calculate seam fabric cost ($0.30 per linear foot)
+            seamFabricCost = totalSeamLength * 0.30;
+            
+            // Calculate buckets of glue needed (1 bucket covers 150 feet of seam)
+            const bucketsNeeded = Math.ceil(totalSeamLength / 150);
+            glueCost = bucketsNeeded * 325;
+            
+            // Update the display with the total seam length in feet, cost, and glue buckets
+            document.getElementById('totalSeamLength').textContent = 
+                `${totalSeamLength.toLocaleString()} ft ($${seamFabricCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) | ${bucketsNeeded} Glue Bucket${bucketsNeeded !== 1 ? 's' : ''} ($${glueCost.toLocaleString()})`;
+            
+            // Update turf cost if include seam costs checkbox is checked
+            updateTurfCostWithSeams();
+        }
+        
+        // Calculate and update hardware kits information
+        function updateHardwareKits(length, count) {
+            // Each cage needs one hardware kit
+            const kitsNeeded = count;
+            
+            // Determine price per kit based on cage length
+            const pricePerKit = length >= 56 ? 175 : 155;
+            
+            // Calculate shipping cost ($19.95 per kit) - still calculate this for the total cost
+            const shippingCost = kitsNeeded * 19.95;
+            
+            // Calculate total hardware cost (still needed for the checkbox functionality)
+            const kitsCost = kitsNeeded * pricePerKit;
+            hardwareKitsCost = kitsCost + shippingCost;
+            
+            // Update the display - remove shipping and total
+            document.getElementById('hardwareKitsInfo').textContent = 
+                `${kitsNeeded} Kit${kitsNeeded !== 1 ? 's' : ''} ($${kitsCost.toLocaleString()})`;
+
+            // Update net cost if include hardware kits checkbox is checked
+            updateNetCostWithHardware();
+        }
+        
+        // Calculate remnant roll information
+        function calculateRemnantRoll(length, width, count, isFlipped) {
+            const rollWidth = 15; // Standard roll width in feet
+            let remnantWidth, remnantLength, remnantArea;
+            
+            if (!isFlipped) {
+                // Rolls run along the length (default when checkbox is unchecked)
+                const totalWidth = width * count;
+                const numRolls = Math.ceil(totalWidth / rollWidth);
+                remnantWidth = (numRolls * rollWidth) - totalWidth;
+                remnantLength = length;
+                remnantArea = remnantWidth * remnantLength;
+                
+                return {
+                    numRolls: numRolls,
+                    remnantWidth: remnantWidth,
+                    remnantLength: remnantLength,
+                    remnantArea: remnantArea,
+                    direction: "along length"
+                };
+            } else {
+                // Rolls run along the width (when checkbox is checked)
+                const numRolls = Math.ceil(length / rollWidth);
+                remnantWidth = (numRolls * rollWidth) - length;
+                remnantLength = width * count;
+                remnantArea = remnantWidth * remnantLength;
+                
+                return {
+                    numRolls: numRolls,
+                    remnantWidth: remnantWidth,
+                    remnantLength: remnantLength,
+                    remnantArea: remnantArea,
+                    direction: "along width"
+                };
+            }
+        }
+        
+        // Update remnant roll information display
+        function updateRemnantInfo(length, width, count) {
+            const isFlipped = document.getElementById('flipLines').checked;
+            const remnantInfo = calculateRemnantRoll(length, width, count, isFlipped);
+            
+            let rollsLine = "";
+            let remnantLine = "";
+            
+            if (remnantInfo.remnantWidth > 0) {
+                if (!isFlipped) {
+                    // Rolls run along the length (default when checkbox is unchecked)
+                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                    remnantLine = `<span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
+                } else {
+                    // Rolls run along the width (when checkbox is checked)
+                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                    remnantLine = `<span class="remnant-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
+                }
+            } else {
+                // No remnant (perfect fit)
+                if (!isFlipped) {
+                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                    remnantLine = `<span class="remnant-info-value">No remnant</span> after installation (perfect fit)`;
+                } else {
+                    rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+                    remnantLine = `<span class="remnant-info-value">No remnant</span> after installation (perfect fit)`;
+                }
+            }
+            
+            document.getElementById('rollsLine').innerHTML = rollsLine;
+            document.getElementById('remnantLine').innerHTML = remnantLine;
+        }
+        
+        // Calculate and update total roll square feet
+        function updateTotalRollSquareFeet(length, width, count) {
+            const isFlipped = document.getElementById('flipLines').checked;
+            let totalRollSqFt;
+            
+            if (!isFlipped) {
+                // When unchecked, multiply length by width rounded up to next 15' increment
+                const totalWidth = width * count;
+                const roundedWidth = Math.ceil(totalWidth / 15) * 15;
+                totalRollSqFt = length * roundedWidth;
+            } else {
+                // When checked, multiply width by length rounded up to next 15' increment
+                const roundedLength = Math.ceil(length / 15) * 15;
+                totalRollSqFt = (width * count) * roundedLength;
+            }
+            
+            const roundedTotalRollSqFt = Math.round(totalRollSqFt);
+            document.getElementById('totalRollSquareFeet').textContent = roundedTotalRollSqFt.toLocaleString();
+            
+            // Update turf cost based on roll square feet
+            baseTurfCost = roundedTotalRollSqFt * 1.69;
+            
+            // Update turf cost display (with or without seam costs)
+            updateTurfCostWithSeams();
+        }
+        
+        // Calculate and update gravel needed
+        function updateGravelCalculation(length, width, count) {
+            // Calculate total area
+            const totalArea = length * width * count;
+            
+            // Calculate cubic feet of gravel (4 inches deep = 1/3 foot)
+            const cubicFeet = totalArea * (4/12);
+            
+            // Convert to tons (approximately 1.4 tons per cubic yard, and 27 cubic feet per cubic yard)
+            const tons = cubicFeet * (1.4/27);
+            
+            // Round to 1 decimal place
+            const roundedTons = Math.round(tons * 10) / 10;
+            
+            // Update the display
+            document.getElementById('gravelTons').textContent = roundedTons.toLocaleString();
+        }
+        
+        // Set up flip lines checkbox
+        function setupFlipLinesCheckbox() {
+            const flipLinesCheckbox = document.getElementById('flipLines');
+            
+            flipLinesCheckbox.addEventListener('change', function() {
+                // Trigger update to redraw the cage with new line orientation
+                const length = parseFloat(document.getElementById('length').value) || 70;
+                const width = parseFloat(document.getElementById('width').value) || 14;
+                const height = parseFloat(document.getElementById('height').value) || 12;
+                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
+                
+                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                    createCages(length, width, height, cageCount);
+                    // Update remnant roll information
+                    updateRemnantInfo(length, width, cageCount);
+                    // Update total roll square feet
+                    updateTotalRollSquareFeet(length, width, cageCount);
+                    // Update total seam length
+                    updateTotalSeamLength(length, width, cageCount);
+                }
+            });
+        }
+        
+        // Set up custom number input controls
+        function setupNumberControls() {
+            const numberControls = document.querySelectorAll('.number-control');
+            
+            numberControls.forEach(control => {
+                control.addEventListener('click', function() {
+                    const inputId = this.getAttribute('data-input');
+                    const action = this.getAttribute('data-action');
+                    const input = document.getElementById(inputId);
+                    
+                    let value = parseInt(input.value) || 0;
+                    const step = parseInt(input.getAttribute('step')) || 1;
+                    const min = parseInt(input.getAttribute('min')) || 10;
+                    const max = parseInt(input.getAttribute('max')) || Infinity;
+                    
+                    if (action === 'increment') {
+                        value = Math.min(value + step, max);
+                    } else if (action === 'decrement') {
+                        value = Math.max(value - step, min);
+                    }
+                    
+                    input.value = value;
+                    
+                    // Trigger input event to update the 3D model
+                    const event = new Event('input', { bubbles: true });
+                    input.dispatchEvent(event);
+                });
+            });
+        }
+        
+        // Update total square feet display
+        function updateTotalSquareFeet(length, width, count) {
+            const totalSqFt = Math.round(length * width * count);
+            document.getElementById('totalSquareFeet').textContent = totalSqFt.toLocaleString();
+            
+            // Update gravel calculation
+            updateGravelCalculation(length, width, count);
+        }
+        
+        // Update total square feet of net display
+        function updateTotalSquareFeetNet(length, width, height, count) {
+            // Calculate net square footage for a single cage
+            const topSide = length * width;
+            const frontAndBackSides = length * height * 2;
+            const leftAndRightSides = width * height * 2;
+            const singleCageNet = topSide + frontAndBackSides + leftAndRightSides;
+            
+            // For multiple cages, subtract the redundant long sides
+            let totalNetSqFt;
+            if (count === 1) {
+                totalNetSqFt = singleCageNet;
+            } else {
+                // Subtract one long side (length × height) for each additional cage
+                const redundantSides = (length * height) * (count - 1);
+                totalNetSqFt = (singleCageNet * count) - redundantSides;
+            }
+            
+            const roundedNetSqFt = Math.round(totalNetSqFt);
+            document.getElementById('totalSquareFeetNet').textContent = roundedNetSqFt.toLocaleString();
+            
+            // Update net cost with hardware if checkbox is checked
+            updateNetCostWithHardware();
+        }
+        
+        // Update net cost to include or exclude hardware costs
+        function updateNetCostWithHardware() {
+            const includeHardwareKits = document.getElementById('includeHardwareKits').checked;
+            
+            // Get the current net square feet value
+            const netSqFtText = document.getElementById('totalSquareFeetNet').textContent;
+            const netSqFt = parseFloat(netSqFtText.replace(/,/g, ''));
+            
+            // Calculate base net cost
+            const baseNetCost = netSqFt * 0.43;
+            
+            if (includeHardwareKits) {
+                // Add hardware kits cost to net cost
+                const totalNetCost = baseNetCost + hardwareKitsCost;
+                document.getElementById('costNet').textContent = '$' + totalNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf + Hardware';
+            } else {
+                // Use base net cost only
+                document.getElementById('costNet').textContent = '$' + baseNetCost.toLocaleString(undefined, {minimumFractionDigits: 2, minimumFractionDigits: 2});
+                document.getElementById('costNetLabel').textContent = 'Net @ $0.43 sf';
+            }
+            
+            // Update total cost
+            updateTotalCost();
+        }
+        
+        // Update total cost (turf + net)
+        function updateTotalCost() {
+            // Get the current cost values
+            const costTurfText = document.getElementById('costTurf').textContent;
+            const costNetText = document.getElementById('costNet').textContent;
+            
+            // Remove $ and commas, then parse as float
+            const costTurf = parseFloat(costTurfText.replace('$', '').replace(/,/g, ''));
+            const costNet = parseFloat(costNetText.replace('$', '').replace(/,/g, ''));
+            
+            // Calculate total
+            const totalCost = costTurf + costNet;
+            
+            // Update the total cost display
+            document.getElementById('totalCost').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        
+        // Create text texture
+        function createTextTexture(text, width, height, rotate90 = false) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            // Set canvas size - swap width and height if rotating
+            if (rotate90) {
+                canvas.width = height;
+                canvas.height = width;
+            } else {
+                canvas.width = width;
+                canvas.height = height;
+            }
+            
+            // Clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (rotate90) {
+                // Set text properties for rotated text
+                const fontSize = Math.min(width, height) * 0.3;
+                context.font = `bold ${fontSize}px Arial`;
+                
+                // Save the current context state
+                context.save();
+                
+                // Translate and rotate the context
+                context.translate(canvas.width / 2, canvas.height / 2);
+                context.rotate(Math.PI / 2);
+                
+                // Set text alignment for rotated text
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                // Add gradient for better visibility
+                context.fillStyle = 'white';
+                context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                context.lineWidth = fontSize * 0.05;
+                
+                // Draw rotated text
+                context.strokeText(text, 0, 0);
+                context.fillText(text, 0, 0);
+                
+                // Restore the context to its original state
+                context.restore();
+            } else {
+                // Set text properties for normal text
+                const fontSize = Math.min(width, height) * 0.3;
+                context.font = `bold ${fontSize}px Arial`;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                // Add gradient for better visibility
+                context.fillStyle = 'white';
+                context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                context.lineWidth = fontSize * 0.05;
+                
+                // Draw text
+                context.strokeText(text, canvas.width / 2, canvas.height / 2);
+                context.fillText(text, canvas.width / 2, canvas.height / 2);
+            }
+            
+            // Create texture
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            
+            return texture;
+        }
+        
+        // Add text to cage
+        function addTextToCage(length, width, height, xOffset = 0) {
+            const text = "ATXTurf.com";
+            
+            // Create materials for each side with text
+            const frontTexture = createTextTexture(text, 1024, 512);
+            const backTexture = createTextTexture(text, 1024, 512);
+            const leftTexture = createTextTexture(text, 1024, 512);
+            const rightTexture = createTextTexture(text, 1024, 512);
+            const topTexture = createTextTexture(text, 1024, 512, true); // Rotate text 90 degrees
+            
+            // Create materials with the textures
+            const frontMaterial = new THREE.MeshBasicMaterial({ 
+                map: frontTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const backMaterial = new THREE.MeshBasicMaterial({ 
+                map: backTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const leftMaterial = new THREE.MeshBasicMaterial({ 
+                map: leftTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const rightMaterial = new THREE.MeshBasicMaterial({ 
+                map: rightTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const topMaterial = new THREE.MeshBasicMaterial({ 
+                map: topTexture, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            // Create planes for each side
+            // Front side (positive Z)
+            const frontPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width * 0.85, height * 0.45),
+                frontMaterial
+            );
+            frontPlane.position.set(xOffset, 0, length / 2 + 0.1);
+            frontPlane.rotation.y = Math.PI;
+            scene.add(frontPlane);
+            textLabels.push(frontPlane);
+            
+            // Back side (negative Z)
+            const backPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width * 0.85, height * 0.45),
+                backMaterial
+            );
+            backPlane.position.set(xOffset, 0, -length / 2 - 0.1);
+            scene.add(backPlane);
+            textLabels.push(backPlane);
+            
+            // Only add side labels for the first and last cage
+            // Left side (negative X)
+            if (xOffset === 0) {
+                const leftPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(length * 0.85, height * 0.45),
+                    leftMaterial
+                );
+                leftPlane.position.set(xOffset - width / 2 - 0.1, 0, 0);
+                leftPlane.rotation.y = Math.PI / 2;
+                scene.add(leftPlane);
+                textLabels.push(leftPlane);
+            }
+            
+            // Top side (positive Y)
+            const topPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width * 0.85, length * 0.85),
+                topMaterial
+            );
+            topPlane.position.set(xOffset, height / 2 + 0.1, 0);
+            topPlane.rotation.x = -Math.PI / 2;
+            scene.add(topPlane);
+            textLabels.push(topPlane);
+            
+            // Right side label for the last cage will be added separately
+            return {
+                rightTexture: rightTexture,
+                rightMaterial: rightMaterial,
+                length: length,
+                height: height
+            };
+        }
+        
+        // Create or update multiple cages
+        function createCages(length, width, height, count) {
+            // Round values to whole numbers
+            length = Math.round(length);
+            width = Math.round(width);
+            height = Math.round(height);
+            
+            // Remove existing cages and text labels
+            cages.forEach(cage => scene.remove(cage));
+            cages = [];
+            
+            textLabels.forEach(label => scene.remove(label));
+            textLabels = [];
+            
+            // Remove existing floor planes
+            floors.forEach(floor => scene.remove(floor));
+            floors = [];
+            
+            // Remove existing targets
+            targets.forEach(target => scene.remove(target));
+            homePlates.forEach(plate => scene.remove(plate));
+            homePlates = [];
+            targets = [];
+            
+            // Store info for the right side label of the last cage
+            let lastCageInfo;
+
+            // Check if lines should be flipped
+            const flipLines = document.getElementById('flipLines').checked;
+
+            // Create multiple cages side by side
+            for (let i = 0; i < count; i++) {
+                // Calculate x offset for this cage
+                const xOffset = i * width - ((count - 1) * width / 2);
+
+                // Create cage group
+                const cage = new THREE.Group();
+
+                // Create wireframe material
+                const wireMaterial = new THREE.LineBasicMaterial({ color: 0x00ff9d });
+
+                // Create solid material with transparency
+                const solidMaterial = new THREE.MeshPhongMaterial({
+                    color: 0x00ff9d,
+                    transparent: true,
+                    opacity: 0.1,
+                    side: THREE.DoubleSide
+                });
+
+                // Create cage geometry
+                const geometry = new THREE.BoxGeometry(width, height, length);
+
+                // Create wireframe
+                const wireframe = new THREE.LineSegments(
+                    new THREE.EdgesGeometry(geometry),
+                    wireMaterial
+                );
+
+                // Create solid mesh
+                const solid = new THREE.Mesh(geometry, solidMaterial);
+
+                // Add to cage group
+                cage.add(wireframe);
+                cage.add(solid);
+        
+                // Add door wireframe (6ft x 3ft) to the left of center on the front face
+                const doorWidth = 3;
+                const doorHeight = 6;
+                
+                // Create door geometry
+                const doorGeometry = new THREE.BufferGeometry();
+                const doorVertices = new Float32Array([
+                    // Door outline vertices (rectangle)
+                    -1.5, -height/2 + 0.1, length/2 + 0.05,  // bottom left
+                    -1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,  // top left
+                    1.5, -height/2 + doorHeight + 0.1, length/2 + 0.05,   // top right
+                    1.5, -height/2 + 0.1, length/2 + 0.05,   // bottom right
+                    -1.5, -height/2 + 0.1, length/2 + 0.05   // back to bottom left to close the loop
+                ]);
+        
+                doorGeometry.setAttribute('position', new THREE.BufferAttribute(doorVertices, 3));
+        
+                // Create door wireframe
+                const doorWireframe = new THREE.Line(doorGeometry, wireMaterial);
+        
+                // Position door on the front face, slightly to the left of center
+                doorWireframe.position.set(xOffset - width/6, 0, 0);
+        
+                // Add door to scene
+                scene.add(doorWireframe);
+                cages.push(doorWireframe); // Add to cages array so it gets removed when dimensions change
+                
+                // Add target (6' x 4' black rectangle with 3' x 2' white rectangle inside)
+                // Create black outer rectangle
+                const targetOuterWidth = 4;
+                const targetOuterHeight = 6;
+                const targetOuterGeometry = new THREE.PlaneGeometry(targetOuterWidth, targetOuterHeight);
+                const targetOuterMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x000000, 
+                    side: THREE.DoubleSide 
+                });
+                const targetOuter = new THREE.Mesh(targetOuterGeometry, targetOuterMaterial);
+                
+                // Create white inner rectangle
+                const targetInnerWidth = 2;
+                const targetInnerHeight = 3;
+                const targetInnerGeometry = new THREE.PlaneGeometry(targetInnerWidth, targetInnerHeight);
+                const targetInnerMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0xffffff, 
+                    side: THREE.DoubleSide 
+                });
+                const targetInner = new THREE.Mesh(targetInnerGeometry, targetInnerMaterial);
+                
+                // Position inner rectangle slightly in front of outer rectangle
+                targetInner.position.z = 0.01;
+                
+                // Group the target rectangles
+                const targetGroup = new THREE.Group();
+                targetGroup.add(targetOuter);
+                targetGroup.add(targetInner);
+                
+                // Position target on the back face, 2 feet off the floor
+                targetGroup.position.set(xOffset, -height/2 + 2 + targetOuterHeight/2, -length/2 - 0.05);
+                targetGroup.rotation.y = Math.PI; // Face toward the front
+                
+                // Add target to scene
+                scene.add(targetGroup);
+                targets.push(targetGroup);
+        
+                // Add maroon rectangle with home plate
+                const maroonWidth = 12; // 12 feet wide
+                const maroonLength = 6; // 6 feet long
+                const maroonGeometry = new THREE.PlaneGeometry(maroonWidth, maroonLength);
+                const maroonMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x800000, // Maroon color
+                    side: THREE.DoubleSide 
+                });
+                const maroonRect = new THREE.Mesh(maroonGeometry, maroonMaterial);
+
+                // Position maroon rectangle on the floor, 2 feet from the back wall
+                maroonRect.rotation.x = -Math.PI / 2; // Make it horizontal
+                maroonRect.position.set(
+                    xOffset, 
+                    -height/2 + 0.08, // Slightly above the floor
+                    -length/2 + 2 + maroonLength/2 // 2 feet from back wall
+                );
+
+                // Create home plate (pentagon shape)
+                const homePlateSize = 17/12; // 17 inches in feet
+                const homePlateShape = new THREE.Shape();
+
+                // Home plate is a pentagon with a 17-inch square and two 12-inch sides forming a point
+                homePlateShape.moveTo(0, homePlateSize/2); // Top point
+                homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/6); // Left corner
+                homePlateShape.lineTo(-homePlateSize/2, -homePlateSize/2); // Left back
+                homePlateShape.lineTo(homePlateSize/2, -homePlateSize/2); // Right back
+                homePlateShape.lineTo(homePlateSize/2, -homePlateSize/6); // Right corner
+                homePlateShape.lineTo(0, homePlateSize/2); // Back to top point
+
+                const homePlateGeometry = new THREE.ShapeGeometry(homePlateShape);
+                const homePlateMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0xffffff, // White color
+                    side: THREE.DoubleSide 
+                });
+                const homePlate = new THREE.Mesh(homePlateGeometry, homePlateMaterial);
+
+                // Position home plate in the center of the maroon rectangle
+                homePlate.rotation.x = -Math.PI / 2; // Make it horizontal
+                homePlate.position.set(
+                    xOffset, 
+                    -height/2 + 0.09, // Slightly above the maroon rectangle
+                    -length/2 + 2 + maroonLength/2 // Same position as maroon rectangle
+                );
+
+                // Group the home plate elements
+                const homePlateGroup = new THREE.Group();
+                homePlateGroup.add(maroonRect);
+                homePlateGroup.add(homePlate);
+
+                // Add to scene
+                scene.add(homePlateGroup);
+                homePlates.push(homePlateGroup);
+        
+                // Position cage
+                cage.position.set(xOffset, 0, 0);
+
+                // Add cage to scene
+                scene.add(cage);
+                cages.push(cage);
+            }
+            
+            // Calculate the center x-offset for multiple cages
+            const centerXOffset = 0; // Center for all cages
+            
+            // For multiple cages, create a single continuous floor
+            const totalWidth = width * count;
+            const floorGeometry = new THREE.PlaneGeometry(totalWidth - 0.1, length - 0.1);
+            const floorMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x00ff4c, // Bright green
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.8,
+                emissive: 0x00ff4c, // Add emissive color to make it glow
+                emissiveIntensity: 0.3, // Control the glow intensity
+                roughness: 0.5,
+                metalness: 0.2
+            });
+
+            // Position the floor at the center of all cages
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
+            floor.position.set(centerXOffset, -height/2 + 0.05, 0); // Position at bottom of cage, slightly above
+            scene.add(floor);
+            floors.push(floor);
+
+            // Add a duplicate floor facing the opposite direction for better visibility
+            const floorBottom = new THREE.Mesh(floorGeometry, floorMaterial);
+            floorBottom.rotation.x = -Math.PI / 2; // Rotate to face the opposite direction
+            floorBottom.position.set(centerXOffset, -height/2 + 0.04, 0); // Slightly below the main floor
+            scene.add(floorBottom);
+            floors.push(floorBottom);
+
+            // Add lines every 15 feet across the entire floor
+            const lineInterval = 15; // 15 feet between lines
+            const lineColor = 0x000000; // Black color
+
+            if (!flipLines) {
+                // Lines running along the width (perpendicular to length) - default when unchecked
+                const totalLines = Math.floor(totalWidth / 15);
+                
+                for (let i = 1; i <= totalLines; i++) {
+                    const linePosition = -totalWidth/2 + (i * lineInterval);
+                    
+                    // Create line as a thin rectangle
+                    const lineGeometry = new THREE.PlaneGeometry(0.3, length - 0.5);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
+                        color: lineColor,
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
+                    });
+                    
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(centerXOffset + linePosition, -height/2 + 0.07, 0); // Slightly above the floor
+                    
+                    scene.add(line);
+                    floors.push(line); // Add to floors array so it gets removed when dimensions change
+                }
+            } else {
+                // Lines running along the length (when checkbox is checked)
+                const numLines = Math.floor(length / 15);
+                
+                for (let i = 1; i <= numLines; i++) {
+                    const linePosition = -length/2 + (i * lineInterval);
+                    
+                    // Create line as a thin rectangle spanning the entire width of all cages
+                    const lineGeometry = new THREE.PlaneGeometry(totalWidth - 0.5, 0.3);
+                    const lineMaterial = new THREE.MeshBasicMaterial({ 
+                        color: lineColor,
+                        side: THREE.DoubleSide,
+                        transparent: false,
+                        opacity: 1
+                    });
+                    
+                    // Create line as a mesh
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = Math.PI / 2; // Make it horizontal
+                    line.position.set(centerXOffset, -height/2 + 0.07, linePosition); // Slightly above the floor
+                    
+                    scene.add(line);
+                    floors.push(line); // Add to floors array so it gets removed when dimensions change
+                }
+            }
+
+            // Now add the individual cages
+            for (let i = 0; i < count; i++) {
+                // Calculate x offset for this cage
+                const xOffset = i * width - ((count - 1) * width / 2);
+                
+                // Add text labels to the cage
+                lastCageInfo = addTextToCage(length, width, height, xOffset);
+            }
+            
+            // Add right side label for the last cage
+            if (lastCageInfo && count > 0) {
+                const rightPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(lastCageInfo.length * 0.85, lastCageInfo.height * 0.45),
+                    lastCageInfo.rightMaterial
+                );
+                const lastXOffset = (count - 1) * width - ((count - 1) * width / 2);
+                rightPlane.position.set(lastXOffset + width / 2 + 0.1, 0, 0);
+                rightPlane.rotation.y = -Math.PI / 2;
+                scene.add(rightPlane);
+                textLabels.push(rightPlane);
+            }
+            
+            // Adjust camera position based on number of cages
+            if (count > 1) {
+                const totalWidth = count * width;
+                camera.position.set(totalWidth * 0.7, totalWidth * 0.8, totalWidth * 0.9);
+                camera.lookAt(0, 0, 0);
+            } else {
+                camera.position.set(50, 60, 70);
+                camera.lookAt(0, 0, 0);
+            }
+            
+            // Update dimensions display with whole numbers
+            document.getElementById('dimensionsDisplay').textContent = 
+                `Length: ${length} ft × Width: ${width} ft × Height: ${height} ft × Count: ${count}`;
+                
+            // Update total square feet
+            updateTotalSquareFeet(length, width, count);
+            updateTotalSquareFeetNet(length, width, height, count);
+            updateTotalRollSquareFeet(length, width, count);
+            
+            // Update remnant roll information
+            updateRemnantInfo(length, width, count);
+            // Update total seam length
+            updateTotalSeamLength(length, width, count);
+            // In the createCages function, add this line after updateTotalSeamLength(length, width, count);
+            updateHardwareKits(length, count);
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Handle window resize
+        function onWindowResize() {
+            const container = document.querySelector('.canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+        
+        // Handle form submission
+        document.getElementById('dimensionsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+        
+        // Handle input changes for real-time updates
+        const inputs = document.querySelectorAll('#dimensionsForm input');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const length = parseFloat(document.getElementById('length').value) || 70;
+                const width = parseFloat(document.getElementById('width').value) || 14;
+                const height = parseFloat(document.getElementById('height').value) || 12;
+                const cageCount = parseInt(document.getElementById('cageCount').value) || 1;
+                
+                if (length > 0 && width > 0 && height > 0 && cageCount > 0) {
+                    createCages(length, width, height, cageCount);
+                }
+            });
+        });
+        
+        // Initialize PayPal button for turf
+        function initPayPalButtonTurf() {
+            // Clear any existing buttons first
+            document.getElementById('paypal-button-container-turf').innerHTML = '';
+            
+            // Render the PayPal button
+            paypal.Buttons({
+                // Set up the transaction
+                createOrder: function(data, actions) {
+                    // Validate customer information first
+                    if (!validateCustomerInfo()) {
+                        // Show the customer info section if validation fails
+                        document.getElementById('customerInfoSection').classList.add('active');
+                        document.querySelector('.customer-info-toggle').classList.add('active');
+                        document.getElementById('paymentError').classList.add('visible');
+                        return false; // Prevent order creation
+                    }
+                    
+                    // Get the latest cost value directly from the DOM
+                    const updatedCostTurfText = document.getElementById('costTurf').textContent;
+                    const updatedCostTurf = parseFloat(updatedCostTurfText.replace('$', '').replace(/,/g, ''));
+                    
+                    // Get all cage specifications
+                    const length = document.getElementById('length').value;
+                    const width = document.getElementById('width').value;
+                    const height = document.getElementById('height').value;
+                    const cageCount = document.getElementById('cageCount').value;
+                    const isFlipped = document.getElementById('flipLines').checked ? "Yes" : "No";
+                    const includeSeams = document.getElementById('includeSeamCosts').checked ? "Yes" : "No";
+                    const totalRollSqFt = document.getElementById('totalRollSquareFeet').textContent;
+                    const seamInfo = document.getElementById('totalSeamLength').textContent;
+                    
+                    // Get customer information
+                    const customerName = document.getElementById('customerName').value;
+                    const customerEmail = document.getElementById('customerEmail').value;
+                    const customerPhone = document.getElementById('customerPhone').value;
+                    const customerAddress = document.getElementById('customerAddress').value;
+                    const customerCity = document.getElementById('customerCity').value;
+                    const customerState = document.getElementById('customerState').value;
+                    const customerZip = document.getElementById('customerZip').value;
+                    const customerCountry = document.getElementById('customerCountry').value;
+                    const customerNotes = document.getElementById('customerNotes').value;
+                    
+                    // Create a detailed description for the order
+                    const orderDescription = `Batting Cage Turf: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalRollSqFt} sq ft`;
+                    
+                    // Create a custom_id with all the detailed specifications
+                    const customId = JSON.stringify({
+                        specifications: {
+                            length: length,
+                            width: width,
+                            height: height,
+                            cageCount: cageCount,
+                            flippedRolls: isFlipped,
+                            includeSeams: includeSeams,
+                            totalRollSqFt: totalRollSqFt,
+                            seamDetails: seamInfo
+                        },
+                        customer: {
+                            email: customerEmail,
+                            phone: customerPhone,
+                            notes: customerNotes
+                        }
+                    });
+                    
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: orderDescription,
+                            custom_id: customId,
+                            amount: {
+                                value: updatedCostTurf.toFixed(2)
+                            },
+                            shipping: {
+                                name: {
+                                    full_name: customerName
+                                },
+                                address: {
+                                    address_line_1: customerAddress,
+                                    admin_area_2: customerCity,
+                                    admin_area_1: customerState,
+                                    postal_code: customerZip,
+                                    country_code: customerCountry === "United States" ? "US" : customerCountry
+                                }
+                            }
+                        }]
+                    });
+                },
+                
+                // Finalize the transaction
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(orderData) {
+                        // Show a success message
+                        alert('Turf payment completed! Transaction ID: ' + orderData.id);
+                    });
+                },
+                
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal',
+                    height: 40
+                }
+            }).render('#paypal-button-container-turf');
+        }
+        
+        // Initialize PayPal button for net
+        function initPayPalButtonNet() {
+            // Clear any existing buttons first
+            document.getElementById('paypal-button-container-net').innerHTML = '';
+            
+            // Render the PayPal button
+            paypal.Buttons({
+                // Set up the transaction
+                createOrder: function(data, actions) {
+                    // Validate customer information first
+                    if (!validateCustomerInfo()) {
+                        // Show the customer info section if validation fails
+                        document.getElementById('customerInfoSection').classList.add('active');
+                        document.querySelector('.customer-info-toggle').classList.add('active');
+                        document.getElementById('paymentError').classList.add('visible');
+                        return false; // Prevent order creation
+                    }
+                    
+                    // Get the latest cost value directly from the DOM
+                    const updatedCostNetText = document.getElementById('costNet').textContent;
+                    const updatedCostNet = parseFloat(updatedCostNetText.replace('$', '').replace(/,/g, ''));
+                    
+                    // Get all cage specifications
+                    const length = document.getElementById('length').value;
+                    const width = document.getElementById('width').value;
+                    const height = document.getElementById('height').value;
+                    const cageCount = document.getElementById('cageCount').value;
+                    const includeHardware = document.getElementById('includeHardwareKits').checked ? "Yes" : "No";
+                    const totalNetSqFt = document.getElementById('totalSquareFeetNet').textContent;
+                    const hardwareInfo = document.getElementById('hardwareKitsInfo').textContent;
+                    
+                    // Get customer information
+                    const customerName = document.getElementById('customerName').value;
+                    const customerEmail = document.getElementById('customerEmail').value;
+                    const customerPhone = document.getElementById('customerPhone').value;
+                    const customerAddress = document.getElementById('customerAddress').value;
+                    const customerCity = document.getElementById('customerCity').value;
+                    const customerState = document.getElementById('customerState').value;
+                    const customerZip = document.getElementById('customerZip').value;
+                    const customerCountry = document.getElementById('customerCountry').value;
+                    const customerNotes = document.getElementById('customerNotes').value;
+                    
+                    // Create a detailed description for the order
+                    const orderDescription = `Batting Cage Net: ${length}'L x ${width}'W x ${height}'H - ${cageCount} Cage(s) - ${totalNetSqFt} sq ft`;
+                    
+                    // Create a custom_id with all the detailed specifications
+                    const customId = JSON.stringify({
+                        specifications: {
+                            length: length,
+                            width: width,
+                            height: height,
+                            cageCount: cageCount,
+                            includeHardware: includeHardware,
+                            totalNetSqFt: totalNetSqFt,
+                            hardwareDetails: hardwareInfo
+                        },
+                        customer: {
+                            email: customerEmail,
+                            phone: customerPhone,
+                            notes: customerNotes
+                        }
+                    });
+                    
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: orderDescription,
+                            custom_id: customId,
+                            amount: {
+                                value: updatedCostNet.toFixed(2)
+                            },
+                            shipping: {
+                                name: {
+                                    full_name: customerName
+                                },
+                                address: {
+                                    address_line_1: customerAddress,
+                                    admin_area_2: customerCity,
+                                    admin_area_1: customerState,
+                                    postal_code: customerZip,
+                                    country_code: customerCountry === "United States" ? "US" : customerCountry
+                                }
+                            }
+                        }]
+                    });
+                },
+                
+                // Finalize the transaction
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(orderData) {
+                        // Show a success message
+                        alert('Net payment completed! Transaction ID: ' + orderData.id);
+                    });
+                },
+                
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal',
+                    height: 40
+                }
+            }).render('#paypal-button-container-net');
+        }
+        
+        // Set up customer information section toggle
+        function setupCustomerInfoToggle() {
+            const customerInfoHeader = document.getElementById('customerInfoHeader');
+            const customerInfoSection = document.getElementById('customerInfoSection');
+            const customerInfoToggle = document.querySelector('.customer-info-toggle');
+            
+            customerInfoHeader.addEventListener('click', function() {
+                customerInfoSection.classList.toggle('active');
+                customerInfoToggle.classList.toggle('active');
+            });
+            
+            // Add event listeners to clear error styling on input
+            const allInputs = document.querySelectorAll('#customerInfoSection input, #customerInfoSection textarea');
+            allInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.style.borderColor = 'rgba(0, 255, 157, 0.3)';
+                    document.getElementById('paymentError').classList.remove('visible');
+                });
+            });
+        }
+        
+        // Validate customer information
+        function validateCustomerInfo() {
+            const requiredFields = [
+                'customerName',
+                'customerEmail',
+                'customerPhone',
+                'customerAddress',
+                'customerCity',
+                'customerState',
+                'customerZip',
+                'customerCountry'
+            ];
+            
+            let isValid = true;
+            
+            // Check each required field
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#ff3e3e';
+                    isValid = false;
+                }
+            });
+            
+            // Validate email format
+            const emailField = document.getElementById('customerEmail');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailField.value.trim() && !emailPattern.test(emailField.value)) {
+                emailField.style.borderColor = '#ff3e3e';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Initialize the scene when the page loads
+        window.onload = function() {
+            init();
+            // Initialize PayPal buttons
+            initPayPalButtonTurf();
+            initPayPalButtonNet();
+            // Set up customer info toggle
+            setupCustomerInfoToggle();
+        };
+    </script>
+</body>
+</html>
+
 
 
 
