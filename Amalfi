@@ -3,27 +3,641 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andrews Git Test</title>
+    <title>Space Tech Area Calculator</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle, rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0, 255, 0, 0.05) 2px, transparent 2px);
+            background-size: 50px 50px, 100px 100px;
         }
-        h1 {
-            color: #333;
-            padding: 20px;
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(0, 20, 0, 0.5);
+            border: 1px solid #00aa00;
             border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            background-color: white;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #ff3333;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #005500;
+            color: #00ff00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background-color: #007700;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        button:disabled {
+            background-color: #003300;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        button::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(0, 255, 0, 0.1);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        button:hover::after {
+            opacity: 1;
+            transform: rotate(45deg) translate(10%, 10%);
+        }
+
+        .result {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            display: none;
+        }
+
+        .result-value {
+            font-size: 1.8em;
+            margin-top: 10px;
+            background: rgba(0, 50, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px dashed #00aa00;
+        }
+
+        .success-message {
+            margin-top: 20px;
+            text-align: center;
+            color: #00ff00;
+            font-style: italic;
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ff00;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Database Table Styles */
+        .database-section {
+            margin-top: 50px;
+            display: none;
+        }
+
+        .database-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .database-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .database-icon {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .database-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .database-button {
+            background-color: rgba(0, 50, 0, 0.7);
+            color: #00ff00;
+            border: 1px solid #00aa00;
+            border-radius: 3px;
+            padding: 5px 10px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .database-button:hover {
+            background-color: rgba(0, 70, 0, 0.7);
+        }
+
+        .database-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .database-table th {
+            background-color: rgba(0, 50, 0, 0.7);
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #00aa00;
+            text-transform: uppercase;
+        }
+
+        .database-table td {
+            padding: 10px;
+            border: 1px solid #00aa00;
+            background-color: rgba(0, 20, 0, 0.3);
+        }
+
+        .database-table tr:hover td {
+            background-color: rgba(0, 40, 0, 0.5);
+        }
+
+        .database-info {
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: rgba(0, 255, 0, 0.7);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .blink {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .tab-container {
+            display: flex;
+            margin-top: 30px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: rgba(0, 30, 0, 0.5);
+            border: 1px solid #00aa00;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .tab.active {
+            background-color: rgba(0, 50, 0, 0.7);
+            border-bottom: 1px solid rgba(0, 50, 0, 0.7);
+            position: relative;
+            top: 1px;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #00aa00;
+            background-color: rgba(0, 20, 0, 0.3);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .database-table {
+                font-size: 0.8em;
+            }
+            
+            .database-controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Andrews Git Test</h1>
+    <div class="container">
+        <div class="tab-container">
+            <div class="tab active" data-tab="calculator">Calculator</div>
+            <div class="tab" data-tab="database">Database</div>
+        </div>
+
+        <div id="calculator-tab" class="tab-content active">
+            <h1>Space Tech Area Calculator</h1>
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                    <div class="error" id="emailError">Please enter a valid email address</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="zipcode">US Zip Code</label>
+                    <input type="text" id="zipcode" placeholder="Enter US zip code" required>
+                    <div class="error" id="zipcodeError">Please enter a valid 5-digit US zip code</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="length">Length (feet)</label>
+                    <input type="number" id="length" placeholder="Enter length" required>
+                    <div class="error" id="lengthError">Please enter a valid whole number</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="width">Width (feet)</label>
+                    <input type="number" id="width" placeholder="Enter width" required>
+                    <div class="error" id="widthError">Please enter a valid whole number</div>
+                </div>
+
+                <button type="button" id="calculateBtn">Calculate Area</button>
+            </form>
+
+            <div class="result" id="result">
+                <div>Total Square Feet:</div>
+                <div class="result-value" id="totalArea">0</div>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                Data stored successfully in database <span id="loadingIndicator" class="loading"></span>
+            </div>
+        </div>
+
+        <div id="database-tab" class="tab-content">
+            <div class="database-section" id="databaseSection">
+                <div class="database-header">
+                    <div class="database-title">
+                        <span class="database-icon">⚡</span>
+                        <h2>neon-emerald-apple Database</h2>
+                    </div>
+                    <div class="database-controls">
+                        <button class="database-button" id="refreshDbBtn">
+                            ↻ Refresh
+                        </button>
+                        <button class="database-button">
+                            ⚙ Settings
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="database-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Zip Code</th>
+                            <th>Length (ft)</th>
+                            <th>Width (ft)</th>
+                            <th>Area (sq ft)</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="databaseTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>user1@example.com</td>
+                            <td>90210</td>
+                            <td>20</td>
+                            <td>15</td>
+                            <td>300</td>
+                            <td>2023-04-07 13:45:22</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>user2@example.com</td>
+                            <td>10001</td>
+                            <td>30</td>
+                            <td>25</td>
+                            <td>750</td>
+                            <td>2023-04-07 14:12:05</td>
+                        </tr>
+                        <!-- New entries will be added here -->
+                    </tbody>
+                </table>
+                
+                <div class="database-info">
+                    <span>Connected to: neon-emerald-apple.vercel-storage.com</span>
+                    <span class="blink">● LIVE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            const zipcodeInput = document.getElementById('zipcode');
+            const lengthInput = document.getElementById('length');
+            const widthInput = document.getElementById('width');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultDiv = document.getElementById('result');
+            const totalAreaDiv = document.getElementById('totalArea');
+            const successMessage = document.getElementById('successMessage');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const databaseSection = document.getElementById('databaseSection');
+            const databaseTableBody = document.getElementById('databaseTableBody');
+            const refreshDbBtn = document.getElementById('refreshDbBtn');
+            
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to current tab and content
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Show database section when database tab is clicked
+                    if (tabId === 'database') {
+                        databaseSection.style.display = 'block';
+                    }
+                });
+            });
+
+            // Email validation
+            emailInput.addEventListener('input', validateForm);
+            emailInput.addEventListener('blur', validateForm);
+
+            // Zip code validation
+            zipcodeInput.addEventListener('input', validateForm);
+            zipcodeInput.addEventListener('blur', validateForm);
+
+            // Length validation
+            lengthInput.addEventListener('input', validateForm);
+            lengthInput.addEventListener('blur', validateForm);
+
+            // Width validation
+            widthInput.addEventListener('input', validateForm);
+            widthInput.addEventListener('blur', validateForm);
+
+            function validateEmail() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValid = emailRegex.test(emailInput.value);
+                document.getElementById('emailError').style.display = isValid ? 'none' : 'block';
+                return isValid;
+            }
+
+            function validateZipcode() {
+                const zipcodeRegex = /^\d{5}$/;
+                const isValid = zipcodeRegex.test(zipcodeInput.value);
+                document.getElementById('zipcodeError').style.display = isValid ? 'none' : 'block';
+                return isValid;
+            }
+
+            function validateLength() {
+                const lengthValue = lengthInput.value.trim();
+                const isValid = /^\d+$/.test(lengthValue) && parseInt(lengthValue) > 0;
+                document.getElementById('lengthError').style.display = isValid || lengthValue === '' ? 'none' : 'block';
+                return isValid || lengthValue === '';
+            }
+
+            function validateWidth() {
+                const widthValue = widthInput.value.trim();
+                const isValid = /^\d+$/.test(widthValue) && parseInt(widthValue) > 0;
+                document.getElementById('widthError').style.display = isValid || widthValue === '' ? 'none' : 'block';
+                return isValid || widthValue === '';
+            }
+
+            function validateForm() {
+                const emailValid = validateEmail();
+                const zipcodeValid = validateZipcode();
+                const lengthValid = validateLength();
+                const widthValid = validateWidth();
+                
+                // Enable calculate button only if all fields are valid and not empty
+                const canCalculate = emailValid && zipcodeValid && 
+                                    lengthInput.value.trim() !== '' && 
+                                    widthInput.value.trim() !== '' &&
+                                    lengthValid && widthValid;
+                
+                calculateBtn.disabled = !canCalculate;
+            }
+
+            // Database functionality
+            let nextId = 3; // Starting after the 2 sample entries
+            let entries = [
+                {
+                    id: 1,
+                    email: 'user1@example.com',
+                    zipcode: '90210',
+                    length: 20,
+                    width: 15,
+                    area: 300,
+                    timestamp: '2023-04-07 13:45:22'
+                },
+                {
+                    id: 2,
+                    email: 'user2@example.com',
+                    zipcode: '10001',
+                    length: 30,
+                    width: 25,
+                    area: 750,
+                    timestamp: '2023-04-07 14:12:05'
+                }
+            ];
+
+            function addEntryToDatabase(entry) {
+                entries.push(entry);
+                renderDatabaseTable();
+            }
+
+            function renderDatabaseTable() {
+                databaseTableBody.innerHTML = '';
+                
+                entries.forEach(entry => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${entry.id}</td>
+                        <td>${entry.email}</td>
+                        <td>${entry.zipcode}</td>
+                        <td>${entry.length}</td>
+                        <td>${entry.width}</td>
+                        <td>${entry.area.toLocaleString()}</td>
+                        <td>${entry.timestamp}</td>
+                    `;
+                    
+                    databaseTableBody.appendChild(row);
+                });
+            }
+
+            function getCurrentTimestamp() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            }
+
+            // Calculate button click handler
+            calculateBtn.addEventListener('click', function() {
+                if (calculateBtn.disabled) return;
+                
+                const length = parseInt(lengthInput.value);
+                const width = parseInt(widthInput.value);
+                const area = length * width;
+                
+                // Format the area with commas
+                totalAreaDiv.textContent = area.toLocaleString();
+                resultDiv.style.display = 'block';
+                
+                // Simulate storing to database
+                successMessage.style.display = 'block';
+                loadingIndicator.style.display = 'inline-block';
+                
+                // Create new database entry
+                const newEntry = {
+                    id: nextId++,
+                    email: emailInput.value,
+                    zipcode: zipcodeInput.value,
+                    length: length,
+                    width: width,
+                    area: area,
+                    timestamp: getCurrentTimestamp()
+                };
+                
+                // Simulate database operation completion
+                setTimeout(function() {
+                    loadingIndicator.style.display = 'none';
+                    successMessage.textContent = `Data stored successfully in neon-emerald-apple database!`;
+                    
+                    // Add entry to database
+                    addEntryToDatabase(newEntry);
+                    
+                    // Log the data that would be stored
+                    console.log('Stored in neon-emerald-apple database:', newEntry);
+                }, 2000);
+            });
+
+            // Refresh database button
+            refreshDbBtn.addEventListener('click', function() {
+                renderDatabaseTable();
+            });
+
+            // Initial form validation and database render
+            validateForm();
+            renderDatabaseTable();
+        });
+    </script>
 </body>
 </html>
