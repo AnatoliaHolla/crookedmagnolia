@@ -388,7 +388,7 @@
           margin-top: 0.5rem;
           font-size: 0.7rem;
           color: rgba(224, 255, 233, 0.7);
-          font-style: italic;
+          font-style: italic.
       }
 
       .gravel-note {
@@ -915,7 +915,7 @@
                   <span class="roll-info-title">Roll Size Information:</span>
                   <div class="roll-info-content" id="rollContent">
                       <div class="roll-info-line" id="rollsLine">Calculating...</div>
-                      <div class="roll-info-line  id="rollsLine">Calculating...</div>
+                      <div class="roll-info-line" id="rollsLine2">Calculating...</div>
                       <div class="roll-info-line" id="remnantLine"></div>
                   </div>
               </div>
@@ -1708,6 +1708,7 @@
           }
           
           document.getElementById('rollsLine').innerHTML = rollsLine;
+          document.getElementById('rollsLine2').innerHTML = `Total of ${remnantInfo.numRolls * remnantInfo.remnantLength} linear feet`;
           document.getElementById('remnantLine').innerHTML = remnantLine;
       }
       
@@ -2441,6 +2442,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
