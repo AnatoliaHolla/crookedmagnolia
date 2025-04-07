@@ -912,26 +912,40 @@
               
               <!-- Roll Size Information -->
               <div class="roll-info" id="rollInfo">
-                  <span class="roll-info-title">Roll Size Information:</span>
-                  <div class="roll-info-content" id="rollContent">
-                      <div class="roll-info-line" id="rollsLine">Calculating...</div>
-                      <div class="roll-info-line" id="rollsLine2">Calculating...</div>
-                      <div class="roll-info-line" id="remnantLine"></div>
-                  </div>
-              </div>
+    <span class="roll-info-title">Roll Size Information:</span>
+    <div class="roll-info-content" id="rollContent">
+        <div class="roll-info-line" id="rollsLine">Calculating...</div>
+        <div class="roll-info-line" id="rollsLine2">Calculating...</div>
+        <div class="roll-info-line" id="remnantLine"></div>
+    </div>
+</div>
               
               <div class="seam-info">
-                  <div class="seam-info-row">
-                      <span class="seam-info-label">Seam Totals:</span>
-                      <div class="seam-info-value-container">
-                          <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
-                          <div class="inline-checkbox">
-                              <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
-                              <label for="includeSeamCosts">Add</label>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+    <div class="seam-info-row">
+        <span class="seam-info-label">Seam Totals:</span>
+        <div class="seam-info-value-container">
+            <span class="seam-info-value" id="totalSeamLength">Calculating...</span>
+            <div class="inline-checkbox">
+                <input type="checkbox" id="includeSeamCosts" name="includeSeamCosts">
+                <label for="includeSeamCosts">Add</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add hardware kits section -->
+<div class="seam-info">
+    <div class="seam-info-row">
+        <span class="seam-info-label">Netting Hardware:</span>
+        <div class="seam-info-value-container">
+            <span class="seam-info-value" id="hardwareKitsInfo">Calculating...</span>
+            <div class="inline-checkbox">
+                <input type="checkbox" id="includeHardwareKits" name="includeHardwareKits">
+                <label for="includeHardwareKits">Add</label>
+            </div>
+        </div>
+    </div>
+</div>
               
               <!-- Shipping Calculator -->
               <div class="shipping-calculator">
@@ -1678,39 +1692,44 @@
           }
       }
       
-      // Update remnant roll information display
-      function updateRemnantInfo(length, width, count) {
-          const isFlipped = document.getElementById('flipLines').checked;
-          const remnantInfo = calculateRemnantRoll(length, width, count, isFlipped);
-          
-          let rollsLine = "";
-          let remnantLine = "";
-          
-          if (remnantInfo.remnantWidth > 0) {
-              if (!isFlipped) {
-                  // Rolls run along the length (default when checkbox is unchecked)
-                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                  remnantLine = `<span class="roll-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
-              } else {
-                  // Rolls run along the width (when checkbox is checked)
-                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                  remnantLine = `<span class="roll-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
-              }
-          } else {
-              // No remnant (perfect fit)
-              if (!isFlipped) {
-                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                  remnantLine = `<span class="roll-info-value">No remnant</span> after installation (perfect fit)`;
-              } else {
-                  rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
-                  remnantLine = `<span class="roll-info-value">No remnant</span> after installation (perfect fit)`;
-              }
-          }
-          
-          document.getElementById('rollsLine').innerHTML = rollsLine;
-          document.getElementById('rollsLine2').innerHTML = `Total of ${remnantInfo.numRolls * remnantInfo.remnantLength} linear feet`;
-          document.getElementById('remnantLine').innerHTML = remnantLine;
-      }
+      // Fix the updateRemnantInfo function to properly update both roll info lines
+function updateRemnantInfo(length, width, count) {
+    const isFlipped = document.getElementById('flipLines').checked;
+    const remnantInfo = calculateRemnantRoll(length, width, count, isFlipped);
+    
+    let rollsLine = "";
+    let rollsLine2 = "";
+    let remnantLine = "";
+    
+    if (remnantInfo.remnantWidth > 0) {
+        if (!isFlipped) {
+            // Rolls run along the length (default when checkbox is unchecked)
+            rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+            rollsLine2 = `Total of ${remnantInfo.numRolls * remnantInfo.remnantLength} linear feet`;
+            remnantLine = `<span class="roll-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
+        } else {
+            // Rolls run along the width (when checkbox is checked)
+            rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+            rollsLine2 = `Total of ${remnantInfo.numRolls * remnantInfo.remnantLength} linear feet`;
+            remnantLine = `<span class="roll-info-value">${remnantInfo.remnantWidth}' × ${remnantInfo.remnantLength}'</span> remnant after installation (${remnantInfo.remnantArea.toLocaleString()} sf)`;
+        }
+    } else {
+        // No remnant (perfect fit)
+        if (!isFlipped) {
+            rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+            rollsLine2 = `Total of ${remnantInfo.numRolls * remnantInfo.remnantLength} linear feet`;
+            remnantLine = `<span class="roll-info-value">No remnant</span> after installation (perfect fit)`;
+        } else {
+            rollsLine = `You will receive ${remnantInfo.numRolls} rolls of 15' × ${remnantInfo.remnantLength}'`;
+            rollsLine2 = `Total of ${remnantInfo.numRolls * remnantInfo.remnantLength} linear feet`;
+            remnantLine = `<span class="roll-info-value">No remnant</span> after installation (perfect fit)`;
+        }
+    }
+    
+    document.getElementById('rollsLine').innerHTML = rollsLine;
+    document.getElementById('rollsLine2').innerHTML = rollsLine2;
+    document.getElementById('remnantLine').innerHTML = remnantLine;
+}
       
       // Calculate and update total roll square feet
       function updateTotalRollSquareFeet(length, width, count) {
@@ -2442,6 +2461,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
