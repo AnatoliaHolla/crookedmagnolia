@@ -30,11 +30,47 @@ function Rectangle3DFallback() {
   )
 }
 
-// Import the BasicCage3D component with no SSR
-const BasicCage3D = dynamic(() => import("@/components/BasicCage3D"), {
-  ssr: false,
-  loading: () => <Rectangle3DFallback />,
-})
+// Create a simple 2D fallback for environments where 3D doesn't work
+function Simple2DFallback({
+  length,
+  width,
+  height,
+  cages,
+}: { length: number; width: number; height: number; cages: number }) {
+  return (
+    <div className="w-full h-[200px] md:h-[600px] bg-[rgba(10,26,18,0.8)] rounded-lg border border-[#00ff9d] flex flex-col items-center justify-center p-4">
+      <div className="text-[#00ff9d] mb-4 text-center">Batting Cage Visualization</div>
+
+      {/* Simple 2D representation */}
+      <div className="relative w-3/4 h-24 border-2 border-[#00ff9d] bg-[#005500] flex items-center justify-center">
+        <span className="text-white font-bold text-sm">ATXTurf.com</span>
+
+        {/* Maroon rectangle with white square */}
+        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 w-12 h-6 bg-[#800000]">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white"></div>
+        </div>
+      </div>
+
+      {/* Cage dimensions */}
+      <div className="mt-4 text-center text-[#00ff9d] text-sm">
+        {length}' × {width}' × {height}' ({cages} cage{cages > 1 ? "s" : ""})
+      </div>
+    </div>
+  )
+}
+
+// Import the BasicCage3D component with no SSR and error handling
+const BasicCage3D = dynamic(
+  () =>
+    import("@/components/BasicCage3D").catch((err) => {
+      console.error("Failed to load BasicCage3D:", err)
+      return () => null // Return empty component on error
+    }),
+  {
+    ssr: false,
+    loading: () => <Rectangle3DFallback />,
+  },
+)
 
 export default function Home() {
   // Set default values for dimensions
@@ -59,6 +95,7 @@ export default function Home() {
 
   // Add state to track if 3D model has an error
   const [modelError, setModelError] = useState(false)
+  const [is3DSupported, setIs3DSupported] = useState(true)
 
   // State for shipping information
   const [shippingState, setShippingState] = useState<string | null>(null)
@@ -89,6 +126,20 @@ export default function Home() {
   const [showTurfShippingTooltip, setShowTurfShippingTooltip] = useState(false)
   const [showNetShippingTooltip, setShowNetShippingTooltip] = useState(false)
   const [showHardwareTooltip, setShowHardwareTooltip] = useState(false)
+
+  // Check if WebGL is supported
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const canvas = document.createElement("canvas")
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl")
+        setIs3DSupported(!!gl)
+      } catch (e) {
+        console.error("Error checking WebGL support:", e)
+        setIs3DSupported(false)
+      }
+    }
+  }, [])
 
   // Calculate areas
   const lengthNum = Number.parseInt(length) || 70
@@ -435,32 +486,40 @@ export default function Home() {
     formData.append("flipDirection", flipDirection.toString())
 
     startTransition(async () => {
-      const response = await submitAreaCalculation(formData)
+      try {
+        const response = await submitAreaCalculation(formData)
 
-      if (response.success) {
-        setResult({
-          nettingSqFt: response.surfaceArea,
-          turfSqFt: response.floorArea,
-        })
-        setFormState({
-          success: true,
-          message: response.message,
-        })
-        setFormSubmitted(false) // Reset form submitted state on success
+        if (response.success) {
+          setResult({
+            nettingSqFt: response.surfaceArea,
+            turfSqFt: response.floorArea,
+          })
+          setFormState({
+            success: true,
+            message: response.message,
+          })
+          setFormSubmitted(false) // Reset form submitted state on success
 
-        // Update shipping information from the response
-        if (response.shippingCostPerSqFt) {
-          setShippingCostPerSqFt(response.shippingCostPerSqFt)
+          // Update shipping information from the response
+          if (response.shippingCostPerSqFt) {
+            setShippingCostPerSqFt(response.shippingCostPerSqFt)
+          }
+
+          if (response.shippingCost) {
+            setShippingCost(Number.parseFloat(response.shippingCost))
+          }
+        } else {
+          setFormState({
+            success: false,
+            message: response.message,
+            errors: response.errors,
+          })
         }
-
-        if (response.shippingCost) {
-          setShippingCost(Number.parseFloat(response.shippingCost))
-        }
-      } else {
+      } catch (error) {
+        console.error("Error submitting form:", error)
         setFormState({
           success: false,
-          message: response.message,
-          errors: response.errors,
+          message: "An unexpected error occurred. Please try again.",
         })
       }
     })
@@ -505,15 +564,19 @@ export default function Home() {
             Powered by <span className="text-[#008f39] font-semibold">ATXTurf, LLC</span>
           </div>
           <div className="flex-grow">
-            <Suspense fallback={<Rectangle3DFallback />}>
-              <BasicCage3D
-                length={lengthNum}
-                width={widthNum}
-                height={heightNum}
-                cages={cagesNum}
-                flipDirection={flipDirection}
-              />
-            </Suspense>
+            {is3DSupported ? (
+              <Suspense fallback={<Rectangle3DFallback />}>
+                <BasicCage3D
+                  length={lengthNum}
+                  width={widthNum}
+                  height={heightNum}
+                  cages={cagesNum}
+                  flipDirection={flipDirection}
+                />
+              </Suspense>
+            ) : (
+              <Simple2DFallback length={lengthNum} width={widthNum} height={heightNum} cages={cagesNum} />
+            )}
           </div>
         </div>
 
@@ -811,7 +874,7 @@ export default function Home() {
                   </div>
                   <div className="text-center text-xl font-bold text-white">
                     {zipcode.length === 5 && shippingCost !== null
-                      ? `${shippingCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      ? `$${shippingCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                       : "$0.00"}
                   </div>
                   {/* Shipping details removed */}
@@ -837,7 +900,7 @@ export default function Home() {
                   </div>
                   <div className="text-center text-xl font-bold text-white">
                     {zipcode.length === 5
-                      ? `${(nettingSqFt * 0.04).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      ? `$${(nettingSqFt * 0.04).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                       : "$0.00"}
                   </div>
                   {/* Shipping details removed */}
@@ -906,7 +969,7 @@ export default function Home() {
                   <span>{glueLabel}</span>
                   <span className="result-value text-lg font-bold text-white">
                     {seamLength <= 70
-                      ? `(${glueBucketCost.toFixed(2)})`
+                      ? `($${glueBucketCost.toFixed(2)})`
                       : `${glueBuckets} (${glueBucketCost.toLocaleString()})`}
                   </span>
                 </div>

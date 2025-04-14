@@ -27,24 +27,79 @@ function Fallback({ length, width, height, cages }: BasicCage3DProps) {
   )
 }
 
-// Create the main component
+// Create a simplified 2D representation as a fallback
+function SimplifiedView({ length, width, height, cages }: BasicCage3DProps) {
+  return (
+    <div className="w-full h-[200px] md:h-[600px] bg-[rgba(10,26,18,0.8)] rounded-lg border border-[#00ff9d] flex flex-col items-center justify-center p-4">
+      <div className="text-[#00ff9d] mb-4 text-center">Batting Cage Visualization</div>
+
+      {/* Simple 2D representation */}
+      <div className="relative w-3/4 h-24 border-2 border-[#00ff9d] bg-[#005500] flex items-center justify-center">
+        <span className="text-white font-bold text-sm">ATXTurf.com</span>
+
+        {/* Maroon rectangle with white square */}
+        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 w-12 h-6 bg-[#800000]">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white"></div>
+        </div>
+      </div>
+
+      {/* Cage dimensions */}
+      <div className="mt-4 text-center text-[#00ff9d] text-sm">
+        {length}' × {width}' × {height}' ({cages} cage{cages > 1 ? "s" : ""})
+      </div>
+
+      <div className="mt-4 text-center text-[#e0ffe9] text-xs">
+        3D visualization is available when viewing on your device
+      </div>
+    </div>
+  )
+}
+
+// Create the main component with error handling
 function BasicCage3D({ length, width, height, cages, flipDirection }: BasicCage3DProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [threejsSupported, setThreejsSupported] = useState(true)
 
   // Initialize the scene
   useEffect(() => {
     if (!containerRef.current) return
+
+    // Check if we're in a browser environment that supports WebGL
+    if (typeof window === "undefined") {
+      setThreejsSupported(false)
+      return
+    }
 
     let cleanup = () => {}
     let frameId: number | null = null
 
     const initScene = async () => {
       try {
-        // Dynamically import Three.js modules
-        const THREE = await import("three")
-        const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls")
+        // Safely check for WebGL support
+        const canvas = document.createElement("canvas")
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl")
+
+        if (!gl) {
+          console.error("WebGL not supported")
+          setThreejsSupported(false)
+          setError("WebGL not supported by your browser")
+          return
+        }
+
+        // Dynamically import Three.js modules with error handling
+        let THREE, OrbitControls
+        try {
+          THREE = await import("three")
+          const OrbitControlsModule = await import("three/examples/jsm/controls/OrbitControls")
+          OrbitControls = OrbitControlsModule.OrbitControls
+        } catch (err) {
+          console.error("Failed to load Three.js:", err)
+          setThreejsSupported(false)
+          setError("Failed to load 3D libraries")
+          return
+        }
 
         console.log("Three.js loaded successfully")
 
@@ -60,12 +115,21 @@ function BasicCage3D({ length, width, height, cages, flipDirection }: BasicCage3
           2000, // Increased far plane to see the larger grid
         )
 
-        // Create renderer
-        const renderer = new THREE.WebGLRenderer({
-          antialias: true,
-        })
-        renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
-        containerRef.current.appendChild(renderer.domElement)
+        // Create renderer with error handling
+        let renderer
+        try {
+          renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            powerPreference: "default", // Less demanding setting
+          })
+          renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
+          containerRef.current.appendChild(renderer.domElement)
+        } catch (err) {
+          console.error("Failed to create WebGL renderer:", err)
+          setThreejsSupported(false)
+          setError("Failed to initialize 3D renderer")
+          return
+        }
 
         // Add lights
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
@@ -104,7 +168,7 @@ function BasicCage3D({ length, width, height, cages, flipDirection }: BasicCage3
 
         // Position the camera at an angle to see the cage(s) properly - closer
         camera.position.set(length * 0.5, height * 0.8, width * cages * 0.8) // Reduced values for closer view
-        camera.lookAt(length / 2, height / 2, (width * cages) / 2)
+        camera.lookAt(0, height / 2, 0) // Look at the center of the cage(s)
 
         // Add controls
         const controls = new OrbitControls(camera, renderer.domElement)
@@ -113,24 +177,43 @@ function BasicCage3D({ length, width, height, cages, flipDirection }: BasicCage3
         controls.target.set(0, height / 2, 0) // Look at the center of the cage(s)
         controls.maxDistance = 500 // Reduced to match the closer default view
 
-        // Animation loop
+        // Animation loop with error handling
         const animate = () => {
-          frameId = requestAnimationFrame(animate)
-          controls.update()
-          renderer.render(scene, camera)
+          try {
+            frameId = requestAnimationFrame(animate)
+            controls.update()
+            renderer.render(scene, camera)
+          } catch (err) {
+            console.error("Error in animation loop:", err)
+            if (frameId !== null) {
+              cancelAnimationFrame(frameId)
+              frameId = null
+            }
+          }
         }
-        animate()
+
+        // Start animation with error handling
+        try {
+          animate()
+        } catch (err) {
+          console.error("Failed to start animation:", err)
+          setError("Failed to start 3D animation")
+        }
 
         // Handle resize
         const handleResize = () => {
           if (!containerRef.current) return
 
-          const width = containerRef.current.clientWidth
-          const height = containerRef.current.clientHeight
+          try {
+            const width = containerRef.current.clientWidth
+            const height = containerRef.current.clientHeight
 
-          camera.aspect = width / height
-          camera.updateProjectionMatrix()
-          renderer.setSize(width, height)
+            camera.aspect = width / height
+            camera.updateProjectionMatrix()
+            renderer.setSize(width, height)
+          } catch (err) {
+            console.error("Error handling resize:", err)
+          }
         }
 
         window.addEventListener("resize", handleResize)
@@ -141,19 +224,33 @@ function BasicCage3D({ length, width, height, cages, flipDirection }: BasicCage3
             cancelAnimationFrame(frameId)
           }
 
-          controls.dispose()
-
-          if (containerRef.current && renderer.domElement) {
-            containerRef.current.removeChild(renderer.domElement)
+          try {
+            controls.dispose()
+          } catch (err) {
+            console.error("Error disposing controls:", err)
           }
 
-          renderer.dispose()
+          if (containerRef.current && renderer.domElement) {
+            try {
+              containerRef.current.removeChild(renderer.domElement)
+            } catch (err) {
+              console.error("Error removing renderer:", err)
+            }
+          }
+
+          try {
+            renderer.dispose()
+          } catch (err) {
+            console.error("Error disposing renderer:", err)
+          }
+
           window.removeEventListener("resize", handleResize)
         }
 
         setLoaded(true)
       } catch (err) {
         console.error("Failed to initialize Three.js:", err)
+        setThreejsSupported(false)
         setError(err instanceof Error ? err.message : "Failed to load 3D visualization")
       }
     }
@@ -326,15 +423,9 @@ function BasicCage3D({ length, width, height, cages, flipDirection }: BasicCage3
     }
   }
 
-  if (error) {
-    return (
-      <div className="w-full h-[200px] md:h-[600px] bg-[rgba(10,26,18,0.8)] rounded-lg border border-[#00ff9d] flex items-center justify-center">
-        <div className="text-[#e0ffe9]">
-          <p className="text-center">Unable to load 3D visualization</p>
-          <p className="text-center text-xs mt-2">Error: {error}</p>
-        </div>
-      </div>
-    )
+  // If Three.js is not supported or there's an error, show the simplified view
+  if (!threejsSupported || error) {
+    return <SimplifiedView length={length} width={width} height={height} cages={cages} />
   }
 
   return (
