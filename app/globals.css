@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 224, 255, 233;
+  --background-start-rgb: 10, 26, 18;
+  --background-end-rgb: 5, 15, 10;
+  --input-bg: 15, 35, 15;
+  --border-color: 0, 255, 157;
+  --card-bg: 17, 34, 24;
+
+  /* ATX Turf Colors */
+  --primary: #00ff9d;
+  --primary-dark: #00cc7d;
+  --secondary: #0a1a12;
+  --accent: #00ffcc;
+  --text: #e0ffe9;
+  --background: #0a1a12;
+  --card: #112218;
+  --atx-green: #008f39;
+  --floor-green: #00ff4c;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.input-container {
+  position: relative;
+}
+
+.input-with-buttons {
+  @apply w-full p-3 bg-[rgba(15,35,15,0.8)] border border-[#00ff9d] rounded text-[#e0ffe9] font-mono focus:outline-none focus:border-[#00ff9d] focus:shadow-[0_0_10px_rgba(0,255,157,0.5)];
+}
+
+.input-button {
+  @apply absolute right-0 w-8 h-8 flex items-center justify-center text-[#e0ffe9] bg-[rgba(0,50,0,0.5)] hover:bg-[rgba(0,70,0,0.7)] cursor-pointer;
+}
+
+.input-button-up {
+  @apply top-0 rounded-tr;
+}
+
+.input-button-down {
+  @apply bottom-0 rounded-br;
+}
+
+.card-container {
+  @apply bg-[rgba(17,34,24,0.8)] border border-[#00ff9d] rounded-lg p-4 w-full;
+}
+
+.section-title {
+  @apply text-[#00ff9d] uppercase font-bold text-center mb-4 tracking-wider;
+}
+
+.result-value {
+  @apply text-right text-xl font-bold text-[#00ff9d];
+}
